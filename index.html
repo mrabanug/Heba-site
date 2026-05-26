@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>هبة سالم | Trichologist - استمارة التشخيص المتكامل</title>
+<title>هبة سالم | Trichologist - استشارات وحجز مواعيد</title>
+
+<!-- EmailJS Library -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <style>
 * {
@@ -19,7 +22,6 @@ body{
     color:#2D2D2A;
 }
 
-/* HERO */
 .hero{
     background:#324A3E;
     color:#FFFFFF;
@@ -31,7 +33,6 @@ body{
     margin:0;
     font-size:42px;
     font-weight:bold;
-    letter-spacing:1px;
 }
 
 .hero p{
@@ -55,17 +56,14 @@ body{
 
 .hero button:hover{
     background:#8a7658;
-    transform:scale(1.02);
 }
 
-/* CONTAINER */
 .container{
     max-width:950px;
     margin:auto;
     padding:30px 20px;
 }
 
-/* BOX */
 .box{
     background:#FFFFFF;
     margin:25px 0;
@@ -73,11 +71,6 @@ body{
     border-radius:20px;
     box-shadow:0 8px 20px rgba(0,0,0,0.05);
     border-right:6px solid #324A3E;
-    transition:0.2s;
-}
-
-.box:hover{
-    box-shadow:0 12px 28px rgba(0,0,0,0.08);
 }
 
 h2{
@@ -95,7 +88,6 @@ h3{
     font-size:18px;
 }
 
-/* FORM ELEMENTS */
 label{
     display:block;
     margin-top:12px;
@@ -115,7 +107,6 @@ input, select, textarea{
     background:#F7F5EB;
     color:#2D2D2A;
     font-family:inherit;
-    transition:0.2s;
 }
 
 input:focus, select:focus, textarea:focus{
@@ -123,12 +114,6 @@ input:focus, select:focus, textarea:focus{
     background:#fff;
 }
 
-textarea{
-    resize:vertical;
-    min-height:80px;
-}
-
-/* RADIO & CHECKBOX GROUPS */
 .radio-group, .checkbox-group{
     background:#F7F5EB;
     padding:12px;
@@ -148,7 +133,6 @@ input[type="radio"], input[type="checkbox"]{
     margin-left:5px;
 }
 
-/* FILE INPUT */
 .file-input{
     background:#F7F5EB;
     padding:10px;
@@ -156,15 +140,9 @@ input[type="radio"], input[type="checkbox"]{
     margin:10px 0;
 }
 
-.file-input label{
-    font-weight:bold;
-    color:#324A3E;
-}
-
 .required{
     color:#c0392b;
     font-size:12px;
-    margin-right:5px;
 }
 
 .optional{
@@ -172,7 +150,6 @@ input[type="radio"], input[type="checkbox"]{
     font-size:12px;
 }
 
-/* BUTTONS */
 .submit{
     width:100%;
     background:#324A3E;
@@ -189,10 +166,16 @@ input[type="radio"], input[type="checkbox"]{
 
 .submit:hover{
     background:#2D2D2A;
-    transform:scale(1.01);
 }
 
-/* REVIEWS */
+.submit-secondary {
+    background: #A89676;
+}
+
+.submit-secondary:hover {
+    background: #8a7658;
+}
+
 .review{
     background:#F7F5EB;
     padding:15px;
@@ -202,7 +185,26 @@ input[type="radio"], input[type="checkbox"]{
     font-size:14px;
 }
 
-/* MODAL للتنبيه */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #324A3E;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.toast.error {
+    background: #c0392b;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -215,6 +217,7 @@ input[type="radio"], input[type="checkbox"]{
     align-items: center;
     z-index: 1000;
 }
+
 .modal-content {
     background: white;
     padding: 25px;
@@ -223,16 +226,14 @@ input[type="radio"], input[type="checkbox"]{
     text-align: center;
     border-right: 6px solid #A89676;
 }
-.modal-content p {
-    margin: 15px 0;
-    line-height: 1.6;
-}
+
 .modal-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-top: 20px;
 }
+
 .modal-buttons button {
     padding: 10px 20px;
     border: none;
@@ -240,25 +241,64 @@ input[type="radio"], input[type="checkbox"]{
     cursor: pointer;
     font-weight: bold;
 }
+
 .modal-buttons button:first-child {
     background: #324A3E;
     color: white;
 }
+
 .modal-buttons button:last-child {
     background: #A89676;
     color: white;
 }
-.error-msg {
-    color: #c0392b;
-    font-size: 13px;
-    margin-top: 5px;
-    display: none;
+
+.loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #A89676;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* تنسيق حجز الموعد */
+.booking-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.booking-row > div {
+    flex: 1;
+    min-width: 150px;
+}
+
+.date-picker, .time-picker {
+    background: #F7F5EB;
+    border: 1.5px solid #e0ddd0;
+    border-radius: 12px;
+    padding: 12px;
+    width: 100%;
+}
+
+.booking-summary {
+    background: #F7F5EB;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
 <div class="hero">
     <h1>هبة سالم</h1>
     <p>اختصاص علم الشعر | Trichologist</p>
@@ -269,9 +309,9 @@ input[type="radio"], input[type="checkbox"]{
 
 <div class="container" id="form-start">
 
-<!-- ============ القسم 1 ============ -->
+<!-- ============ استمارة التشخيص (مختصرة للمساحة) ============ -->
 <div class="box">
-<h2>📋 1. البيانات العامة والروتين اليومي</h2>
+<h2>📋 استمارة التشخيص المتكامل</h2>
 
 <label>الاسم الكامل <span class="required">*</span></label>
 <input type="text" id="fullname" placeholder="الاسم الكامل">
@@ -282,29 +322,12 @@ input[type="radio"], input[type="checkbox"]{
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="text" id="phone" placeholder="رقم الهاتف">
 
-<label>كمية شرب الماء يومياً <span class="required">*</span></label>
+<label>كمية شرب الماء يومياً</label>
 <div class="radio-group">
     <label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label>
     <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label>
     <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
 </div>
-
-<label>هل تعانين من ضغوطات نفسية أو قلق مؤخراً؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="stress" value="نعم"> نعم</label>
-    <label><input type="radio" name="stress" value="لا"> لا</label>
-</div>
-
-<label>كم مرة يغسل الشعر في الأسبوع؟ <span class="required">*</span></label>
-<input type="text" id="washFreq" placeholder="مثال: 3 مرات">
-
-<label>ما هي المنتجات المستخدمة حالياً؟</label>
-<textarea id="products" placeholder="الشامبو، البلسم، الزيوت، الكريمات..."></textarea>
-</div>
-
-<!-- ============ القسم 2 ============ -->
-<div class="box">
-<h2>🔄 2. تساقط الشعر وأمراض الفروة</h2>
 
 <label>هل تعانين من تساقط الشعر؟</label>
 <div class="radio-group">
@@ -312,181 +335,77 @@ input[type="radio"], input[type="checkbox"]{
     <label><input type="radio" name="hairLoss" value="لا"> لا</label>
 </div>
 
-<label>معدل التساقط التقريبي يومياً</label>
-<div class="radio-group">
-    <label><input type="radio" name="lossRate" value="طبيعي (أقل من 100 شعرة)"> طبيعي (أقل من 100 شعرة)</label>
-    <label><input type="radio" name="lossRate" value="متوسط"> متوسط</label>
-    <label><input type="radio" name="lossRate" value="حاد (بالخصل)"> حاد (بالخصل)</label>
-</div>
-
-<label>نوع التساقط (إن وجد تشخيص طبي سابق)</label>
-<div class="radio-group">
-    <label><input type="radio" name="lossType" value="تساقط هرموني / وراثي"> تساقط هرموني / وراثي</label>
-    <label><input type="radio" name="lossType" value="تساقط كربي (بعد ولادة، عملية، أو دايت قاسي)"> تساقط كربي</label>
-    <label><input type="radio" name="lossType" value="ثعلبة بقعية"> ثعلبة بقعية</label>
-    <label><input type="radio" name="lossType" value="لا يوجد تشخيص"> لا يوجد تشخيص</label>
-</div>
-
-<label>مشاكل وأمراض الفروة (اختر كل ما ينطبق)</label>
-<div class="checkbox-group">
-    <label><input type="checkbox" name="scalpIssues" value="حكة شديدة"> حكة شديدة</label>
-    <label><input type="checkbox" name="scalpIssues" value="إفرازات دهنية زائدة"> إفرازات دهنية زائدة</label>
-    <label><input type="checkbox" name="scalpIssues" value="جفاف شديد وقشور صغيرة"> جفاف شديد وقشور صغيرة</label>
-    <label><input type="checkbox" name="scalpIssues" value="قشرة دهنية سميكة (صفراء)"> قشرة دهنية سميكة</label>
-    <label><input type="checkbox" name="scalpIssues" value="حبوب أو بذور في الفروة"> حبوب أو بذور في الفروة</label>
-    <label><input type="checkbox" name="scalpIssues" value="صدفية أو أكزيما تشخيصية"> صدفية أو أكزيما</label>
-    <label><input type="checkbox" name="scalpIssues" value="ألم عند تحريك خصلات الشعر"> ألم عند تحريك خصلات الشعر</label>
-</div>
-</div>
-
-<!-- ============ القسم 3 ============ -->
-<div class="box">
-<h2>💇‍♀️ 3. طبيعة الشعر، الجفاف، و"النفشة"</h2>
-
-<label>نوع وملمس الشعر الطبيعي</label>
-<div class="radio-group">
-    <label><input type="radio" name="hairType" value="ناعم/مفرود"> ناعم/مفرود</label>
-    <label><input type="radio" name="hairType" value="مموج (Wavy)"> مموج (Wavy)</label>
-    <label><input type="radio" name="hairType" value="كيرلي"> كيرلي</label>
-    <label><input type="radio" name="hairType" value="أفريقي/خشن"> أفريقي/خشن</label>
-</div>
-
-<label>متى تظهر النفشة؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="frizz" value="بعد الاستحمام مباشرة"> بعد الاستحمام مباشرة</label>
-    <label><input type="radio" name="frizz" value="عند وجود رطوبة في الجو"> عند وجود رطوبة في الجو</label>
-    <label><input type="radio" name="frizz" value="دائماً والشعر باهت"> دائماً والشعر باهت</label>
-</div>
-
-<label>مسامية الشعر (إن عرفت)</label>
-<div class="radio-group">
-    <label><input type="radio" name="porosity" value="منخفضة (يصعب ترطيبه)"> منخفضة</label>
-    <label><input type="radio" name="porosity" value="متوسطة"> متوسطة</label>
-    <label><input type="radio" name="porosity" value="عالية (يمتص الماء بسرعة ويفقده بسرعة)"> عالية</label>
-</div>
-</div>
-
-<!-- ============ القسم 4 ============ -->
-<div class="box">
-<h2>🧪 4. التاريخ الكيميائي وتسريح الشعر (البروتين / الكيراتين)</h2>
-
-<label>هل خضع الشعر لعلاجات كيميائية سابقاً؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="chemicals" value="نعم"> نعم</label>
-    <label><input type="radio" name="chemicals" value="لا"> لا</label>
-</div>
-
-<label>إذا نعم، ما هو نوع المادة؟</label>
-<input type="text" id="chemType" placeholder="بروتين، كيراتين، كولاجين، ريبونديج...">
-
-<label>متى كانت آخر جلسة تسريح كيميائي؟</label>
-<input type="text" id="lastChem" placeholder="مثال: قبل 3 أشهر">
-
-<label>هل صبغ الشعر أو سحب لونه مؤخراً؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="dye" value="نعم"> نعم (منذ كم شهر؟ <input type="text" id="dyeMonths" placeholder="عدد الأشهر" style="width:100px;display:inline-block;margin-right:5px;">)</label>
-    <label><input type="radio" name="dye" value="لا"> لا</label>
-</div>
-
-<label>حالة الشعر الحالية بعد المواد الكيميائية</label>
-<div class="checkbox-group">
-    <label><input type="checkbox" name="chemState" value="تكسر وتقصف"> تكسر وتقصف</label>
-    <label><input type="checkbox" name="chemState" value="مطاطي عند البلل"> مطاطي عند البلل</label>
-    <label><input type="checkbox" name="chemState" value="شديد الجفاف"> شديد الجفاف</label>
-</div>
-</div>
-
-<!-- ============ القسم 5 ============ -->
-<div class="box">
-<h2>⚠️ 5. الحساسية والتحسس من المنتجات</h2>
-
-<label>هل تحسستِ سابقاً من أي منتج للشعر؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="allergy" value="نعم"> نعم</label>
-    <label><input type="radio" name="allergy" value="لا"> لا</label>
-</div>
-
-<label>نوع رد الفعل التحسسي (إن وجد)</label>
-<div class="checkbox-group">
-    <label><input type="checkbox" name="allergyType" value="احمرار وحكة في الفروة"> احمرار وحكة في الفروة</label>
-    <label><input type="checkbox" name="allergyType" value="ظهور حبوب بعد استخدام زيوت أو كريمات"> ظهور حبوب بعد استخدام زيوت أو كريمات</label>
-    <label><input type="checkbox" name="allergyType" value="ضيق تنفس أو حرقان عين (أثناء الفرد)"> ضيق تنفس أو حرقان عين</label>
-</div>
-
-<label>هل لديكِ حساسية معروفة من مواد معينة؟</label>
-<textarea id="knownAllergies" placeholder="مثل: العطور، السلفات، البارابين، الفورمالدهيد، المينوكسيديل..."></textarea>
-</div>
-
-<!-- ============ القسم 6 ============ -->
-<div class="box">
-<h2>🩺 6. التاريخ الطبي العام (مهم جداً لحالات التساقط)</h2>
-
-<label>هل تعانين من نقص في:</label>
-<div class="checkbox-group">
-    <label><input type="checkbox" name="deficiencies" value="الحديد/الفيريتين"> الحديد/الفيريتين</label>
-    <label><input type="checkbox" name="deficiencies" value="فيتامين D"> فيتامين D</label>
-    <label><input type="checkbox" name="deficiencies" value="فيتامين B12"> فيتامين B12</label>
-    <label><input type="checkbox" name="deficiencies" value="الزنك"> الزنك</label>
-</div>
-
-<label>هل هناك اضطرابات في الغدة الدرقية؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="thyroid" value="نعم (خمول)"> نعم (خمول)</label>
-    <label><input type="radio" name="thyroid" value="نعم (نشاط)"> نعم (نشاط)</label>
-    <label><input type="radio" name="thyroid" value="لا"> لا</label>
-</div>
-
-<label>تغيرات هرمونية</label>
-<div class="checkbox-group">
-    <label><input type="checkbox" name="hormones" value="تكيس مبايض"> تكيس مبايض</label>
-    <label><input type="checkbox" name="hormones" value="حمل أو رضاعة حالياً"> حمل أو رضاعة حالياً</label>
-    <label><input type="checkbox" name="hormones" value="انقطاع الطمث"> انقطاع الطمث</label>
-</div>
-
-<label>الأدوية الحالية المستمرة عليها</label>
-<textarea id="medications" placeholder="اذكري الأدوية إن وجدت"></textarea>
-</div>
-
-<!-- ============ القسم 7 ============ -->
-<div class="box">
-<h2>🔬 7. ملاحظات الخبير / الأخصائي</h2>
-
-<label>معاينة خصلة الشعر (Elasticity Test)</label>
-<div class="radio-group">
-    <label><input type="radio" name="elasticity" value="مرنة وصحية"> مرنة وصحية</label>
-    <label><input type="radio" name="elasticity" value="ضعيفة"> ضعيفة</label>
-    <label><input type="radio" name="elasticity" value="متهالكة وتتكسر"> متهالكة وتتكسر</label>
-</div>
-
-<label>كثافة الشعر بالفحص البصري</label>
-<div class="radio-group">
-    <label><input type="radio" name="density" value="ممتازة"> ممتازة</label>
-    <label><input type="radio" name="density" value="خفيفة من المقدمة"> خفيفة من المقدمة</label>
-    <label><input type="radio" name="density" value="فراغات واضحة"> فراغات واضحة</label>
-</div>
-</div>
-
-<!-- ============ رفع الملفات ============ -->
-<div class="box">
-<h2>📎 8. المرفقات</h2>
+<label>مشكلة الشعر الرئيسية</label>
+<textarea id="problem" placeholder="اكتبي مشكلة الشعر بالتفصيل..."></textarea>
 
 <div class="file-input">
     <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
     <input type="file" id="hairImage" accept="image/*">
-    <p style="font-size:12px; color:#7f8c8d; margin-top:5px;">يمكنكِ إرفاق صورة توضح حالة شعركِ من الأمام أو الخلف</p>
 </div>
 
 <div class="file-input">
-    <label>🩺 التحليل الطبي <span class="required" style="color:#c0392b;">(إجباري *)</span></label>
+    <label>🩺 التحليل الطبي <span class="required">(إجباري)</span></label>
     <input type="file" id="medicalReport" accept=".pdf,.jpg,.png,.jpeg">
-    <p style="font-size:12px; color:#c0392b; margin-top:5px;">يجب رفع التحليل الطبي لإتمام إرسال الاستشارة</p>
-    <div id="medicalError" class="error-msg">⚠️ الرجاء رفع ملف التحليل الطبي قبل الإرسال</div>
-</div>
+    <div id="medicalError" style="color:#c0392b; font-size:12px; display:none;">⚠️ يجب رفع التحليل الطبي</div>
 </div>
 
-<!-- ============ زر الإرسال ============ -->
+<button class="submit" id="sendBtn">📤 إرسال الاستشارة</button>
+</div>
+
+<!-- ============ حجز موعد جديد مع إيميل تلقائي ============ -->
 <div class="box">
-<button class="submit" id="sendBtn">📤 إرسال الاستشارة عبر واتساب</button>
+<h2>📅 حجز موعد استشارة خاصة</h2>
+<p style="margin-bottom:15px;">احجزي موعداً للاستشارة المباشرة وسيصلك تأكيد على بريدك الإلكتروني فوراً</p>
+
+<label>الاسم الكامل <span class="required">*</span></label>
+<input type="text" id="bookingName" placeholder="الاسم الكامل">
+
+<label>البريد الإلكتروني <span class="required">*</span></label>
+<input type="email" id="bookingEmail" placeholder="example@gmail.com">
+
+<label>رقم الهاتف <span class="required">*</span></label>
+<input type="text" id="bookingPhone" placeholder="رقم الهاتف">
+
+<div class="booking-row">
+    <div>
+        <label>اختر التاريخ <span class="required">*</span></label>
+        <input type="date" id="bookingDate" class="date-picker">
+    </div>
+    <div>
+        <label>اختر الوقت <span class="required">*</span></label>
+        <select id="bookingTime" class="time-picker">
+            <option value="">-- اختر الوقت --</option>
+            <option value="10:00 صباحاً">10:00 صباحاً</option>
+            <option value="11:00 صباحاً">11:00 صباحاً</option>
+            <option value="12:00 ظهراً">12:00 ظهراً</option>
+            <option value="13:00 ظهراً">01:00 ظهراً</option>
+            <option value="14:00 ظهراً">02:00 ظهراً</option>
+            <option value="15:00 عصراً">03:00 عصراً</option>
+            <option value="16:00 عصراً">04:00 عصراً</option>
+            <option value="17:00 مساءً">05:00 مساءً</option>
+            <option value="18:00 مساءً">06:00 مساءً</option>
+        </select>
+    </div>
+</div>
+
+<label>نوع الاستشارة</label>
+<select id="consultType">
+    <option value="استشارة عامة للشعر">استشارة عامة للشعر</option>
+    <option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option>
+    <option value="علاج فروة الرأس">علاج فروة الرأس</option>
+    <option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option>
+</select>
+
+<label>ملاحظات إضافية (اختياري)</label>
+<textarea id="bookingNotes" placeholder="أي شيء تودين إضافته..."></textarea>
+
+<div id="bookingError" style="color:#c0392b; font-size:13px; margin-top:10px; display:none;"></div>
+
+<button class="submit submit-secondary" id="bookNowBtn">📅 تأكيد الحجز وإرسال التأكيد لبريدك</button>
+
+<div class="booking-summary" id="bookingSummary" style="display:none;">
+    ✅ تم حجز موعدك بنجاح! سيصلك تأكيد على بريدك الإلكتروني.
+</div>
 </div>
 
 <!-- ============ آراء العملاء ============ -->
@@ -497,195 +416,232 @@ input[type="radio"], input[type="checkbox"]{
 <div class="review">خدمة احترافية أنصح بها</div>
 </div>
 
-<div class="box">
-<h2>📅 حجز موعد</h2>
-<p>يمكنك التواصل مباشرة عبر واتساب لحجز موعد</p>
-<button class="submit" onclick="bookNow()">حجز موعد الآن</button>
 </div>
 
-</div>
-
-<!-- Modal للتنبيه (صورة الشعر اختياري) -->
-<div id="photoModal" class="modal">
-    <div class="modal-content">
-        <p>📸 أنتِ على وشك الإرسال بدون صورة الشعر.</p>
-        <p>الصورة ليست إجبارية، لكنها تساعدني في تقديم تشخيص دقيق لحالتك.</p>
-        <p>✅ اضغطي "متابعة" للإرسال الآن، أو "إضافة صورة" لرفعها قبل الإرسال.</p>
-        <div class="modal-buttons">
-            <button id="confirmSend">متابعة</button>
-            <button id="addPhoto">إضافة صورة</button>
-        </div>
-    </div>
-</div>
+<div id="toast" class="toast"></div>
 
 <script>
-// متغير لتخزين حالة ما إذا كان المستخدم وافق على الإرسال بدون صورة
-let forceSend = false;
+// ========== إعدادات EmailJS ==========
+// ⚠️ يرجى استبدال هذه القيم بعد التسجيل في EmailJS
+// https://www.emailjs.com
 
-// الحصول على العناصر
-const sendBtn = document.getElementById('sendBtn');
+// سيتم تهيئة EmailJS بعد أن تضعي مفاتيحك
+let emailJSInitialized = false;
+
+// دالة تهيئة EmailJS (استدعيها بعد وضع المفاتيح)
+function initEmailJS(publicKey) {
+    emailjs.init(publicKey);
+    emailJSInitialized = true;
+}
+
+// ========== متغيرات عامة ==========
 const medicalReport = document.getElementById('medicalReport');
-const hairImage = document.getElementById('hairImage');
 const medicalError = document.getElementById('medicalError');
-const modal = document.getElementById('photoModal');
+const toast = document.getElementById('toast');
 
-// دالة لجمع كل بيانات الاستمارة
-function collectFormData() {
-    let message = `📋 *استمارة التشخيص المتكامل لصحة وعلاج الشعر*\n\n`;
+function showMessage(text, isError = false) {
+    toast.textContent = text;
+    toast.className = 'toast' + (isError ? ' error' : '');
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 4000);
+}
 
-    // القسم 1
-    message += `*1. البيانات العامة والروتين اليومي*\n`;
-    message += `👤 الاسم: ${document.getElementById('fullname').value || 'لم يذكر'}\n`;
-    message += `🎂 العمر: ${document.getElementById('age').value || 'لم يذكر'}\n`;
-    message += `📞 الهاتف: ${document.getElementById('phone').value || 'لم يذكر'}\n`;
+// ========== إرسال الاستشارة (بدون إيميل - فقط تجميع البيانات) ==========
+function sendConsultation() {
+    if (medicalReport.files.length === 0) {
+        medicalError.style.display = 'block';
+        setTimeout(() => {
+            medicalError.style.display = 'none';
+        }, 3000);
+        return false;
+    }
+    medicalError.style.display = 'none';
+    
+    const name = document.getElementById('fullname').value || 'لم يذكر';
+    const age = document.getElementById('age').value || 'لم يذكر';
+    const phone = document.getElementById('phone').value || 'لم يذكر';
     const water = document.querySelector('input[name="water"]:checked');
-    message += `💧 شرب الماء: ${water ? water.value : 'لم يذكر'}\n`;
-    const stress = document.querySelector('input[name="stress"]:checked');
-    message += `😟 ضغوطات نفسية: ${stress ? stress.value : 'لم يذكر'}\n`;
-    message += `🛁 غسل الشعر: ${document.getElementById('washFreq').value || 'لم يذكر'} مرة/أسبوع\n`;
-    message += `🧴 المنتجات: ${document.getElementById('products').value || 'لم يذكر'}\n\n`;
-
-    // القسم 2
-    message += `*2. تساقط الشعر وأمراض الفروة*\n`;
     const hairLoss = document.querySelector('input[name="hairLoss"]:checked');
-    message += `تساقط الشعر: ${hairLoss ? hairLoss.value : 'لم يذكر'}\n`;
-    const lossRate = document.querySelector('input[name="lossRate"]:checked');
-    message += `معدل التساقط: ${lossRate ? lossRate.value : 'لم يذكر'}\n`;
-    const lossType = document.querySelector('input[name="lossType"]:checked');
-    message += `نوع التساقط: ${lossType ? lossType.value : 'لم يذكر'}\n`;
-    const scalpIssues = [];
-    document.querySelectorAll('input[name="scalpIssues"]:checked').forEach(cb => scalpIssues.push(cb.value));
-    message += `مشاكل الفروة: ${scalpIssues.length ? scalpIssues.join(', ') : 'لا يوجد'}\n\n`;
-
-    // القسم 3
-    message += `*3. طبيعة الشعر والجفاف*\n`;
-    const hairType = document.querySelector('input[name="hairType"]:checked');
-    message += `نوع الشعر: ${hairType ? hairType.value : 'لم يذكر'}\n`;
-    const frizz = document.querySelector('input[name="frizz"]:checked');
-    message += `النفشة: ${frizz ? frizz.value : 'لم يذكر'}\n`;
-    const porosity = document.querySelector('input[name="porosity"]:checked');
-    message += `مسامية الشعر: ${porosity ? porosity.value : 'لم يذكر'}\n\n`;
-
-    // القسم 4
-    message += `*4. التاريخ الكيميائي*\n`;
-    const chemicals = document.querySelector('input[name="chemicals"]:checked');
-    message += `علاجات كيميائية: ${chemicals ? chemicals.value : 'لم يذكر'}\n`;
-    message += `نوع المادة: ${document.getElementById('chemType').value || 'لم يذكر'}\n`;
-    message += `آخر جلسة: ${document.getElementById('lastChem').value || 'لم يذكر'}\n`;
-    const dye = document.querySelector('input[name="dye"]:checked');
-    if (dye && dye.value === 'نعم') {
-        message += `صبغ شعر: نعم (منذ ${document.getElementById('dyeMonths').value || '?'} شهر)\n`;
-    } else {
-        message += `صبغ شعر: ${dye ? dye.value : 'لم يذكر'}\n`;
-    }
-    const chemState = [];
-    document.querySelectorAll('input[name="chemState"]:checked').forEach(cb => chemState.push(cb.value));
-    message += `حالة الشعر بعد الكيميائيات: ${chemState.length ? chemState.join(', ') : 'لا توجد مشاكل'}\n\n`;
-
-    // القسم 5
-    message += `*5. الحساسية*\n`;
-    const allergy = document.querySelector('input[name="allergy"]:checked');
-    message += `حساسية سابقة: ${allergy ? allergy.value : 'لم يذكر'}\n`;
-    const allergyType = [];
-    document.querySelectorAll('input[name="allergyType"]:checked').forEach(cb => allergyType.push(cb.value));
-    message += `نوع التحسس: ${allergyType.length ? allergyType.join(', ') : 'لا يوجد'}\n`;
-    message += `حساسية من مواد معينة: ${document.getElementById('knownAllergies').value || 'لا شيء'}\n\n`;
-
-    // القسم 6
-    message += `*6. التاريخ الطبي العام*\n`;
-    const deficiencies = [];
-    document.querySelectorAll('input[name="deficiencies"]:checked').forEach(cb => deficiencies.push(cb.value));
-    message += `نقص فيتامينات/معادن: ${deficiencies.length ? deficiencies.join(', ') : 'لا يوجد نقص معروف'}\n`;
-    const thyroid = document.querySelector('input[name="thyroid"]:checked');
-    message += `الغدة الدرقية: ${thyroid ? thyroid.value : 'لم يذكر'}\n`;
-    const hormones = [];
-    document.querySelectorAll('input[name="hormones"]:checked').forEach(cb => hormones.push(cb.value));
-    message += `تغيرات هرمونية: ${hormones.length ? hormones.join(', ') : 'لا توجد'}\n`;
-    message += `الأدوية: ${document.getElementById('medications').value || 'لا يوجد'}\n\n`;
-
-    // القسم 7
-    message += `*7. ملاحظات الخبير*\n`;
-    const elasticity = document.querySelector('input[name="elasticity"]:checked');
-    message += `مرونة الشعر: ${elasticity ? elasticity.value : 'لم يذكر'}\n`;
-    const density = document.querySelector('input[name="density"]:checked');
-    message += `كثافة الشعر: ${density ? density.value : 'لم يذكر'}\n\n`;
-
-    // المرفقات
-    message += `*المرفقات*\n`;
-    message += `📸 صورة الشعر: ${hairImage.files.length > 0 ? 'تم الرفع ✅' : 'لم يتم الرفع ⚠️'}\n`;
-    message += `🩺 التحليل الطبي: ${medicalReport.files.length > 0 ? 'تم الرفع ✅' : 'لم يتم الرفع ❌'}\n\n`;
-    message += `🟢 الرجاء إرسال ملف التحليل الطبي (وصورة الشعر إن وجدت) مع هذه الرسالة.`;
-
-    return message;
+    const problem = document.getElementById('problem').value || 'لم يذكر';
+    
+    let message = `📋 *استشارة جديدة*\n👤 الاسم: ${name}\n🎂 العمر: ${age}\n📞 الهاتف: ${phone}\n💧 الماء: ${water ? water.value : 'لم يحدد'}\n🔄 تساقط الشعر: ${hairLoss ? hairLoss.value : 'لم يحدد'}\n📝 المشكلة: ${problem}\n📸 صورة الشعر: ${document.getElementById('hairImage').files.length > 0 ? 'تم الرفع' : 'لم يرفع'}\n🩺 التحليل الطبي: تم الرفع ✅`;
+    
+    window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(message)}`, "_blank");
+    showMessage('✅ تم فتح واتساب، الرجاء إرسال الملفات');
+    return true;
 }
 
-// دالة الإرسال النهائية
-function sendToWhatsApp() {
-    // التحقق من وجود التحليل الطبي
-    if (medicalReport.files.length === 0) {
-        medicalError.style.display = 'block';
+document.getElementById('sendBtn').addEventListener('click', sendConsultation);
+
+// ========== حجز الموعد مع إرسال إيميل ==========
+async function sendBookingEmail(bookingData) {
+    if (!emailJSInitialized) {
+        console.warn('EmailJS not initialized yet');
+        return false;
+    }
+    
+    // قالب الإيميل للمستخدم
+    const userTemplateParams = {
+        to_name: bookingData.name,
+        to_email: bookingData.email,
+        booking_date: bookingData.date,
+        booking_time: bookingData.time,
+        consult_type: bookingData.consultType,
+        phone: bookingData.phone,
+        notes: bookingData.notes || 'لا يوجد',
+        reply_to: bookingData.email
+    };
+    
+    // قالب الإيميل لكِ (إشعار)
+    const adminTemplateParams = {
+        user_name: bookingData.name,
+        user_email: bookingData.email,
+        user_phone: bookingData.phone,
+        booking_date: bookingData.date,
+        booking_time: bookingData.time,
+        consult_type: bookingData.consultType,
+        notes: bookingData.notes || 'لا يوجد'
+    };
+    
+    try {
+        // إرسال إيميل للمستخدم
+        await emailjs.send(
+            'YOUR_SERVICE_ID',      // استبدلي بـ Service ID
+            'YOUR_USER_TEMPLATE_ID', // استبدلي بـ Template ID للمستخدم
+            userTemplateParams
+        );
+        
+        // إرسال إشعار لكِ
+        await emailjs.send(
+            'YOUR_SERVICE_ID',
+            'YOUR_ADMIN_TEMPLATE_ID', // استبدلي بـ Template ID للمسؤول
+            adminTemplateParams
+        );
+        
+        return true;
+    } catch (error) {
+        console.error('Email error:', error);
+        return false;
+    }
+}
+
+async function submitBooking() {
+    const name = document.getElementById('bookingName').value.trim();
+    const email = document.getElementById('bookingEmail').value.trim();
+    const phone = document.getElementById('bookingPhone').value.trim();
+    const date = document.getElementById('bookingDate').value;
+    const time = document.getElementById('bookingTime').value;
+    const consultType = document.getElementById('consultType').value;
+    const notes = document.getElementById('bookingNotes').value;
+    
+    const errorDiv = document.getElementById('bookingError');
+    const summaryDiv = document.getElementById('bookingSummary');
+    const bookBtn = document.getElementById('bookNowBtn');
+    
+    // التحقق من الحقول الإجبارية
+    if (!name || !email || !phone || !date || !time) {
+        errorDiv.textContent = '⚠️ الرجاء تعبئة جميع الحقول الإجبارية (الاسم، البريد، الهاتف، التاريخ، الوقت)';
+        errorDiv.style.display = 'block';
         setTimeout(() => {
-            medicalError.style.display = 'none';
-        }, 3000);
+            errorDiv.style.display = 'none';
+        }, 4000);
         return;
     }
     
-    medicalError.style.display = 'none';
-    const message = collectFormData();
-    const phone = "9647762243091";
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-}
-
-// زر الإرسال الرئيسي
-sendBtn.addEventListener('click', function() {
-    // أولاً: التحقق من التحليل الطبي
-    if (medicalReport.files.length === 0) {
-        medicalError.style.display = 'block';
-        setTimeout(() => {
-            medicalError.style.display = 'none';
-        }, 3000);
+    // التحقق من صحة الإيميل
+    if (!email.includes('@') || !email.includes('.')) {
+        errorDiv.textContent = '⚠️ الرجاء إدخال بريد إلكتروني صحيح';
+        errorDiv.style.display = 'block';
         return;
     }
     
-    medicalError.style.display = 'none';
+    // التحقق من أن التاريخ ليس ماضياً
+    const today = new Date().toISOString().split('T')[0];
+    if (date < today) {
+        errorDiv.textContent = '⚠️ لا يمكن حجز موعد في تاريخ مضى';
+        errorDiv.style.display = 'block';
+        return;
+    }
     
-    // التحقق من صورة الشعر
-    if (hairImage.files.length === 0) {
-        // إظهار التنبيه
-        modal.style.display = 'flex';
+    errorDiv.style.display = 'none';
+    
+    // تعطيل الزر أثناء الإرسال
+    bookBtn.disabled = true;
+    bookBtn.innerHTML = '<span class="loader"></span> جاري تأكيد الحجز...';
+    
+    const bookingData = { name, email, phone, date, time, consultType, notes };
+    
+    // محاولة إرسال الإيميل
+    const emailSent = await sendBookingEmail(bookingData);
+    
+    if (emailSent) {
+        summaryDiv.style.display = 'block';
+        showMessage('✅ تم حجز موعدك بنجاح! سيصلك تأكيد على بريدك الإلكتروني');
+        
+        // مسح الحقول
+        document.getElementById('bookingName').value = '';
+        document.getElementById('bookingEmail').value = '';
+        document.getElementById('bookingPhone').value = '';
+        document.getElementById('bookingDate').value = '';
+        document.getElementById('bookingTime').value = '';
+        document.getElementById('bookingNotes').value = '';
+        
+        // إرسال أيضاً إلى واتساب للتأكيد (نسخة احتياطية)
+        const waMsg = `📅 *حجز موعد جديد*\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 نوع الاستشارة: ${consultType}`;
+        window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, "_blank");
+        
     } else {
-        // الصورة موجودة، أرسل مباشرة
-        sendToWhatsApp();
+        errorDiv.textContent = '❌ حدث خطأ في إرسال التأكيد. الرجاء المحاولة مرة أخرى أو التواصل عبر واتساب';
+        errorDiv.style.display = 'block';
+        showMessage('❌ فشل إرسال التأكيد، حاولي مرة أخرى', true);
     }
-});
-
-// متابعة الإرسال بدون صورة
-document.getElementById('confirmSend').addEventListener('click', function() {
-    modal.style.display = 'none';
-    sendToWhatsApp();
-});
-
-// إضافة صورة
-document.getElementById('addPhoto').addEventListener('click', function() {
-    modal.style.display = 'none';
-    document.getElementById('hairImage').click();
-});
-
-// إغلاق المودال عند النقر خارج المحتوى
-window.addEventListener('click', function(e) {
-    if (e.target === modal) {
-        modal.style.display = 'none';
-    }
-});
-
-// دالة حجز موعد
-function bookNow() {
-    let msg = "أرغب بحجز موعد استشارة شعر";
-    const phone = "9647762243091";
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+    
+    bookBtn.disabled = false;
+    bookBtn.innerHTML = '📅 تأكيد الحجز وإرسال التأكيد لبريدك';
 }
+
+document.getElementById('bookNowBtn').addEventListener('click', submitBooking);
+
+// تعيين الحد الأدنى للتاريخ (لا يمكن حجز موعد في الماضي)
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('bookingDate').min = today;
+
+// ========== تنبيه عند مغادرة الصفحة (اختياري) ==========
+window.addEventListener('beforeunload', function(e) {
+    // تنبيه اختياري إذا كان هناك بيانات غير محفوظة
+    const hasData = document.getElementById('bookingName').value || 
+                    document.getElementById('bookingEmail').value ||
+                    document.getElementById('bookingPhone').value;
+    if (hasData) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+
+// ========== تنبيه للمستخدم: تهيئة EmailJS ==========
+console.log('⚠️ للتشغيل الكامل لميزة حجز الموعد مع الإيميل، يرجى:');
+console.log('1. التسجيل في https://www.emailjs.com');
+console.log('2. إضافة خدمة Gmail');
+console.log('3. إنشاء قالبين: واحد للمستخدم وواحد للمسؤول');
+console.log('4. وضع المفاتيح في دالة initEmailJS()');
 </script>
+
+<!-- ========== تعليمات EmailJS للمستخدم ========== -->
+<div style="display:none;" id="emailjs-instructions">
+    <h3>📧 لإعداد إرسال الإيميلات التلقائية:</h3>
+    <ol>
+        <li>سجلي في <a href="https://www.emailjs.com" target="_blank">EmailJS.com</a></li>
+        <li>أضيفي خدمة البريد (Gmail أو أي خدمة)</li>
+        <li>أنشئي قالب إيميل للمستخدم (اسمه user_booking_template)</li>
+        <li>أنشئي قالب إيميل للمسؤول (اسمه admin_booking_template)</li>
+        <li>ضعي الكود التالي في الـ Console أو أضيفيه بعد الـ script:</li>
+    </ol>
+    <pre>
+    initEmailJS("YOUR_PUBLIC_KEY");
+    </pre>
+</div>
 
 </body>
 </html>
