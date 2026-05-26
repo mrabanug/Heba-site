@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heba Salim | Trichologist</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --dark-green:#2A3E34;
+  --mid-green:#53675A;
+  --cream:#F4F3EB;
+  --gold:#A3937C;
+  --gray:#D2CFC4;
+  --white:#FFFFFF;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins','Tahoma',sans-serif;
+}
+
+body{
+  background:var(--cream);
+  color:var(--dark-green);
+}
+
+/* HERO */
+.hero{
+  background: linear-gradient(135deg,var(--dark-green),var(--mid-green));
+  color:var(--white);
+  padding:90px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero h1{
+  font-size:42px;
+  margin-bottom:10px;
+  letter-spacing:1px;
+  font-weight:600;
+}
+
+.hero p{
+  font-size:18px;
+  opacity:0.9;
+}
+
+/* decorative circle */
+.hero::after{
+  content:"";
+  position:absolute;
+  width:320px;
+  height:320px;
+  background:var(--gold);
+  opacity:0.15;
+  border-radius:50%;
+  top:-80px;
+  left:-100px;
+  animation: float 6s infinite ease-in-out;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(35px);}
+}
+
+/* CARD */
+.card{
+  background:var(--white);
+  max-width:600px;
+  margin:-60px auto 30px;
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.1);
+  border:1px solid var(--gray);
+  position:relative;
+}
+
+.card h2{
+  margin-bottom:15px;
+  color:var(--dark-green);
+  font-weight:600;
+}
+
+input, textarea{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border:1px solid var(--gray);
+  border-radius:12px;
+  outline:none;
+  font-size:14px;
+  transition:0.3s;
+}
+
+input:focus, textarea:focus{
+  border-color:var(--mid-green);
+  box-shadow:0 0 8px rgba(83,103,90,0.2);
+}
+
+/* BUTTON */
+button{
+  background:var(--dark-green);
+  color:var(--white);
+  padding:14px;
+  border:none;
+  width:100%;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:500;
+  transition:0.3s;
+}
+
+button:hover{
+  background:var(--mid-green);
+  transform:translateY(-2px);
+}
+
+/* WHATSAPP BUTTON */
+.whatsapp{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#25D366;
+  color:white;
+  padding:15px 18px;
+  border-radius:50px;
+  text-decoration:none;
+  font-weight:bold;
+  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+  transition:0.3s;
+}
+
+.whatsapp:hover{
+  transform:scale(1.1);
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:20px;
+  color:var(--mid-green);
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Heba Salim</h1>
+  <p>اختصاص علم الشعر | Trichologist</p>
+</div>
+
+<!-- FORM -->
+<div class="card">
+  <h2>احجزي استشارتك الآن</h2>
+
+  <input type="text" placeholder="الاسم الكامل">
+  <input type="tel" placeholder="رقم الهاتف">
+  <textarea rows="4" placeholder="اكتبي مشكلتك بالتفصيل..."></textarea>
+
+  <button onclick="sendToWhatsApp()">إرسال عبر واتساب</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  برمجة: محمد العزاوي | Mohamed AL-Azzawi
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a class="whatsapp" href="https://wa.me/9647762243091" target="_blank">
+  واتساب
+</a>
+
+<!-- SCRIPT -->
+<script>
+function sendToWhatsApp(){
+  const name = document.querySelector('input[type="text"]').value;
+  const phone = document.querySelector('input[type="tel"]').value;
+  const msg = document.querySelector('textarea').value;
+
+  const text = `اسم: ${name}%0Aرقم: ${phone}%0Aرسالة: ${msg}`;
+
+  window.open(`https://wa.me/9647762243091?text=${text}`, '_blank');
+}
+</script>
+
+</body>
+</html>
