@@ -82,12 +82,6 @@ h2{
     padding-bottom:6px;
 }
 
-h3{
-    color:#A89676;
-    margin:15px 0 10px 0;
-    font-size:18px;
-}
-
 label{
     display:block;
     margin-top:12px;
@@ -148,6 +142,14 @@ input[type="radio"], input[type="checkbox"]{
 .optional{
     color:#7f8c8d;
     font-size:12px;
+}
+
+.conditional-text{
+    color:#A89676;
+    font-size:12px;
+    margin-top:-8px;
+    margin-bottom:10px;
+    font-style:italic;
 }
 
 .submit{
@@ -268,7 +270,6 @@ input[type="radio"], input[type="checkbox"]{
     100% { transform: rotate(360deg); }
 }
 
-/* تنسيق حجز الموعد */
 .booking-row {
     display: flex;
     gap: 15px;
@@ -295,6 +296,16 @@ input[type="radio"], input[type="checkbox"]{
     margin-top: 15px;
     text-align: center;
 }
+
+.info-note {
+    background: #e8f0e8;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: #2D4A3E;
+    border-right: 3px solid #324A3E;
+}
 </style>
 </head>
 <body>
@@ -309,7 +320,7 @@ input[type="radio"], input[type="checkbox"]{
 
 <div class="container" id="form-start">
 
-<!-- ============ استمارة التشخيص (مختصرة للمساحة) ============ -->
+<!-- ============ استمارة التشخيص ============ -->
 <div class="box">
 <h2>📋 استمارة التشخيص المتكامل</h2>
 
@@ -329,30 +340,38 @@ input[type="radio"], input[type="checkbox"]{
     <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
 </div>
 
-<label>هل تعانين من تساقط الشعر؟</label>
-<div class="radio-group">
-    <label><input type="radio" name="hairLoss" value="نعم"> نعم</label>
-    <label><input type="radio" name="hairLoss" value="لا"> لا</label>
+<!-- سؤال تساقط الشعر - يتحكم بإجبارية التحليل الطبي -->
+<label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label>
+<div class="radio-group" id="hairLossGroup">
+    <label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label>
+    <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label>
 </div>
 
 <label>مشكلة الشعر الرئيسية</label>
 <textarea id="problem" placeholder="اكتبي مشكلة الشعر بالتفصيل..."></textarea>
 
+<!-- صورة الشعر (اختياري) -->
 <div class="file-input">
-    <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
+    <label>📸 صورة الشعر <span class="optional">(اختياري - لكن مفيد للتشخيص)</span></label>
     <input type="file" id="hairImage" accept="image/*">
 </div>
 
-<div class="file-input">
-    <label>🩺 التحليل الطبي <span class="required">(إجباري)</span></label>
+<!-- التحليل الطبي (إجباري فقط في حالة وجود تساقط) -->
+<div class="file-input" id="medicalReportContainer">
+    <label>🩺 التحليل الطبي 
+        <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span>
+    </label>
     <input type="file" id="medicalReport" accept=".pdf,.jpg,.png,.jpeg">
-    <div id="medicalError" style="color:#c0392b; font-size:12px; display:none;">⚠️ يجب رفع التحليل الطبي</div>
+    <div id="medicalNote" class="conditional-text">
+        💡 ملاحظة: التحليل الطبي إجباري فقط إذا كنت تعانين من تساقط الشعر
+    </div>
+    <div id="medicalError" style="color:#c0392b; font-size:12px; display:none;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي</div>
 </div>
 
 <button class="submit" id="sendBtn">📤 إرسال الاستشارة</button>
 </div>
 
-<!-- ============ حجز موعد جديد مع إيميل تلقائي ============ -->
+<!-- ============ حجز موعد ============ -->
 <div class="box">
 <h2>📅 حجز موعد استشارة خاصة</h2>
 <p style="margin-bottom:15px;">احجزي موعداً للاستشارة المباشرة وسيصلك تأكيد على بريدك الإلكتروني فوراً</p>
@@ -420,15 +439,22 @@ input[type="radio"], input[type="checkbox"]{
 
 <div id="toast" class="toast"></div>
 
+<!-- Modal لتنبيه صورة الشعر -->
+<div id="photoModal" class="modal">
+    <div class="modal-content">
+        <p>📸 أنتِ على وشك الإرسال بدون صورة الشعر.</p>
+        <p>الصورة ليست إجبارية، لكنها تساعدني في تقديم تشخيص دقيق لحالتك.</p>
+        <div class="modal-buttons">
+            <button id="confirmSend">متابعة</button>
+            <button id="addPhoto">إضافة صورة</button>
+        </div>
+    </div>
+</div>
+
 <script>
 // ========== إعدادات EmailJS ==========
-// ⚠️ يرجى استبدال هذه القيم بعد التسجيل في EmailJS
-// https://www.emailjs.com
-
-// سيتم تهيئة EmailJS بعد أن تضعي مفاتيحك
 let emailJSInitialized = false;
 
-// دالة تهيئة EmailJS (استدعيها بعد وضع المفاتيح)
 function initEmailJS(publicKey) {
     emailjs.init(publicKey);
     emailJSInitialized = true;
@@ -437,7 +463,16 @@ function initEmailJS(publicKey) {
 // ========== متغيرات عامة ==========
 const medicalReport = document.getElementById('medicalReport');
 const medicalError = document.getElementById('medicalError');
+const hairLossYes = document.getElementById('hairLossYes');
+const hairLossNo = document.getElementById('hairLossNo');
+const medicalRequiredLabel = document.getElementById('medicalRequiredLabel');
+const medicalNote = document.getElementById('medicalNote');
+const medicalReportContainer = document.getElementById('medicalReportContainer');
 const toast = document.getElementById('toast');
+const modal = document.getElementById('photoModal');
+const hairImage = document.getElementById('hairImage');
+
+let pendingSend = false;
 
 function showMessage(text, isError = false) {
     toast.textContent = text;
@@ -448,30 +483,133 @@ function showMessage(text, isError = false) {
     }, 4000);
 }
 
-// ========== إرسال الاستشارة (بدون إيميل - فقط تجميع البيانات) ==========
-function sendConsultation() {
-    if (medicalReport.files.length === 0) {
-        medicalError.style.display = 'block';
-        setTimeout(() => {
-            medicalError.style.display = 'none';
-        }, 3000);
-        return false;
+// تحديث حالة إجبارية التحليل الطبي بناءً على إجابة سؤال تساقط الشعر
+function updateMedicalRequirement() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    if (isHairLoss && isHairLoss.value === 'نعم') {
+        // في حالة وجود تساقط -> التحليل إجباري
+        medicalRequiredLabel.innerHTML = '(إجباري *)';
+        medicalRequiredLabel.style.color = '#c0392b';
+        medicalNote.innerHTML = '⚠️ بما أنك تعانين من تساقط الشعر، يرجى رفع التحليل الطبي';
+        medicalNote.style.color = '#c0392b';
+        medicalReport.required = true;
+    } else if (isHairLoss && isHairLoss.value === 'لا') {
+        // في حالة عدم وجود تساقط -> التحليل اختياري
+        medicalRequiredLabel.innerHTML = '(اختياري - غير مطلوب)';
+        medicalRequiredLabel.style.color = '#7f8c8d';
+        medicalNote.innerHTML = '💚 بما أنك لا تعانين من تساقط الشعر، التحليل الطبي غير مطلوب';
+        medicalNote.style.color = '#27ae60';
+        medicalReport.required = false;
+    } else {
+        // لم يتم الاختيار بعد
+        medicalRequiredLabel.innerHTML = '(إجباري في حالة وجود تساقط)';
+        medicalRequiredLabel.style.color = '#7f8c8d';
+        medicalNote.innerHTML = '💡 ملاحظة: التحليل الطبي إجباري فقط إذا كنت تعانين من تساقط الشعر';
+        medicalNote.style.color = '#A89676';
+    }
+}
+
+// إضافة مستمعين لأزرار تساقط الشعر
+hairLossYes.addEventListener('change', updateMedicalRequirement);
+hairLossNo.addEventListener('change', updateMedicalRequirement);
+
+// استدعاء أولي
+updateMedicalRequirement();
+
+// التحقق من صحة التحليل الطبي قبل الإرسال
+function isMedicalReportValid() {
+    const isHairLossSelected = document.querySelector('input[name="hairLoss"]:checked');
+    const hasHairLoss = isHairLossSelected && isHairLossSelected.value === 'نعم';
+    
+    if (hasHairLoss) {
+        // في حالة تساقط الشعر -> التحليل إجباري
+        if (medicalReport.files.length === 0) {
+            medicalError.style.display = 'block';
+            setTimeout(() => {
+                medicalError.style.display = 'none';
+            }, 4000);
+            return false;
+        }
     }
     medicalError.style.display = 'none';
-    
-    const name = document.getElementById('fullname').value || 'لم يذكر';
-    const age = document.getElementById('age').value || 'لم يذكر';
-    const phone = document.getElementById('phone').value || 'لم يذكر';
-    const water = document.querySelector('input[name="water"]:checked');
-    const hairLoss = document.querySelector('input[name="hairLoss"]:checked');
-    const problem = document.getElementById('problem').value || 'لم يذكر';
-    
-    let message = `📋 *استشارة جديدة*\n👤 الاسم: ${name}\n🎂 العمر: ${age}\n📞 الهاتف: ${phone}\n💧 الماء: ${water ? water.value : 'لم يحدد'}\n🔄 تساقط الشعر: ${hairLoss ? hairLoss.value : 'لم يحدد'}\n📝 المشكلة: ${problem}\n📸 صورة الشعر: ${document.getElementById('hairImage').files.length > 0 ? 'تم الرفع' : 'لم يرفع'}\n🩺 التحليل الطبي: تم الرفع ✅`;
-    
-    window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(message)}`, "_blank");
-    showMessage('✅ تم فتح واتساب، الرجاء إرسال الملفات');
     return true;
 }
+
+// جمع بيانات الاستشارة
+function collectConsultationData() {
+    const isHairLossSelected = document.querySelector('input[name="hairLoss"]:checked');
+    const hasHairLoss = isHairLossSelected ? isHairLossSelected.value : 'لم يحدد';
+    
+    const water = document.querySelector('input[name="water"]:checked');
+    
+    return {
+        name: document.getElementById('fullname').value || 'لم يذكر',
+        age: document.getElementById('age').value || 'لم يذكر',
+        phone: document.getElementById('phone').value || 'لم يذكر',
+        water: water ? water.value : 'لم يحدد',
+        hairLoss: hasHairLoss,
+        problem: document.getElementById('problem').value || 'لم يذكر',
+        hasHairImage: hairImage.files.length > 0 ? 'نعم' : 'لا',
+        hasMedicalReport: medicalReport.files.length > 0 ? 'نعم' : 'لا',
+        medicalReportRequired: (hasHairLoss === 'نعم') ? 'إجباري' : 'غير مطلوب'
+    };
+}
+
+// إرسال الاستشارة
+function sendConsultation() {
+    // التحقق من صحة التحليل الطبي
+    if (!isMedicalReportValid()) {
+        return false;
+    }
+    
+    // التحقق من وجود صورة الشعر (تنبيه فقط)
+    if (hairImage.files.length === 0) {
+        // إظهار التنبيه
+        pendingSend = true;
+        modal.style.display = 'flex';
+        return false;
+    }
+    
+    // إرسال مباشر
+    performSend();
+    return true;
+}
+
+function performSend() {
+    const data = collectConsultationData();
+    
+    let message = `📋 *استشارة جديدة - هبة سالم*\n\n`;
+    message += `👤 الاسم: ${data.name}\n`;
+    message += `🎂 العمر: ${data.age}\n`;
+    message += `📞 الهاتف: ${data.phone}\n`;
+    message += `💧 شرب الماء: ${data.water}\n`;
+    message += `🔄 تساقط الشعر: ${data.hairLoss}\n`;
+    message += `📝 المشكلة: ${data.problem}\n\n`;
+    message += `📸 صورة الشعر: ${data.hasHairImage}\n`;
+    message += `🩺 التحليل الطبي: ${data.hasMedicalReport} (${data.medicalReportRequired})\n\n`;
+    message += `🟢 الرجاء إرسال الملفات المرفقة (صورة الشعر إن وجدت، والتحليل الطبي إن كان مطلوباً)`;
+    
+    window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(message)}`, "_blank");
+    showMessage('✅ تم فتح واتساب، الرجاء إرسال الملفات المطلوبة');
+    return true;
+}
+
+// متابعة الإرسال بدون صورة
+document.getElementById('confirmSend').addEventListener('click', function() {
+    modal.style.display = 'none';
+    performSend();
+});
+
+// إضافة صورة
+document.getElementById('addPhoto').addEventListener('click', function() {
+    modal.style.display = 'none';
+    document.getElementById('hairImage').click();
+});
+
+// إغلاق المودال
+window.addEventListener('click', function(e) {
+    if (e.target === modal) modal.style.display = 'none';
+});
 
 document.getElementById('sendBtn').addEventListener('click', sendConsultation);
 
@@ -482,7 +620,6 @@ async function sendBookingEmail(bookingData) {
         return false;
     }
     
-    // قالب الإيميل للمستخدم
     const userTemplateParams = {
         to_name: bookingData.name,
         to_email: bookingData.email,
@@ -494,7 +631,6 @@ async function sendBookingEmail(bookingData) {
         reply_to: bookingData.email
     };
     
-    // قالب الإيميل لكِ (إشعار)
     const adminTemplateParams = {
         user_name: bookingData.name,
         user_email: bookingData.email,
@@ -506,17 +642,15 @@ async function sendBookingEmail(bookingData) {
     };
     
     try {
-        // إرسال إيميل للمستخدم
         await emailjs.send(
-            'YOUR_SERVICE_ID',      // استبدلي بـ Service ID
-            'YOUR_USER_TEMPLATE_ID', // استبدلي بـ Template ID للمستخدم
+            'YOUR_SERVICE_ID',
+            'YOUR_USER_TEMPLATE_ID',
             userTemplateParams
         );
         
-        // إرسال إشعار لكِ
         await emailjs.send(
             'YOUR_SERVICE_ID',
-            'YOUR_ADMIN_TEMPLATE_ID', // استبدلي بـ Template ID للمسؤول
+            'YOUR_ADMIN_TEMPLATE_ID',
             adminTemplateParams
         );
         
@@ -540,9 +674,8 @@ async function submitBooking() {
     const summaryDiv = document.getElementById('bookingSummary');
     const bookBtn = document.getElementById('bookNowBtn');
     
-    // التحقق من الحقول الإجبارية
     if (!name || !email || !phone || !date || !time) {
-        errorDiv.textContent = '⚠️ الرجاء تعبئة جميع الحقول الإجبارية (الاسم، البريد، الهاتف، التاريخ، الوقت)';
+        errorDiv.textContent = '⚠️ الرجاء تعبئة جميع الحقول الإجبارية';
         errorDiv.style.display = 'block';
         setTimeout(() => {
             errorDiv.style.display = 'none';
@@ -550,14 +683,12 @@ async function submitBooking() {
         return;
     }
     
-    // التحقق من صحة الإيميل
     if (!email.includes('@') || !email.includes('.')) {
         errorDiv.textContent = '⚠️ الرجاء إدخال بريد إلكتروني صحيح';
         errorDiv.style.display = 'block';
         return;
     }
     
-    // التحقق من أن التاريخ ليس ماضياً
     const today = new Date().toISOString().split('T')[0];
     if (date < today) {
         errorDiv.textContent = '⚠️ لا يمكن حجز موعد في تاريخ مضى';
@@ -567,20 +698,17 @@ async function submitBooking() {
     
     errorDiv.style.display = 'none';
     
-    // تعطيل الزر أثناء الإرسال
     bookBtn.disabled = true;
     bookBtn.innerHTML = '<span class="loader"></span> جاري تأكيد الحجز...';
     
     const bookingData = { name, email, phone, date, time, consultType, notes };
     
-    // محاولة إرسال الإيميل
     const emailSent = await sendBookingEmail(bookingData);
     
     if (emailSent) {
         summaryDiv.style.display = 'block';
         showMessage('✅ تم حجز موعدك بنجاح! سيصلك تأكيد على بريدك الإلكتروني');
         
-        // مسح الحقول
         document.getElementById('bookingName').value = '';
         document.getElementById('bookingEmail').value = '';
         document.getElementById('bookingPhone').value = '';
@@ -588,12 +716,11 @@ async function submitBooking() {
         document.getElementById('bookingTime').value = '';
         document.getElementById('bookingNotes').value = '';
         
-        // إرسال أيضاً إلى واتساب للتأكيد (نسخة احتياطية)
         const waMsg = `📅 *حجز موعد جديد*\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 نوع الاستشارة: ${consultType}`;
         window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, "_blank");
         
     } else {
-        errorDiv.textContent = '❌ حدث خطأ في إرسال التأكيد. الرجاء المحاولة مرة أخرى أو التواصل عبر واتساب';
+        errorDiv.textContent = '❌ حدث خطأ، الرجاء المحاولة مرة أخرى أو التواصل عبر واتساب';
         errorDiv.style.display = 'block';
         showMessage('❌ فشل إرسال التأكيد، حاولي مرة أخرى', true);
     }
@@ -604,44 +731,12 @@ async function submitBooking() {
 
 document.getElementById('bookNowBtn').addEventListener('click', submitBooking);
 
-// تعيين الحد الأدنى للتاريخ (لا يمكن حجز موعد في الماضي)
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('bookingDate').min = today;
+const todayDate = new Date().toISOString().split('T')[0];
+document.getElementById('bookingDate').min = todayDate;
 
-// ========== تنبيه عند مغادرة الصفحة (اختياري) ==========
-window.addEventListener('beforeunload', function(e) {
-    // تنبيه اختياري إذا كان هناك بيانات غير محفوظة
-    const hasData = document.getElementById('bookingName').value || 
-                    document.getElementById('bookingEmail').value ||
-                    document.getElementById('bookingPhone').value;
-    if (hasData) {
-        e.preventDefault();
-        e.returnValue = '';
-    }
-});
-
-// ========== تنبيه للمستخدم: تهيئة EmailJS ==========
-console.log('⚠️ للتشغيل الكامل لميزة حجز الموعد مع الإيميل، يرجى:');
-console.log('1. التسجيل في https://www.emailjs.com');
-console.log('2. إضافة خدمة Gmail');
-console.log('3. إنشاء قالبين: واحد للمستخدم وواحد للمسؤول');
-console.log('4. وضع المفاتيح في دالة initEmailJS()');
+console.log('✅ الكود يعمل بنجاح');
+console.log('⚠️ لإضافة الإيميلات التلقائية، سجلي في EmailJS');
 </script>
-
-<!-- ========== تعليمات EmailJS للمستخدم ========== -->
-<div style="display:none;" id="emailjs-instructions">
-    <h3>📧 لإعداد إرسال الإيميلات التلقائية:</h3>
-    <ol>
-        <li>سجلي في <a href="https://www.emailjs.com" target="_blank">EmailJS.com</a></li>
-        <li>أضيفي خدمة البريد (Gmail أو أي خدمة)</li>
-        <li>أنشئي قالب إيميل للمستخدم (اسمه user_booking_template)</li>
-        <li>أنشئي قالب إيميل للمسؤول (اسمه admin_booking_template)</li>
-        <li>ضعي الكود التالي في الـ Console أو أضيفيه بعد الـ script:</li>
-    </ol>
-    <pre>
-    initEmailJS("YOUR_PUBLIC_KEY");
-    </pre>
-</div>
 
 </body>
 </html>
