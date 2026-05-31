@@ -8,10 +8,8 @@
 <!-- EmailJS Library -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- jsPDF Library for PDF generation -->
+<!-- jsPDF Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- html2canvas for capturing images -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 * {
@@ -310,16 +308,6 @@ input[type="radio"], input[type="checkbox"] {
     margin-top: 15px;
     text-align: center;
 }
-
-.info-note {
-    background: #e8f0e8;
-    padding: 12px;
-    border-radius: 12px;
-    margin: 10px 0;
-    font-size: 13px;
-    color: #2D4A3E;
-    border-right: 3px solid #324A3E;
-}
 </style>
 </head>
 <body>
@@ -412,77 +400,98 @@ input[type="radio"], input[type="checkbox"] {
 <div id="photoModal" class="modal"><div class="modal-content"><p>📸 أنتِ على وشك الإرسال بدون صورة الشعر.</p><p>الصورة ليست إجبارية، لكنها تساعدني في تقديم تشخيص دقيق لحالتك.</p><div class="modal-buttons"><button id="confirmSend">متابعة</button><button id="addPhoto">إضافة صورة</button></div></div></div>
 
 <script>
-// ==================== CONFIGURATION ====================
-const EMAILJS_CONFIG = {
-    publicKey: 'k_uVBPGLWFluR9_gn',
-    serviceId: 'service_7zs119e',
-    templateId: 'template_nyt2zee' // Template for customer booking confirmation
+// ========== الإعدادات ==========
+const CONFIG = {
+    emailjs: {
+        publicKey: 'k_uVBPGLWFluR9_gn',
+        serviceId: 'service_7zs119e',
+        adminTemplateId: 'template_vopl98l',    // للمسؤول (يحتوي رابط PDF)
+        clientTemplateId: 'template_nyt2zee'     // للعميل (تأكيد فقط)
+    },
+    telegram: {
+        botToken: '8714986063:AAFE4C2OzUcnA4kt2KiA7F_DPeEyJi6r42Q',
+        chatId: '5163846793'
+    },
+    adminEmail: 'mohammad.alazzawi@gmail.com'
 };
 
-const TELEGRAM_CONFIG = {
-    botToken: '8714986063:AAFE4C2OzUcnA4kt2KiA7F_DPeEyJi6r42Q',
-    chatId: '5163846793'
-};
+// تهيئة EmailJS
+emailjs.init(CONFIG.emailjs.publicKey);
 
-const ADMIN_EMAIL = 'mohammad.alazzawi@gmail.com';
-
-// Initialize EmailJS
-emailjs.init(EMAILJS_CONFIG.publicKey);
-
-// Helper: Show toast message
+// دالة عرض الرسائل
 function showMessage(text, isError = false) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 4000);
+    setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-// Helper: Update medical report requirement based on hair loss selection
-function updateMedicalRequirement() {
-    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
-    const medicalRequiredLabel = document.getElementById('medicalRequiredLabel');
-    const medicalNote = document.getElementById('medicalNote');
-    const medicalReport = document.getElementById('medicalReport');
-    if (isHairLoss && isHairLoss.value === 'نعم') {
-        medicalRequiredLabel.innerHTML = '(إجباري *)';
-        medicalRequiredLabel.style.color = '#c0392b';
-        medicalNote.innerHTML = '⚠️ بما أنك تعانين من تساقط الشعر، يرجى رفع التحليل الطبي';
-        medicalNote.style.color = '#c0392b';
-        medicalReport.required = true;
-    } else if (isHairLoss && isHairLoss.value === 'لا') {
-        medicalRequiredLabel.innerHTML = '(اختياري - غير مطلوب)';
-        medicalRequiredLabel.style.color = '#7f8c8d';
-        medicalNote.innerHTML = '💚 بما أنك لا تعانين من تساقط الشعر، التحليل الطبي غير مطلوب';
-        medicalNote.style.color = '#27ae60';
-        medicalReport.required = false;
-    } else {
-        medicalRequiredLabel.innerHTML = '(إجباري في حالة وجود تساقط)';
-        medicalRequiredLabel.style.color = '#7f8c8d';
-        medicalNote.innerHTML = '💡 ملاحظة: التحليل الطبي إجباري فقط إذا كنت تعانين من تساقط الشعر';
-        medicalNote.style.color = '#A89676';
+// دالة إرسال إشعار تليجرام
+async function sendTelegramNotification(message) {
+    try {
+        const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/sendMessage`;
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CONFIG.telegram.chatId,
+                text: message,
+                parse_mode: 'HTML'
+            })
+        });
+    } catch (error) {
+        console.error('Telegram error:', error);
     }
 }
 
-document.getElementById('hairLossYes').addEventListener('change', updateMedicalRequirement);
-document.getElementById('hairLossNo').addEventListener('change', updateMedicalRequirement);
-updateMedicalRequirement();
-
-// Helper: Validate medical report
-function isMedicalReportValid() {
-    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
-    const hasHairLoss = isHairLoss && isHairLoss.value === 'نعم';
-    const medicalReportFile = document.getElementById('medicalReport').files[0];
-    if (hasHairLoss && !medicalReportFile) {
-        const medicalError = document.getElementById('medicalError');
-        medicalError.style.display = 'block';
-        setTimeout(() => medicalError.style.display = 'none', 4000);
-        return false;
-    }
-    return true;
+// دالة إنشاء PDF وتحويله إلى رابط Data URL
+async function generatePDF(data) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // العنوان
+    doc.setFontSize(20);
+    doc.text('تقرير استشارة - هبة سالم', 105, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(`تاريخ التقرير: ${new Date().toLocaleString('ar-EG')}`, 105, 30, { align: 'center' });
+    
+    // خط فاصل
+    doc.line(20, 35, 190, 35);
+    
+    // بيانات العميل
+    doc.setFontSize(14);
+    doc.text('📋 بيانات العميل', 20, 50);
+    doc.setFontSize(11);
+    doc.text(`الاسم الكامل: ${data.name}`, 20, 65);
+    doc.text(`العمر: ${data.age}`, 20, 75);
+    doc.text(`رقم الهاتف: ${data.phone}`, 20, 85);
+    doc.text(`كمية شرب الماء: ${data.water}`, 20, 95);
+    doc.text(`تساقط الشعر: ${data.hairLoss}`, 20, 105);
+    
+    // المشكلة
+    doc.setFontSize(14);
+    doc.text('📝 مشكلة الشعر', 20, 125);
+    doc.setFontSize(11);
+    const splitProblem = doc.splitTextToSize(data.problem || 'لم يذكر', 170);
+    doc.text(splitProblem, 20, 140);
+    
+    // المرفقات
+    doc.setFontSize(14);
+    doc.text('📎 المرفقات', 20, 165);
+    doc.setFontSize(11);
+    doc.text(`صورة الشعر: ${data.hairImage ? '✅ مرفقة' : '❌ غير مرفقة'}`, 20, 180);
+    doc.text(`التحليل الطبي: ${data.medicalReport ? '✅ مرفق' : '❌ غير مرفق'}`, 20, 190);
+    
+    // تذييل
+    doc.setFontSize(9);
+    doc.text('تم إنشاء هذا التقرير تلقائياً من نظام الاستشارات', 105, 270, { align: 'center' });
+    
+    // تحويل PDF إلى Data URL
+    return doc.output('datauristring');
 }
 
-// Helper: Collect consultation data
+// دالة جمع بيانات الاستشارة
 function collectConsultationData() {
     const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
     const water = document.querySelector('input[name="water"]:checked');
@@ -493,145 +502,141 @@ function collectConsultationData() {
         water: water ? water.value : 'لم يحدد',
         hairLoss: isHairLoss ? isHairLoss.value : 'لم يحدد',
         problem: document.getElementById('problem').value || 'لم يذكر',
-        hairImage: document.getElementById('hairImage').files[0],
-        medicalReport: document.getElementById('medicalReport').files[0]
+        hairImage: document.getElementById('hairImage').files[0] ? true : false,
+        medicalReport: document.getElementById('medicalReport').files[0] ? true : false
     };
 }
 
-// Helper: Send Telegram notification
-async function sendTelegramNotification(message) {
-    const url = `https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendMessage`;
-    try {
-        await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CONFIG.chatId, text: message, parse_mode: 'HTML' })
-        });
-    } catch (error) {
-        console.error('Telegram error:', error);
+// التحقق من صحة التحليل الطبي
+function isMedicalReportValid() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const hasHairLoss = isHairLoss && isHairLoss.value === 'نعم';
+    const medicalReportFile = document.getElementById('medicalReport').files[0];
+    if (hasHairLoss && !medicalReportFile) {
+        const medicalError = document.getElementById('medicalError');
+        medicalError.style.display = 'block';
+        setTimeout(() => medicalError.style.display = 'none', 5000);
+        showMessage('⚠️ يرجى رفع التحليل الطبي (إجباري لوجود تساقط شعر)', true);
+        return false;
+    }
+    return true;
+}
+
+// تحديث إجبارية التحليل الطبي
+function updateMedicalRequirement() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const medicalRequiredLabel = document.getElementById('medicalRequiredLabel');
+    const medicalNote = document.getElementById('medicalNote');
+    if (isHairLoss && isHairLoss.value === 'نعم') {
+        medicalRequiredLabel.innerHTML = '(إجباري *)';
+        medicalRequiredLabel.style.color = '#c0392b';
+        medicalNote.innerHTML = '⚠️ بما أنك تعانين من تساقط الشعر، يرجى رفع التحليل الطبي';
+        medicalNote.style.color = '#c0392b';
+    } else if (isHairLoss && isHairLoss.value === 'لا') {
+        medicalRequiredLabel.innerHTML = '(اختياري - غير مطلوب)';
+        medicalRequiredLabel.style.color = '#7f8c8d';
+        medicalNote.innerHTML = '💚 بما أنك لا تعانين من تساقط الشعر، التحليل الطبي غير مطلوب';
+        medicalNote.style.color = '#27ae60';
     }
 }
 
-// Helper: Generate PDF and send via email
-async function generateAndSendPDF(consultationData, adminEmail) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Title
-    doc.setFontSize(18);
-    doc.text('استشارة جديدة - هبة سالم', 105, 20, { align: 'center' });
-    doc.setFontSize(12);
-    doc.text(`التاريخ: ${new Date().toLocaleString('ar-EG')}`, 105, 35, { align: 'center' });
-    
-    // Client Info
-    doc.setFontSize(14);
-    doc.text('بيانات العميل:', 20, 55);
-    doc.setFontSize(11);
-    doc.text(`الاسم: ${consultationData.name}`, 20, 70);
-    doc.text(`العمر: ${consultationData.age}`, 20, 80);
-    doc.text(`الهاتف: ${consultationData.phone}`, 20, 90);
-    doc.text(`شرب الماء: ${consultationData.water}`, 20, 100);
-    doc.text(`تساقط الشعر: ${consultationData.hairLoss}`, 20, 110);
-    
-    // Problem
-    doc.text('المشكلة:', 20, 125);
-    const splitProblem = doc.splitTextToSize(consultationData.problem, 170);
-    doc.text(splitProblem, 20, 135);
-    
-    // Image placeholders
-    let yOffset = 155;
-    if (consultationData.hairImage) {
-        doc.text('صورة الشعر:', 20, yOffset);
-        yOffset += 10;
-        doc.text('(تم إرفاق الصورة مع هذا البريد الإلكتروني)', 20, yOffset);
-        yOffset += 15;
-    }
-    if (consultationData.medicalReport) {
-        doc.text('التحليل الطبي:', 20, yOffset);
-        yOffset += 10;
-        doc.text('(تم إرفاق الملف مع هذا البريد الإلكتروني)', 20, yOffset);
-    }
-    
-    // Convert PDF to base64
-    const pdfBase64 = doc.output('datauristring');
-    
-    // Send email with PDF attachment using EmailJS (Note: EmailJS free tier doesn't support attachments directly.
-    // As a workaround, we send a notification email with links or use a separate service.
-    // For simplicity, we'll send a detailed email with PDF as text and instruct to check attached files.
-    // Since EmailJS does not support file attachments in free plan, we will send the data as text and separately note that images are available via download links.
-    // Alternative: We can use a backend service, but within this static site, we'll send the PDF data as a link.
-    // For practical use, we'll send an email with the PDF as a data URI link (the admin can click to download).
-    // This is a limitation of EmailJS.
-    
-    const pdfLink = pdfBase64; // Data URI
-    const emailParams = {
-        to_email: adminEmail,
-        subject: `استشارة جديدة من ${consultationData.name}`,
-        message_html: `
-            <h2>بيانات الاستشارة</h2>
-            <p><strong>الاسم:</strong> ${consultationData.name}</p>
-            <p><strong>العمر:</strong> ${consultationData.age}</p>
-            <p><strong>الهاتف:</strong> ${consultationData.phone}</p>
-            <p><strong>شرب الماء:</strong> ${consultationData.water}</p>
-            <p><strong>تساقط الشعر:</strong> ${consultationData.hairLoss}</p>
-            <p><strong>المشكلة:</strong> ${consultationData.problem}</p>
-            <h3>ملفات مرفقة:</h3>
-            ${consultationData.hairImage ? `<p>📸 <strong>صورة الشعر:</strong> مرفقة (تم إرسالها بشكل منفصل عبر الواتساب أو البريد، أو يمكن تنزيلها يدوياً)</p>` : ''}
-            ${consultationData.medicalReport ? `<p>🩺 <strong>التحليل الطبي:</strong> مرفق (تم إرساله بشكل منفصل)</p>` : ''}
-            <p><strong>ملف PDF للاستشارة:</strong> <a href="${pdfLink}">اضغط هنا لتحميل ملف PDF</a> (احفظ الرابط لفتح الملف)</p>
-            <hr/>
-            <p>تم إرسال هذا البريد تلقائياً من موقع هبة سالم.</p>
-        `
-    };
-    
-    try {
-        await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, emailParams);
-        showMessage('✅ تم إرسال ملف PDF إلى بريدك الإلكتروني');
-    } catch (err) {
-        console.error('PDF email error:', err);
-        showMessage('⚠️ فشل إرسال ملف PDF، لكن تم إرسال البيانات عبر واتساب وتليجرام', true);
-    }
-}
+document.getElementById('hairLossYes').addEventListener('change', updateMedicalRequirement);
+document.getElementById('hairLossNo').addEventListener('change', updateMedicalRequirement);
+updateMedicalRequirement();
 
-// Main: Send consultation via WhatsApp + Telegram + PDF Email
+// إرسال الاستشارة
 async function sendConsultation() {
     if (!isMedicalReportValid()) return;
+    
     const data = collectConsultationData();
+    const sendBtn = document.getElementById('sendBtn');
     
-    // Prepare WhatsApp message
-    let waMsg = `📋 *استشارة جديدة - هبة سالم*\n\n👤 الاسم: ${data.name}\n🎂 العمر: ${data.age}\n📞 الهاتف: ${data.phone}\n💧 شرب الماء: ${data.water}\n🔄 تساقط الشعر: ${data.hairLoss}\n📝 المشكلة: ${data.problem}\n\n📸 صورة الشعر: ${data.hairImage ? 'نعم' : 'لا'}\n🩺 التحليل الطبي: ${data.medicalReport ? 'نعم' : 'لا'}`;
-    window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, '_blank');
-    showMessage('✅ تم فتح واتساب، الرجاء إرسال الملفات المرفقة');
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<span class="loader"></span> جاري الإرسال...';
     
-    // Send Telegram notification
-    let tgMsg = `<b>📋 استشارة جديدة - هبة سالم</b>\n\n👤 الاسم: ${data.name}\n🎂 العمر: ${data.age}\n📞 الهاتف: ${data.phone}\n💧 شرب الماء: ${data.water}\n🔄 تساقط الشعر: ${data.hairLoss}\n📝 المشكلة: ${data.problem}`;
-    await sendTelegramNotification(tgMsg);
-    
-    // Generate PDF and send to admin email
-    await generateAndSendPDF(data, ADMIN_EMAIL);
+    try {
+        // 1. إرسال إيميل تأكيد للعميل
+        const clientEmailParams = {
+            to_email: data.name.includes('@') ? data.name : data.phone,
+            name: data.name,
+            phone: data.phone
+        };
+        
+        await emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.clientTemplateId, clientEmailParams);
+        
+        // 2. إنشاء PDF
+        const pdfDataUrl = await generatePDF(data);
+        
+        // 3. إرسال إيميل للمسؤول مع رابط PDF
+        const adminEmailParams = {
+            to_email: CONFIG.adminEmail,
+            name: data.name,
+            age: data.age,
+            phone: data.phone,
+            problem: data.problem || 'لا يوجد',
+            pdf_link: pdfDataUrl
+        };
+        
+        await emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.adminTemplateId, adminEmailParams);
+        
+        // 4. إرسال إشعار تليجرام
+        const tgMsg = `📋 <b>استشارة جديدة</b>\n\n👤 الاسم: ${data.name}\n🎂 العمر: ${data.age}\n📞 الهاتف: ${data.phone}\n💧 الماء: ${data.water}\n🔄 تساقط: ${data.hairLoss}\n📸 صورة: ${data.hairImage ? 'نعم' : 'لا'}\n🩺 تحليل: ${data.medicalReport ? 'نعم' : 'لا'}`;
+        await sendTelegramNotification(tgMsg);
+        
+        // 5. فتح واتساب
+        const waMsg = `📋 *استشارة جديدة - هبة سالم*\n\n👤 الاسم: ${data.name}\n🎂 العمر: ${data.age}\n📞 الهاتف: ${data.phone}\n💧 شرب الماء: ${data.water}\n🔄 تساقط الشعر: ${data.hairLoss}\n📝 المشكلة: ${data.problem || 'لا يوجد'}`;
+        window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, '_blank');
+        
+        showMessage('✅ تم إرسال الاستشارة بنجاح! سيصلك ملف PDF على بريدك الإلكتروني');
+        
+        // تنظيف النموذج
+        document.getElementById('fullname').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('problem').value = '';
+        document.getElementById('hairImage').value = '';
+        document.getElementById('medicalReport').value = '';
+        document.querySelectorAll('input[name="water"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="hairLoss"]').forEach(r => r.checked = false);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showMessage('❌ حدث خطأ، يرجى المحاولة مرة أخرى', true);
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '📤 إرسال الاستشارة';
+    }
 }
 
-// Modal handling for hair image missing
+// Modal logic
 const modal = document.getElementById('photoModal');
-const hairImage = document.getElementById('hairImage');
+const hairImageInput = document.getElementById('hairImage');
+let pendingSend = false;
+
 document.getElementById('sendBtn').addEventListener('click', () => {
-    if (hairImage.files.length === 0) {
+    if (hairImageInput.files.length === 0) {
         modal.style.display = 'flex';
+        pendingSend = true;
         return;
     }
     sendConsultation();
 });
+
 document.getElementById('confirmSend').addEventListener('click', () => {
     modal.style.display = 'none';
-    sendConsultation();
+    if (pendingSend) sendConsultation();
 });
+
 document.getElementById('addPhoto').addEventListener('click', () => {
     modal.style.display = 'none';
-    hairImage.click();
+    hairImageInput.click();
 });
-window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
 
-// Booking: Send confirmation email + Telegram notification
+window.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+});
+
+// ========== حجز الموعد ==========
 async function submitBooking() {
     const name = document.getElementById('bookingName').value.trim();
     const email = document.getElementById('bookingEmail').value.trim();
@@ -655,45 +660,49 @@ async function submitBooking() {
         errorDiv.style.display = 'block';
         return;
     }
+    
     errorDiv.style.display = 'none';
     bookBtn.disabled = true;
     bookBtn.innerHTML = '<span class="loader"></span> جاري تأكيد الحجز...';
     
-    // Send confirmation email to client
-    const clientEmailParams = {
-        to_email: email,
-        name: name,
-        date: date,
-        time: time,
-        consult_type: consultType
-    };
     try {
-        await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, clientEmailParams);
-        showMessage('✅ تم إرسال تأكيد الحجز إلى بريدك الإلكتروني');
-    } catch (err) {
-        console.error('Email error:', err);
-        showMessage('⚠️ فشل إرسال التأكيد، لكن تم حفظ الحجز', true);
+        // إرسال إيميل تأكيد للعميل
+        const clientParams = {
+            to_email: email,
+            name: name,
+            date: date,
+            time: time,
+            consult_type: consultType
+        };
+        await emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.clientTemplateId, clientParams);
+        
+        // إرسال إشعار تليجرام
+        const tgMsg = `📅 <b>حجز موعد جديد</b>\n\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 الاستشارة: ${consultType}\n📝 ملاحظات: ${notes || 'لا يوجد'}`;
+        await sendTelegramNotification(tgMsg);
+        
+        // فتح واتساب
+        const waMsg = `📅 *حجز موعد جديد*\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 نوع الاستشارة: ${consultType}`;
+        window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, '_blank');
+        
+        summaryDiv.style.display = 'block';
+        showMessage('✅ تم حجز موعدك بنجاح! سيصلك تأكيد على بريدك الإلكتروني');
+        
+        // تنظيف النموذج
+        document.getElementById('bookingName').value = '';
+        document.getElementById('bookingEmail').value = '';
+        document.getElementById('bookingPhone').value = '';
+        document.getElementById('bookingDate').value = '';
+        document.getElementById('bookingTime').value = '';
+        document.getElementById('bookingNotes').value = '';
+        
+    } catch (error) {
+        errorDiv.textContent = '❌ حدث خطأ، الرجاء المحاولة مرة أخرى';
+        errorDiv.style.display = 'block';
+        showMessage('❌ فشل إرسال التأكيد، حاولي مرة أخرى', true);
+    } finally {
+        bookBtn.disabled = false;
+        bookBtn.innerHTML = '📅 تأكيد الحجز وإرسال التأكيد لبريدك';
     }
-    
-    // Send Telegram notification to admin
-    let tgMsg = `<b>📅 حجز موعد جديد</b>\n\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 نوع الاستشارة: ${consultType}\n📝 ملاحظات: ${notes || 'لا يوجد'}`;
-    await sendTelegramNotification(tgMsg);
-    
-    // WhatsApp notification
-    let waMsg = `📅 *حجز موعد جديد*\n👤 الاسم: ${name}\n📧 الإيميل: ${email}\n📞 الهاتف: ${phone}\n📅 التاريخ: ${date}\n⏰ الوقت: ${time}\n📋 نوع الاستشارة: ${consultType}`;
-    window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, '_blank');
-    
-    summaryDiv.style.display = 'block';
-    document.getElementById('bookingName').value = '';
-    document.getElementById('bookingEmail').value = '';
-    document.getElementById('bookingPhone').value = '';
-    document.getElementById('bookingDate').value = '';
-    document.getElementById('bookingTime').value = '';
-    document.getElementById('bookingNotes').value = '';
-    
-    bookBtn.disabled = false;
-    bookBtn.innerHTML = '📅 تأكيد الحجز وإرسال التأكيد لبريدك';
-    showMessage('✅ تم حجز موعدك بنجاح!');
 }
 
 document.getElementById('bookNowBtn').addEventListener('click', submitBooking);
