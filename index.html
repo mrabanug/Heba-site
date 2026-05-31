@@ -1,32 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هبة سالم | Trichologist - استشارات</title>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#F7F5EB;color:#2D2D2A;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+.hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
+.hero h1{font-size:42px;}
+.hero p{color:#A89676;margin-top:12px;}
+button{padding:14px 32px;border:none;border-radius:40px;background:#A89676;color:#FFF;font-weight:bold;cursor:pointer;}
+.container{max-width:950px;margin:auto;padding:30px 20px;}
+.box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
+.submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border-radius:40px;font-weight:bold;}
+input,select,textarea{width:100%;padding:12px;margin:5px 0;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>هبة سالم</h1>
+    <p>اختصاص علم الشعر | Trichologist</p>
+    <button onclick="document.getElementById('form-start').scrollIntoView({behavior:'smooth'})">ابدئي الاستشارة الآن</button>
+</div>
+
+<div class="container" id="form-start">
+<div class="box">
+<h2>📋 استمارة التشخيص</h2>
+<label>الاسم الكامل *</label>
+<input type="text" id="fullname" placeholder="الاسم الكامل">
+<label>العمر *</label>
+<input type="number" id="age" placeholder="العمر">
+<label>رقم الهاتف *</label>
+<input type="text" id="phone" placeholder="رقم الهاتف">
+<label>مشكلة الشعر</label>
+<textarea id="problem" placeholder="اكتبي مشكلة الشعر..."></textarea>
+<button class="submit" id="sendBtn">📤 إرسال الاستشارة</button>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
 <script>
 emailjs.init('k_uVBPGLWFluR9_gn');
 
-function testEmail() {
-    emailjs.send('service_7zs119e', 'template_vopl98l', {
-        to_email: 'mohammad.alazzawi@gmail.com',
-        name: 'اختبار',
-        age: '30',
-        phone: '12345678',
-        problem: 'هذا اختبار',
-        pdf_link: 'https://example.com/test.pdf'
-    }).then(
-        function(response) {
-            console.log('نجاح:', response);
-            alert('✅ تم إرسال الإيميل بنجاح!');
-        },
-        function(error) {
-            console.log('فشل:', error);
-            alert('❌ خطأ: ' + error.text);
-        }
-    );
+function showMessage(text, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = text;
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 4000);
 }
+
+document.getElementById('sendBtn').onclick = async function() {
+    const name = document.getElementById('fullname').value;
+    const age = document.getElementById('age').value;
+    const phone = document.getElementById('phone').value;
+    const problem = document.getElementById('problem').value;
+    
+    if (!name || !age || !phone) {
+        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
+        return;
+    }
+    
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.innerHTML = 'جاري الإرسال...';
+    
+    try {
+        // محاولة إرسال إيميل للمسؤول فقط (اختبار)
+        const response = await emailjs.send('service_7zs119e', 'template_vopl98l', {
+            to_email: 'mohammad.alazzawi@gmail.com',
+            name: name,
+            age: age,
+            phone: phone,
+            problem: problem || 'لا يوجد',
+            pdf_link: 'https://hibasalem.com/test'
+        });
+        
+        console.log('نجاح:', response);
+        showMessage('✅ تم إرسال الاستشارة بنجاح!');
+        
+        // تنظيف الحقول
+        document.getElementById('fullname').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('problem').value = '';
+        
+    } catch (error) {
+        console.log('فشل:', error);
+        showMessage('❌ خطأ: ' + (error.text || 'يرجى المحاولة مرة أخرى'), true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📤 إرسال الاستشارة';
+    }
+};
 </script>
-</head>
-<body>
-<button onclick="testEmail()">اختبار إرسال إيميل</button>
 </body>
 </html>
