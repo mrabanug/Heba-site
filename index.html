@@ -7,7 +7,6 @@
 
 <!-- EmailJS Library -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -155,7 +154,17 @@ function showMessage(text, isError = false) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-// إرسال البيانات إلى Google Sheets (بدون رابط PDF)
+// تحويل الملف إلى Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// إرسال البيانات إلى Google Sheets
 async function sendToGoogleSheets(data) {
     try {
         await fetch(GOOGLE_SCRIPT_URL, {
@@ -168,27 +177,6 @@ async function sendToGoogleSheets(data) {
     } catch (error) {
         console.error('Google Sheets error:', error);
     }
-}
-
-// إنشاء PDF
-async function generatePDF(data) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('تقرير استشارة - هبة سالم', 105, 20, { align: 'center' });
-    doc.setFontSize(10);
-    doc.text(new Date().toLocaleString('ar-EG'), 105, 30, { align: 'center' });
-    doc.line(20, 35, 190, 35);
-    doc.setFontSize(12);
-    doc.text(`الاسم: ${data.name}`, 20, 55);
-    doc.text(`العمر: ${data.age}`, 20, 65);
-    doc.text(`الهاتف: ${data.phone}`, 20, 75);
-    doc.text(`شرب الماء: ${data.water}`, 20, 85);
-    doc.text(`تساقط الشعر: ${data.hairLoss}`, 20, 95);
-    doc.text('المشكلة:', 20, 115);
-    const splitProblem = doc.splitTextToSize(data.problem || 'لا يوجد', 170);
-    doc.text(splitProblem, 20, 125);
-    return doc.output('datauristring');
 }
 
 function updateMedicalRequirement() {
@@ -212,7 +200,7 @@ document.getElementById('hairLossYes')?.addEventListener('change', updateMedical
 document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
 updateMedicalRequirement();
 
-// ========== إرسال الاستشارة ==========
+// ========== إرسال الاستشارة (بدون PDF، مع الصور Base64) ==========
 document.getElementById('sendBtn').onclick = async function() {
     const name = document.getElementById('fullname').value.trim();
     const age = document.getElementById('age').value.trim();
@@ -220,60 +208,103 @@ document.getElementById('sendBtn').onclick = async function() {
     const problem = document.getElementById('problem').value.trim();
     const waterRadio = document.querySelector('input[name="water"]:checked');
     const hairLossRadio = document.querySelector('input[name="hairLoss"]:checked');
-    const medicalReport = document.getElementById('medicalReport').files[0];
+    const hairImageFile = document.getElementById('hairImage').files[0];
+    const medicalReportFile = document.getElementById('medicalReport').files[0];
+    const medicalReportRequired = hairLossRadio && hairLossRadio.value === 'نعم';
     
     if (!name || !age || !phone) {
         showMessage('⚠️ الرجاء تعبئة الاسم والعمر والهاتف', true);
         return;
     }
     
-    if (hairLossRadio && hairLossRadio.value === 'نعم' && !medicalReport) {
+    if (medicalReportRequired && !medicalReportFile) {
         document.getElementById('medicalError').style.display = 'block';
         setTimeout(() => document.getElementById('medicalError').style.display = 'none', 5000);
         showMessage('⚠️ يرجى رفع التحليل الطبي', true);
         return;
     }
     
-    const data = {
-        name: name,
-        age: age,
-        phone: phone,
-        water: waterRadio ? waterRadio.value : 'لم يحدد',
-        hairLoss: hairLossRadio ? hairLossRadio.value : 'لم يحدد',
-        problem: problem || 'لا يوجد'
-    };
-    
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> جاري الإرسال...';
     
     try {
-        const pdfDataUrl = await generatePDF(data);
+        // تحويل الصور إلى Base64
+        let hairImageBase64 = '';
+        let medicalReportBase64 = '';
         
-        // إرسال إيميل للمسؤول مع PDF
+        if (hairImageFile) {
+            hairImageBase64 = await fileToBase64(hairImageFile);
+        }
+        if (medicalReportFile) {
+            medicalReportBase64 = await fileToBase64(medicalReportFile);
+        }
+        
+        // بناء الإيميل HTML المنّسق
+        const emailHTML = `
+            <div dir="rtl" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #F7F5EB; border-radius: 20px;">
+                <div style="background: #324A3E; padding: 30px; text-align: center; border-radius: 20px 20px 0 0;">
+                    <h1 style="color: #FFFFFF; margin: 0;">📋 استشارة جديدة</h1>
+                    <p style="color: #A89676; margin: 10px 0 0;">${new Date().toLocaleString('ar-EG')}</p>
+                </div>
+                <div style="background: white; padding: 25px; border-radius: 0 0 20px 20px;">
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px;">بيانات العميل</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>👤 الاسم:</strong></td><td style="padding: 8px;">${name}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>🎂 العمر:</strong></td><td style="padding: 8px;">${age}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>📞 الهاتف:</strong></td><td style="padding: 8px;">${phone}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>💧 شرب الماء:</strong></td><td style="padding: 8px;">${waterRadio ? waterRadio.value : 'لم يحدد'}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>🔄 تساقط الشعر:</strong></td><td style="padding: 8px;">${hairLossRadio ? hairLossRadio.value : 'لم يحدد'}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>📝 المشكلة:</strong></td><td style="padding: 8px;">${problem || 'لا يوجد'}</td></tr>
+                    </table>
+                    
+                    ${hairImageBase64 ? `
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px; margin-top: 25px;">📸 صورة الشعر</h2>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <img src="${hairImageBase64}" style="max-width: 100%; border-radius: 12px; border: 1px solid #e0ddd0;">
+                    </div>
+                    ` : '<p style="color: #7f8c8d; margin-top: 15px;">📸 لم يتم رفع صورة الشعر</p>'}
+                    
+                    ${medicalReportBase64 ? `
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px; margin-top: 25px;">🩺 التحليل الطبي</h2>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <img src="${medicalReportBase64}" style="max-width: 100%; border-radius: 12px; border: 1px solid #e0ddd0;">
+                    </div>
+                    ` : (medicalReportRequired ? '<p style="color: #c0392b; margin-top: 15px;">⚠️ التحليل الطبي مطلوب ولم يتم رفعه</p>' : '<p style="color: #27ae60; margin-top: 15px;">✅ التحليل الطبي غير مطلوب</p>')}
+                    
+                    <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0ddd0;">
+                    <p style="text-align: center; color: #A89676; font-size: 12px;">تم إرسال هذا التقرير تلقائياً من موقع هبة سالم</p>
+                </div>
+            </div>
+        `;
+        
+        // إرسال الإيميل للمسؤول
         await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
-            name: data.name,
-            age: data.age,
-            phone: data.phone,
-            problem: data.problem,
-            pdf_link: pdfDataUrl
+            name: name,
+            age: age,
+            phone: phone,
+            problem: problem || 'لا يوجد',
+            pdf_link: emailHTML  // نستخدم حقل pdf_link لحمل HTML الإيميل
         });
         
-        // إرسال البيانات إلى Google Sheets (بدون رابط PDF)
+        // إرسال البيانات إلى Google Sheets
         await sendToGoogleSheets({
-            name: data.name,
-            age: data.age,
-            phone: data.phone,
-            water: data.water,
-            hairLoss: data.hairLoss,
-            problem: data.problem,
+            name: name,
+            age: age,
+            phone: phone,
+            water: waterRadio ? waterRadio.value : 'لم يحدد',
+            hairLoss: hairLossRadio ? hairLossRadio.value : 'لم يحدد',
+            problem: problem || 'لا يوجد',
+            hasHairImage: hairImageFile ? 'نعم' : 'لا',
+            hasMedicalReport: medicalReportFile ? 'نعم' : 'لا',
             type: "استشارة"
         });
         
-        const waMsg = `📋 *استشارة جديدة*\nالاسم: ${data.name}\nالعمر: ${data.age}\nالهاتف: ${data.phone}\nالماء: ${data.water}\nتساقط: ${data.hairLoss}\nالمشكلة: ${data.problem}`;
+        // فتح واتساب
+        const waMsg = `📋 *استشارة جديدة*\nالاسم: ${name}\nالعمر: ${age}\nالهاتف: ${phone}\nالماء: ${waterRadio ? waterRadio.value : 'لم يحدد'}\nتساقط: ${hairLossRadio ? hairLossRadio.value : 'لم يحدد'}\nالمشكلة: ${problem || 'لا يوجد'}`;
         window.open(`https://wa.me/9647762243091?text=${encodeURIComponent(waMsg)}`, '_blank');
         
-        showMessage('✅ تم إرسال الاستشارة بنجاح!');
+        showMessage('✅ تم إرسال الاستشارة بنجاح! سيصلك إيميل بالبيانات والصور');
         
         // تنظيف الحقول
         document.getElementById('fullname').value = '';
@@ -286,6 +317,7 @@ document.getElementById('sendBtn').onclick = async function() {
         document.querySelectorAll('input[name="hairLoss"]').forEach(r => r.checked = false);
         
     } catch (error) {
+        console.error('Error:', error);
         showMessage('❌ خطأ: ' + (error.text || 'يرجى المحاولة مرة أخرى'), true);
     } finally {
         btn.disabled = false;
@@ -293,7 +325,7 @@ document.getElementById('sendBtn').onclick = async function() {
     }
 };
 
-// Modal logic
+// Modal logic للصورة
 const modal = document.getElementById('photoModal');
 const hairImageInput = document.getElementById('hairImage');
 let pendingSend = false;
@@ -355,15 +387,37 @@ document.getElementById('bookNowBtn').onclick = async function() {
         });
         
         // إرسال إيميل للمسؤول
+        const adminEmailHTML = `
+            <div dir="rtl" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #F7F5EB; border-radius: 20px;">
+                <div style="background: #324A3E; padding: 30px; text-align: center; border-radius: 20px 20px 0 0;">
+                    <h1 style="color: #FFFFFF; margin: 0;">📅 حجز موعد جديد</h1>
+                    <p style="color: #A89676; margin: 10px 0 0;">${new Date().toLocaleString('ar-EG')}</p>
+                </div>
+                <div style="background: white; padding: 25px; border-radius: 0 0 20px 20px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>👤 الاسم:</strong></td><td style="padding: 8px;">${name}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>📧 البريد:</strong></td><td style="padding: 8px;">${email}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>📞 الهاتف:</strong></td><td style="padding: 8px;">${phone}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>📅 التاريخ:</strong></td><td style="padding: 8px;">${date}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>⏰ الوقت:</strong></td><td style="padding: 8px;">${time}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB;"><strong>📋 الاستشارة:</strong></td><td style="padding: 8px;">${consultType}</td></tr>
+                        ${notes ? `<tr><td style="padding: 8px; background: #F7F5EB;"><strong>📝 ملاحظات:</strong></td><td style="padding: 8px;">${notes}</td></tr>` : ''}
+                    </table>
+                    <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0ddd0;">
+                    <p style="text-align: center; color: #A89676; font-size: 12px;">تم إرسال هذا الإشعار تلقائياً من موقع هبة سالم</p>
+                </div>
+            </div>
+        `;
+        
         await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
             name: name,
             age: 'حجز موعد',
             phone: phone,
             problem: `📅 حجز موعد\nالبريد: ${email}\nالتاريخ: ${date}\nالوقت: ${time}\nالاستشارة: ${consultType}\nملاحظات: ${notes || 'لا يوجد'}`,
-            pdf_link: 'تم الحجز - راجع البيانات أعلاه'
+            pdf_link: adminEmailHTML
         });
         
-        // إرسال البيانات إلى Google Sheets (بدون رابط)
+        // إرسال إلى Google Sheets
         await sendToGoogleSheets({
             name: name,
             age: 'حجز موعد',
@@ -380,7 +434,6 @@ document.getElementById('bookNowBtn').onclick = async function() {
         document.getElementById('bookingSummary').style.display = 'block';
         showMessage('✅ تم حجز موعدك بنجاح!');
         
-        // تنظيف الحقول
         document.getElementById('bookingName').value = '';
         document.getElementById('bookingEmail').value = '';
         document.getElementById('bookingPhone').value = '';
