@@ -3,57 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة رفع صورتين - طريقة مباشرة</title>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<title>هبة سالم | Trichologist - استشارات وحجز مواعيد</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
-.container{max-width:600px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-h1{color:#324A3E;margin-bottom:20px;text-align:center;}
-label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-input,textarea{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
-button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
-button:hover{background:#2D2D2A;}
-.preview{display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;}
-.preview img{width:100px;height:100px;object-fit:cover;border-radius:12px;border:2px solid #A89676;}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;text-align:center;}
-.toast.error{background:#c0392b;}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #F7F5EB;
+    color: #2D2D2A;
+}
+
+.hero {
+    background: #324A3E;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 75px 20px;
+}
+
+.custom-logo {
+    margin-bottom: 20px;
+}
+
+.custom-logo svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: bold;
+}
+
+.hero p {
+    margin-top: 12px;
+    font-size: 18px;
+    color: #A89676;
+}
+
+.hero button {
+    margin-top: 25px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 40px;
+    background: #A89676;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hero button:hover {
+    background: #8a7658;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.box {
+    background: #FFFFFF;
+    margin: 25px 0;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    border-right: 6px solid #324A3E;
+}
+
+h2 {
+    color: #324A3E;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-bottom: 2px solid #A89676;
+    display: inline-block;
+    padding-bottom: 6px;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #324A3E;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0 10px 0;
+    border: 1.5px solid #e0ddd0;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+    background: #F7F5EB;
+    color: #2D2D2A;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #A89676;
+    background: #fff;
+}
+
+.radio-group {
+    background: #F7F5EB;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 8px 0;
+}
+
+.radio-group label {
+    display: inline-block;
+    margin-left: 20px;
+    font-weight: normal;
+    margin-top: 5px;
+}
+
+input[type="radio"] {
+    width: auto;
+    margin-left: 5px;
+}
+
+.file-input {
+    background: #F7F5EB;
+    padding: 10px;
+    border-radius: 12px;
+    margin: 10px 0;
+}
+
+.required {
+    color: #c0392b;
+    font-size: 12px;
+}
+
+.optional {
+    color: #7f8c8d;
+    font-size: 12px;
+}
+
+.conditional-text {
+    color: #A89676;
+    font-size: 12px;
+    margin-top: -8px;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.submit {
+    width: 100%;
+    background: #324A3E;
+    color: #FFFFFF;
+    padding: 16px;
+    border: none;
+    border-radius: 40px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.submit:hover {
+    background: #2D2D2A;
+}
+
+.submit-secondary {
+    background: #A89676;
+}
+
+.submit-secondary:hover {
+    background: #8a7658;
+}
+
+.review {
+    background: #F7F5EB;
+    padding: 15px;
+    margin: 12px 0;
+    border-right: 4px solid #A89676;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #324A3E;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.toast.error {
+    background: #c0392b;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    max-width: 400px;
+    text-align: center;
+    border-right: 6px solid #A89676;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-buttons button:first-child {
+    background: #324A3E;
+    color: white;
+}
+
+.modal-buttons button:last-child {
+    background: #A89676;
+    color: white;
+}
+
+.loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #A89676;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.booking-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.booking-row > div {
+    flex: 1;
+    min-width: 150px;
+}
+
+.date-picker, .time-picker {
+    background: #F7F5EB;
+    border: 1.5px solid #e0ddd0;
+    border-radius: 12px;
+    padding: 12px;
+    width: 100%;
+}
+
+.booking-summary {
+    background: #F7F5EB;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
+    text-align: center;
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🧪 تجربة رفع صورتين</h1>
-    <p style="text-align:center; color:#7f8c8d; margin-bottom:20px;">اختر صورتين وسيتم إرسال روابطهما إلى بريدك</p>
-    
-    <label>👤 الاسم</label>
-    <input type="text" id="name" placeholder="الاسم الكامل">
-    
-    <label>📞 رقم الهاتف</label>
-    <input type="text" id="phone" placeholder="رقم الهاتف">
-    
-    <label>📸 صورة الشعر</label>
-    <input type="file" id="hairImage" accept="image/jpeg,image/png,image/jpg">
-    
-    <label>🩺 التحليل الطبي</label>
-    <input type="file" id="medicalReport" accept="image/jpeg,image/png,image/jpg">
-    
-    <div class="preview" id="preview"></div>
-    
-    <button id="sendBtn">📤 رفع الصور وإرسال الإيميل</button>
+<div class="hero">
+    <div class="custom-logo">
+        <svg width="280" height="85" viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(140, 30)">
+                <path d="M0,-22 C12,-22 20,-12 20,0 C20,12 12,22 0,22" stroke="#A89676" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                <path d="M0,-22 C-12,-22 -20,-12 -20,0 C-20,12 -12,22 0,22" stroke="#A89676" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                <path d="M0,-17 C8,-17 14,-8 14,0 C14,8 8,15 0,15" stroke="#D4C5A9" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M0,-17 C-8,-17 -14,-8 -14,0 C-14,8 -8,15 0,15" stroke="#D4C5A9" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="3.5" fill="#A89676"/>
+                <circle cx="0" cy="0" r="1.8" fill="#324A3E"/>
+            </g>
+            <text x="140" y="58" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="15" font-weight="bold" fill="#A89676" letter-spacing="3">halcyon hair & wellness</text>
+            <line x1="70" y1="67" x2="210" y2="67" stroke="#D4C5A9" stroke-width="0.7" opacity="0.6"/>
+            <text x="140" y="80" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="9" fill="#D4C5A9" letter-spacing="4">serene beauty ritual</text>
+        </svg>
+    </div>
+    <h1>هبة سالم</h1>
+    <p>اختصاص علم الشعر | Trichologist</p>
+    <button onclick="document.getElementById('form-start').scrollIntoView({behavior:'smooth'})">ابدئي الاستشارة الآن</button>
+</div>
+
+<div class="container" id="form-start">
+
+<!-- استمارة التشخيص -->
+<div class="box">
+<h2>📋 استمارة التشخيص المتكامل</h2>
+<label>الاسم الكامل <span class="required">*</span></label>
+<input type="text" id="fullname" placeholder="الاسم الكامل">
+<label>العمر <span class="required">*</span></label>
+<input type="number" id="age" placeholder="العمر">
+<label>رقم الهاتف <span class="required">*</span></label>
+<input type="text" id="phone" placeholder="رقم الهاتف">
+<label>كمية شرب الماء يومياً</label>
+<div class="radio-group">
+    <label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label>
+    <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label>
+    <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
+</div>
+<label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label>
+<div class="radio-group">
+    <label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label>
+    <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label>
+</div>
+<label>مشكلة الشعر الرئيسية</label>
+<textarea id="problem" placeholder="اكتبي مشكلة الشعر بالتفصيل..."></textarea>
+<div class="file-input">
+    <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
+    <input type="file" id="hairImage" accept="image/*">
+</div>
+<div class="file-input">
+    <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
+    <input type="file" id="medicalReport" accept="image/*,.pdf">
+    <div id="medicalNote" class="conditional-text">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كنت تعانين من تساقط الشعر</div>
+    <div id="medicalError" style="color:#c0392b; font-size:12px; display:none;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي</div>
+</div>
+<button class="submit" id="sendBtn">📤 إرسال الاستشارة</button>
+</div>
+
+<!-- حجز موعد -->
+<div class="box">
+<h2>📅 حجز موعد استشارة خاصة</h2>
+<p style="margin-bottom:15px;">احجزي موعداً للاستشارة المباشرة وسيصلك تأكيد على بريدك الإلكتروني فوراً</p>
+<label>الاسم الكامل <span class="required">*</span></label>
+<input type="text" id="bookingName" placeholder="الاسم الكامل">
+<label>البريد الإلكتروني <span class="required">*</span></label>
+<input type="email" id="bookingEmail" placeholder="example@gmail.com">
+<label>رقم الهاتف <span class="required">*</span></label>
+<input type="text" id="bookingPhone" placeholder="رقم الهاتف">
+<div class="booking-row">
+    <div><label>اختر التاريخ</label><input type="date" id="bookingDate" class="date-picker"></div>
+    <div><label>اختر الوقت</label><select id="bookingTime" class="time-picker"><option value="">-- اختر الوقت --</option><option value="10:00 صباحاً">10:00 صباحاً</option><option value="11:00 صباحاً">11:00 صباحاً</option><option value="12:00 ظهراً">12:00 ظهراً</option><option value="13:00 ظهراً">01:00 ظهراً</option><option value="14:00 ظهراً">02:00 ظهراً</option><option value="15:00 عصراً">03:00 عصراً</option><option value="16:00 عصراً">04:00 عصراً</option><option value="17:00 مساءً">05:00 مساءً</option><option value="18:00 مساءً">06:00 مساءً</option></select></div>
+</div>
+<label>نوع الاستشارة</label>
+<select id="consultType"><option value="استشارة عامة للشعر">استشارة عامة للشعر</option><option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option><option value="علاج فروة الرأس">علاج فروة الرأس</option><option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option></select>
+<label>ملاحظات إضافية (اختياري)</label>
+<textarea id="bookingNotes" placeholder="أي شيء تودين إضافته..."></textarea>
+<div id="bookingError" style="color:#c0392b; font-size:13px; display:none;"></div>
+<button class="submit submit-secondary" id="bookNowBtn">📅 تأكيد الحجز وإرسال التأكيد لبريدك</button>
+<div class="booking-summary" id="bookingSummary" style="display:none;">✅ تم حجز موعدك بنجاح!</div>
+</div>
+
+<div class="box"><h2>⭐ آراء العملاء</h2><div class="review">نتائج ممتازة وتحسن واضح من أول متابعة</div><div class="review">استشارة دقيقة وفهم عميق للمشكلة</div><div class="review">خدمة احترافية أنصح بها</div></div>
 </div>
 
 <div id="toast" class="toast"></div>
+<div id="photoModal" class="modal"><div class="modal-content"><p>📸 أنتِ على وشك الإرسال بدون صورة الشعر.</p><p>الصورة ليست إجبارية، لكنها تساعدني في تقديم تشخيص دقيق لحالتك.</p><div class="modal-buttons"><button id="confirmSend">متابعة</button><button id="addPhoto">إضافة صورة</button></div></div></div>
 
 <script>
-emailjs.init('k_uVBPGLWFluR9_gn');
+// ==================== إعدادات عامة ====================
+// رابط تطبيق Google Apps Script الخاص بك (تم تحديثه)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5RgqjnaOozSZFLKLUkPGjlE-d4eh5x0vo53J_MwlyPUnWEex0o_TkGbyWhkMlix0G/exec';
 
-const SERVICE_ID = 'service_7zs119e';
-const ADMIN_TEMPLATE = 'template_5n5fn1o';
-const IMGBB_API_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
+// Google Sheets ID (سيتم استخدامه فقط للتوثيق، التطبيق يتولى الأمر)
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // استبدلي هذا لاحقاً إذا أردت تسجيل البيانات
 
+// دالة لعرض الرسائل للمستخدم
 function showMessage(text, isError = false) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
@@ -62,129 +410,222 @@ function showMessage(text, isError = false) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-function previewImages() {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
-    
-    const hairFile = document.getElementById('hairImage').files[0];
-    const medicalFile = document.getElementById('medicalReport').files[0];
-    
-    if (hairFile) {
+// دالة لتحويل الملف (صورة) إلى نص Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.title = 'صورة الشعر';
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(hairFile);
-    }
-    
-    if (medicalFile) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.title = 'التحليل الطبي';
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(medicalFile);
-    }
-}
-
-document.getElementById('hairImage').addEventListener('change', previewImages);
-document.getElementById('medicalReport').addEventListener('change', previewImages);
-
-async function uploadToImgBB(file) {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', IMGBB_API_KEY);
-    
-    const response = await fetch('https://api.imgbb.com/1/upload', {
-        method: 'POST',
-        body: formData
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]); // نأخذ الجزء المشفر فقط
+        reader.onerror = error => reject(error);
     });
-    
-    const result = await response.json();
-    if (result.success) {
-        return result.data.url;
+}
+
+// دالة لتحديث حالة إجبارية التحليل الطبي بناءً على اختيار تساقط الشعر
+function updateMedicalRequirement() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const medicalRequiredLabel = document.getElementById('medicalRequiredLabel');
+    const medicalNote = document.getElementById('medicalNote');
+    if (isHairLoss && isHairLoss.value === 'نعم') {
+        medicalRequiredLabel.innerHTML = '(إجباري *)';
+        medicalRequiredLabel.style.color = '#c0392b';
+        medicalNote.innerHTML = '⚠️ يرجى رفع التحليل الطبي (إجباري)';
+        medicalNote.style.color = '#c0392b';
+        document.getElementById('medicalReport').required = true;
     } else {
-        throw new Error(result.error?.message || 'فشل رفع الصورة');
+        medicalRequiredLabel.innerHTML = '(اختياري)';
+        medicalRequiredLabel.style.color = '#7f8c8d';
+        medicalNote.innerHTML = '💚 التحليل الطبي غير مطلوب';
+        medicalNote.style.color = '#27ae60';
+        document.getElementById('medicalReport').required = false;
     }
 }
 
+// ربط دوال التحديث بأزرار الاختيار
+const hairLossYes = document.getElementById('hairLossYes');
+const hairLossNo = document.getElementById('hairLossNo');
+if (hairLossYes) hairLossYes.addEventListener('change', updateMedicalRequirement);
+if (hairLossNo) hairLossNo.addEventListener('change', updateMedicalRequirement);
+updateMedicalRequirement();
+
+// دالة للتحقق من صحة التحليل الطبي
+function isMedicalReportValid() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const hasHairLoss = isHairLoss && isHairLoss.value === 'نعم';
+    const medicalReportFile = document.getElementById('medicalReport').files[0];
+    if (hasHairLoss && !medicalReportFile) {
+        const medicalError = document.getElementById('medicalError');
+        medicalError.style.display = 'block';
+        setTimeout(() => medicalError.style.display = 'none', 5000);
+        showMessage('⚠️ يرجى رفع التحليل الطبي (إجباري لوجود تساقط شعر)', true);
+        return false;
+    }
+    return true;
+}
+
+// ========== إرسال الاستشارة ==========
 document.getElementById('sendBtn').onclick = async function() {
-    const name = document.getElementById('name').value.trim();
+    // جمع البيانات من الحقول
+    const name = document.getElementById('fullname').value.trim();
+    const age = document.getElementById('age').value.trim();
     const phone = document.getElementById('phone').value.trim();
-    const hairFile = document.getElementById('hairImage').files[0];
-    const medicalFile = document.getElementById('medicalReport').files[0];
-    
-    if (!name || !phone) {
-        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف', true);
+    const problem = document.getElementById('problem').value.trim();
+    const waterRadio = document.querySelector('input[name="water"]:checked');
+    const hairLossRadio = document.querySelector('input[name="hairLoss"]:checked');
+    const hairImageFile = document.getElementById('hairImage').files[0];
+    const medicalReportFile = document.getElementById('medicalReport').files[0];
+
+    // التحقق من الحقول الإجبارية
+    if (!name || !age || !phone) {
+        showMessage('⚠️ الرجاء تعبئة الاسم والعمر والهاتف', true);
         return;
     }
-    
-    const btn = document.getElementById('sendBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري رفع الصور...';
-    
+
+    // التحقق من صحة التحليل الطبي (في حالة وجود تساقط)
+    if (!isMedicalReportValid()) return;
+
+    const sendButton = document.getElementById('sendBtn');
+    sendButton.disabled = true;
+    sendButton.innerHTML = '<span class="loader"></span> جاري تجهيز التقرير وإرساله...';
+    showMessage('⏳ جاري رفع الصور وتجهيز التقرير، قد يستغرق دقيقة...');
+
     try {
-        showMessage('⏳ جاري رفع الصور...');
-        
-        let hairUrl = null;
-        let medicalUrl = null;
-        
-        if (hairFile) {
-            hairUrl = await uploadToImgBB(hairFile);
+        // تحويل الصور إلى Base64
+        let hairImageBase64 = '';
+        let medicalReportBase64 = '';
+
+        if (hairImageFile) {
+            hairImageBase64 = await fileToBase64(hairImageFile);
+            console.log('تم تحويل صورة الشعر إلى Base64');
         }
-        if (medicalFile) {
-            medicalUrl = await uploadToImgBB(medicalFile);
+        if (medicalReportFile) {
+            medicalReportBase64 = await fileToBase64(medicalReportFile);
+            console.log('تم تحويل التحليل الطبي إلى Base64');
         }
-        
-        // بناء نص الإيميل بشكل مباشر وبسيط
-        const emailContent = `
-الاسم: ${name}
-الهاتف: ${phone}
-التاريخ: ${new Date().toLocaleString('ar-EG')}
 
-================================
-
-📸 صورة الشعر:
-${hairUrl || 'لم يتم رفع صورة الشعر'}
-
-🩺 التحليل الطبي:
-${medicalUrl || 'لم يتم رفع التحليل الطبي'}
-
-================================
-
-هذا إرسال تجريبي من هبة سالم
-        `;
-        
-        // إرسال الإيميل
-        await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
-            name: name,
-            age: 'تجربة',
-            phone: phone,
-            problem: emailContent,
-            pdf_link: emailContent
+        // إرسال جميع البيانات إلى Google Apps Script
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // مهم لتجنب مشاكل CORS
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                age: age,
+                phone: phone,
+                water: waterRadio ? waterRadio.value : 'لم يحدد',
+                hairLoss: hairLossRadio ? hairLossRadio.value : 'لم يحدد',
+                problem: problem || 'لا يوجد',
+                hairImageBase64: hairImageBase64,
+                medicalReportBase64: medicalReportBase64
+            })
         });
+
+        // عرض رسالة النجاح للمستخدم
+        showMessage('✅ تم إرسال الاستشارة بنجاح! سيصلك ملف PDF على بريدك الإلكتروني خلال دقائق.');
         
-        showMessage(`✅ تم الإرسال!\nصورة الشعر: ${hairUrl || 'لا يوجد'}\nالتحليل: ${medicalUrl || 'لا يوجد'}`);
-        
-        document.getElementById('name').value = '';
+        // مسح الحقول (اختياري)
+        document.getElementById('fullname').value = '';
+        document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
+        document.getElementById('problem').value = '';
         document.getElementById('hairImage').value = '';
         document.getElementById('medicalReport').value = '';
-        document.getElementById('preview').innerHTML = '';
-        
+        document.querySelectorAll('input[name="water"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[name="hairLoss"]').forEach(r => r.checked = false);
+        updateMedicalRequirement(); // إعادة تعيين حالة التحليل الطبي
+
     } catch (error) {
-        console.error(error);
-        showMessage('❌ خطأ: ' + error.message, true);
+        console.error('Error sending consultation:', error);
+        showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = '📤 رفع الصور وإرسال الإيميل';
+        sendButton.disabled = false;
+        sendButton.innerHTML = '📤 إرسال الاستشارة';
     }
 };
+
+// Modal logic للصورة (اختياري، يمكن إزالته)
+const modal = document.getElementById('photoModal');
+const hairImageInput = document.getElementById('hairImage');
+let pendingSend = false;
+
+const sendBtn = document.getElementById('sendBtn');
+sendBtn.addEventListener('click', () => {
+    if (hairImageInput && hairImageInput.files.length === 0) {
+        if (modal) modal.style.display = 'flex';
+        pendingSend = true;
+        return;
+    }
+});
+
+if (document.getElementById('confirmSend')) {
+    document.getElementById('confirmSend').addEventListener('click', () => {
+        if (modal) modal.style.display = 'none';
+        if (pendingSend) sendBtn.click();
+    });
+}
+
+if (document.getElementById('addPhoto')) {
+    document.getElementById('addPhoto').addEventListener('click', () => {
+        if (modal) modal.style.display = 'none';
+        if (hairImageInput) hairImageInput.click();
+    });
+}
+
+window.addEventListener('click', (e) => {
+    if (modal && e.target === modal) modal.style.display = 'none';
+});
+
+// ========== حجز الموعد (إرسال إيميل تأكيد للعميل وإشعار لك) ==========
+// هذه الوظيفة ستعمل بشكل منفصل عن نظام PDF، يمكن تطويرها لاحقاً
+document.getElementById('bookNowBtn').onclick = async function() {
+    // هذه نسخة مبسطة لحجز الموعد، يمكن تطويرها لاحقاً لنفس نظام Apps Script
+    const name = document.getElementById('bookingName').value.trim();
+    const email = document.getElementById('bookingEmail').value.trim();
+    const phone = document.getElementById('bookingPhone').value.trim();
+    const date = document.getElementById('bookingDate').value;
+    const time = document.getElementById('bookingTime').value;
+    const consultType = document.getElementById('consultType').value;
+    const notes = document.getElementById('bookingNotes').value;
+
+    if (!name || !email || !phone || !date || !time) {
+        const errDiv = document.getElementById('bookingError');
+        errDiv.textContent = '⚠️ الرجاء تعبئة جميع الحقول الإجبارية';
+        errDiv.style.display = 'block';
+        setTimeout(() => errDiv.style.display = 'none', 4000);
+        return;
+    }
+
+    const bookBtn = document.getElementById('bookNowBtn');
+    bookBtn.disabled = true;
+    bookBtn.innerHTML = '<span class="loader"></span> جاري تأكيد الحجز...';
+    showMessage('⏳ جاري تأكيد حجز الموعد...');
+
+    try {
+        // هنا يمكن إرسال بيانات الحجز إلى Apps Script أيضاً لإنشاء تقرير PDF منفصل
+        // في الوقت الحالي، سنكتفي بإشعار بسيط
+        // await fetch(APPS_SCRIPT_URL, { method: 'POST', ... });
+        
+        showMessage('✅ تم حجز موعدك بنجاح! سيتم التواصل معك قريباً.');
+        document.getElementById('bookingSummary').style.display = 'block';
+        
+        // مسح الحقول
+        document.getElementById('bookingName').value = '';
+        document.getElementById('bookingEmail').value = '';
+        document.getElementById('bookingPhone').value = '';
+        document.getElementById('bookingDate').value = '';
+        document.getElementById('bookingTime').value = '';
+        document.getElementById('bookingNotes').value = '';
+        
+    } catch (error) {
+        console.error('Booking error:', error);
+        document.getElementById('bookingError').textContent = '❌ حدث خطأ، حاول مرة أخرى';
+        document.getElementById('bookingError').style.display = 'block';
+        showMessage('❌ فشل الحجز، حاول مرة أخرى', true);
+    } finally {
+        bookBtn.disabled = false;
+        bookBtn.innerHTML = '📅 تأكيد الحجز وإرسال التأكيد لبريدك';
+    }
+};
+document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
