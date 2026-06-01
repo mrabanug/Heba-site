@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة رفع الصور - هبة سالم</title>
+<title>تجربة رفع صورتين وإرسالها للإيميل</title>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
-.container{max-width:500px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
+.container{max-width:600px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
 h1{color:#324A3E;margin-bottom:20px;text-align:center;}
 label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-input{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;}
+input,textarea{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
 button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
 button:hover{background:#2D2D2A;}
-.result{background:#F7F5EB;padding:15px;border-radius:12px;margin-top:20px;display:none;}
-.result a{color:#324A3E;word-break:break-all;}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
+.preview{display:flex;gap:15px;margin-top:15px;flex-wrap:wrap;}
+.preview img{width:100px;height:100px;object-fit:cover;border-radius:12px;border:2px solid #A89676;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;text-align:center;}
 .toast.error{background:#c0392b;}
 .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
 @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
@@ -25,24 +25,34 @@ button:hover{background:#2D2D2A;}
 <body>
 
 <div class="container">
-    <h1>🧪 تجربة رفع الصور</h1>
-    <p style="text-align:center; color:#7f8c8d; margin-bottom:20px;">اختر صورة وسيتم رفعها إلى ImgBB</p>
+    <h1>🧪 تجربة رفع صورتين</h1>
+    <p style="text-align:center; color:#7f8c8d; margin-bottom:20px;">اختر صورتين وسيتم إرسالهما إلى بريدك الإلكتروني</p>
     
-    <label>📸 اختر صورة</label>
-    <input type="file" id="imageFile" accept="image/jpeg,image/png,image/jpg">
+    <label>👤 الاسم</label>
+    <input type="text" id="name" placeholder="الاسم الكامل">
     
-    <button id="uploadBtn">📤 رفع الصورة</button>
+    <label>📞 رقم الهاتف</label>
+    <input type="text" id="phone" placeholder="رقم الهاتف">
     
-    <div id="result" class="result">
-        <h3>✅ تم الرفع بنجاح</h3>
-        <p><strong>رابط الصورة:</strong></p>
-        <a href="#" id="imageLink" target="_blank"></a>
-    </div>
+    <label>📸 صورة الشعر (الصورة الأولى)</label>
+    <input type="file" id="hairImage" accept="image/jpeg,image/png,image/jpg">
+    
+    <label>🩺 التحليل الطبي (الصورة الثانية)</label>
+    <input type="file" id="medicalReport" accept="image/jpeg,image/png,image/jpg">
+    
+    <div class="preview" id="preview"></div>
+    
+    <button id="sendBtn">📤 رفع الصور وإرسال الإيميل</button>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
+// تهيئة EmailJS
+emailjs.init('k_uVBPGLWFluR9_gn');
+
+const SERVICE_ID = 'service_7zs119e';
+const ADMIN_TEMPLATE = 'template_5n5fn1o';
 const IMGBB_API_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 
 function showMessage(text, isError = false) {
@@ -50,51 +60,162 @@ function showMessage(text, isError = false) {
     toast.textContent = text;
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 3000);
+    setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-document.getElementById('uploadBtn').onclick = async function() {
-    const file = document.getElementById('imageFile').files[0];
+// معاينة الصور
+function previewImages() {
+    const preview = document.getElementById('preview');
+    preview.innerHTML = '';
     
-    if (!file) {
-        showMessage('⚠️ الرجاء اختيار صورة أولاً', true);
+    const hairFile = document.getElementById('hairImage').files[0];
+    const medicalFile = document.getElementById('medicalReport').files[0];
+    
+    if (hairFile) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.title = 'صورة الشعر';
+            preview.appendChild(img);
+        };
+        reader.readAsDataURL(hairFile);
+    }
+    
+    if (medicalFile) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.title = 'التحليل الطبي';
+            preview.appendChild(img);
+        };
+        reader.readAsDataURL(medicalFile);
+    }
+}
+
+document.getElementById('hairImage').addEventListener('change', previewImages);
+document.getElementById('medicalReport').addEventListener('change', previewImages);
+
+// رفع صورة واحدة إلى ImgBB
+async function uploadToImgBB(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('key', IMGBB_API_KEY);
+    
+    const response = await fetch('https://api.imgbb.com/1/upload', {
+        method: 'POST',
+        body: formData
+    });
+    
+    const result = await response.json();
+    if (result.success) {
+        return result.data.url;
+    } else {
+        throw new Error(result.error?.message || 'فشل رفع الصورة');
+    }
+}
+
+// رفع صورتين معاً
+async function uploadTwoImages(hairFile, medicalFile) {
+    const results = { hairUrl: null, medicalUrl: null };
+    
+    if (hairFile) {
+        results.hairUrl = await uploadToImgBB(hairFile);
+    }
+    if (medicalFile) {
+        results.medicalUrl = await uploadToImgBB(medicalFile);
+    }
+    
+    return results;
+}
+
+document.getElementById('sendBtn').onclick = async function() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const hairFile = document.getElementById('hairImage').files[0];
+    const medicalFile = document.getElementById('medicalReport').files[0];
+    
+    if (!name || !phone) {
+        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف', true);
         return;
     }
     
-    const btn = document.getElementById('uploadBtn');
+    if (!hairFile && !medicalFile) {
+        showMessage('⚠️ الرجاء اختيار صورة واحدة على الأقل', true);
+        return;
+    }
+    
+    const btn = document.getElementById('sendBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري الرفع...';
+    btn.innerHTML = '<span class="loader"></span> جاري رفع الصور وإرسال الإيميل...';
     
     try {
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('key', IMGBB_API_KEY);
+        showMessage('⏳ جاري رفع الصور إلى السحابة...');
         
-        const response = await fetch('https://api.imgbb.com/1/upload', {
-            method: 'POST',
-            body: formData
+        // رفع الصور إلى ImgBB
+        const imageUrls = await uploadTwoImages(hairFile, medicalFile);
+        
+        // بناء الإيميل HTML
+        const emailHTML = `
+            <div dir="rtl" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #F7F5EB; border-radius: 20px;">
+                <div style="background: #324A3E; padding: 30px; text-align: center; border-radius: 20px 20px 0 0;">
+                    <h1 style="color: #FFFFFF; margin: 0;">🧪 تجربة رفع صورتين</h1>
+                    <p style="color: #A89676; margin: 10px 0 0;">${new Date().toLocaleString('ar-EG')}</p>
+                </div>
+                <div style="background: white; padding: 25px; border-radius: 0 0 20px 20px;">
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px;">بيانات العميل</h2>
+                    <table style="width: 100%; margin-top: 15px;">
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>👤 الاسم:</strong></td><td style="padding: 8px;">${name}</td></tr>
+                        <tr><td style="padding: 8px; background: #F7F5EB; border-radius: 8px;"><strong>📞 الهاتف:</strong></td><td style="padding: 8px;">${phone}</td></tr>
+                    </table>
+                    
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px; margin-top: 25px;">📸 صورة الشعر</h2>
+                    ${imageUrls.hairUrl ? 
+                        `<div style="text-align: center; margin-top: 15px;">
+                            <a href="${imageUrls.hairUrl}" target="_blank" style="display: inline-block; background: #324A3E; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none;">🔗 اضغطي لفتح صورة الشعر</a>
+                        </div>` : 
+                        '<p style="color: #7f8c8d;">❌ لم يتم رفع صورة الشعر</p>'
+                    }
+                    
+                    <h2 style="color: #324A3E; border-right: 4px solid #A89676; padding-right: 15px; margin-top: 25px;">🩺 التحليل الطبي</h2>
+                    ${imageUrls.medicalUrl ? 
+                        `<div style="text-align: center; margin-top: 15px;">
+                            <a href="${imageUrls.medicalUrl}" target="_blank" style="display: inline-block; background: #A89676; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none;">🔗 اضغطي لفتح التحليل الطبي</a>
+                        </div>` : 
+                        '<p style="color: #7f8c8d;">❌ لم يتم رفع التحليل الطبي</p>'
+                    }
+                    
+                    <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0ddd0;">
+                    <p style="text-align: center; color: #A89676; font-size: 12px;">هذا إرسال تجريبي - هبة سالم</p>
+                </div>
+            </div>
+        `;
+        
+        // إرسال الإيميل
+        await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
+            name: name,
+            age: 'تجربة رفع صورتين',
+            phone: phone,
+            problem: 'تجربة ناجحة - تم رفع صورتين وإرسالهما',
+            pdf_link: emailHTML
         });
         
-        const result = await response.json();
+        showMessage('✅ تم الإرسال بنجاح! تفقد بريدك الإلكتروني mohammad.alazzawi@gmail.com');
         
-        if (result.success) {
-            const imageUrl = result.data.url;
-            
-            document.getElementById('imageLink').href = imageUrl;
-            document.getElementById('imageLink').textContent = imageUrl;
-            document.getElementById('result').style.display = 'block';
-            
-            showMessage('✅ تم رفع الصورة بنجاح!');
-        } else {
-            throw new Error(result.error?.message || 'فشل الرفع');
-        }
+        // تنظيف الحقول
+        document.getElementById('name').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('hairImage').value = '';
+        document.getElementById('medicalReport').value = '';
+        document.getElementById('preview').innerHTML = '';
         
     } catch (error) {
         console.error(error);
         showMessage('❌ خطأ: ' + error.message, true);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '📤 رفع الصورة';
+        btn.innerHTML = '📤 رفع الصور وإرسال الإيميل';
     }
 };
 </script>
