@@ -123,7 +123,6 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 <div id="photoModal" class="modal"><div class="modal-content"><p>📸 <strong>صورة الشعر غير إجبارية</strong></p><p>لكنها تساعد في تشخيص دقيق لحالتك.</p><div class="modal-buttons"><button id="confirmSend">متابعة بدون صورة</button><button id="addPhoto">📸 إضافة صورة</button></div></div></div>
 
 <script>
-const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkFZCibtu2aN__bD7MJVE8bDp09kjW618Kb3cEB-PlJjznKjIQDHwIGmC0PfLiXLAK/exec';
 
 // عداد الأحرف
@@ -141,22 +140,13 @@ function showMessage(text, isError) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-// رفع صورة إلى ImgBB
-async function uploadToImgBB(file) {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', IMGBB_KEY);
-    
-    const response = await fetch('https://api.imgbb.com/1/upload', {
-        method: 'POST',
-        body: formData
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
     });
-    const data = await response.json();
-    if (data.success) {
-        return data.data.url;
-    } else {
-        throw new Error('فشل رفع الصورة');
-    }
 }
 
 function updateMedicalRequirement() {
@@ -187,8 +177,8 @@ let pendingSend = false;
 async function performSend() {
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري رفع الصور وإرسال البيانات...';
-    showMessage('⏳ جاري رفع الصور...');
+    btn.innerHTML = '<span class="loader"></span> جاري تجهيز البيانات...';
+    showMessage('⏳ جاري تجهيز وإرسال الاستشارة...');
     
     try {
         const name = document.getElementById('fullname').value.trim();
@@ -212,18 +202,16 @@ async function performSend() {
         const hairImage = document.getElementById('hairImage').files[0];
         const medicalReport = document.getElementById('medicalReport').files[0];
         
-        // رفع الصور إلى ImgBB
-        let hairImageUrl = '';
-        let medicalReportUrl = '';
+        // تحويل الصور إلى Base64
+        let hairImageBase64 = '';
+        let medicalReportBase64 = '';
         
         if (hairImage) {
-            hairImageUrl = await uploadToImgBB(hairImage);
+            hairImageBase64 = await fileToBase64(hairImage);
         }
         if (medicalReport) {
-            medicalReportUrl = await uploadToImgBB(medicalReport);
+            medicalReportBase64 = await fileToBase64(medicalReport);
         }
-        
-        showMessage('⏳ جاري إرسال البيانات...');
         
         // إرسال البيانات إلى Google Apps Script
         await fetch(APPS_SCRIPT_URL, {
@@ -233,7 +221,7 @@ async function performSend() {
             body: JSON.stringify({
                 name, age, phone, email, date, time, consultType, notes,
                 water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
-                hairImageUrl, medicalReportUrl
+                hairImageBase64, medicalReportBase64
             })
         });
         
