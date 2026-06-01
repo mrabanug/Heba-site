@@ -155,10 +155,10 @@ function showMessage(text, isError = false) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-// إرسال البيانات إلى Google Sheets
+// إرسال البيانات إلى Google Sheets (بدون رابط PDF)
 async function sendToGoogleSheets(data) {
     try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
+        await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
@@ -250,6 +250,7 @@ document.getElementById('sendBtn').onclick = async function() {
     try {
         const pdfDataUrl = await generatePDF(data);
         
+        // إرسال إيميل للمسؤول مع PDF
         await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
             name: data.name,
             age: data.age,
@@ -258,6 +259,7 @@ document.getElementById('sendBtn').onclick = async function() {
             pdf_link: pdfDataUrl
         });
         
+        // إرسال البيانات إلى Google Sheets (بدون رابط PDF)
         await sendToGoogleSheets({
             name: data.name,
             age: data.age,
@@ -265,7 +267,6 @@ document.getElementById('sendBtn').onclick = async function() {
             water: data.water,
             hairLoss: data.hairLoss,
             problem: data.problem,
-            pdfLink: pdfDataUrl,
             type: "استشارة"
         });
         
@@ -274,6 +275,7 @@ document.getElementById('sendBtn').onclick = async function() {
         
         showMessage('✅ تم إرسال الاستشارة بنجاح!');
         
+        // تنظيف الحقول
         document.getElementById('fullname').value = '';
         document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
@@ -342,6 +344,7 @@ document.getElementById('bookNowBtn').onclick = async function() {
     btn.innerHTML = '<span class="loader"></span> جاري التأكيد...';
     
     try {
+        // إرسال إيميل تأكيد للزبون
         await emailjs.send(SERVICE_ID, CLIENT_BOOKING_TEMPLATE, {
             customer_email: email,
             customer_name: name,
@@ -351,22 +354,23 @@ document.getElementById('bookNowBtn').onclick = async function() {
             consult_type: consultType
         });
         
+        // إرسال إيميل للمسؤول
         await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, {
             name: name,
             age: 'حجز موعد',
             phone: phone,
             problem: `📅 حجز موعد\nالبريد: ${email}\nالتاريخ: ${date}\nالوقت: ${time}\nالاستشارة: ${consultType}\nملاحظات: ${notes || 'لا يوجد'}`,
-            pdf_link: 'https://hibasalem.com/booking'
+            pdf_link: 'تم الحجز - راجع البيانات أعلاه'
         });
         
+        // إرسال البيانات إلى Google Sheets (بدون رابط)
         await sendToGoogleSheets({
             name: name,
             age: 'حجز موعد',
             phone: phone,
             water: '-',
             hairLoss: '-',
-            problem: `حجز موعد: ${date} ${time} - ${consultType} - إيميل: ${email}`,
-            pdfLink: 'https://hibasalem.com/booking',
+            problem: `حجز موعد: ${date} ${time} - ${consultType} - إيميل: ${email} - ملاحظات: ${notes || 'لا يوجد'}`,
             type: "حجز موعد"
         });
         
@@ -376,6 +380,7 @@ document.getElementById('bookNowBtn').onclick = async function() {
         document.getElementById('bookingSummary').style.display = 'block';
         showMessage('✅ تم حجز موعدك بنجاح!');
         
+        // تنظيف الحقول
         document.getElementById('bookingName').value = '';
         document.getElementById('bookingEmail').value = '';
         document.getElementById('bookingPhone').value = '';
