@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة التذكير - 5 دقائق | هبة سالم</title>
+<title>تجربة التذكير - هبة سالم (متكامل)</title>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
@@ -25,16 +25,17 @@
 <body>
 
 <div class="container">
-    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الميت بعد 5 دقائق</div>
-    <h1>🔔 تجربة التذكير بـ 5 دقائق</h1>
+    <div class="test-badge">🧪 نظام متكامل - رابط Meet فريد لكل عميل</div>
+    <h1>🔔 تجربة الحجز والتذكير</h1>
     
     <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
     
     <div class="note">
-        🧪 هذه التجربة مخصصة للاختبار:<br>
-        1️⃣ إيميل تأكيد فوري ✅<br>
-        2️⃣ سيتم إرسال رابط الاستشارة <strong>بعد 5 دقائق من الآن</strong>.<br>
-        ⏰ يرجى مراقبة بريدك الإلكتروني (والبريد العشوائي).
+        🧪 هذه تجربة متكاملة:<br>
+        1️⃣ إيميل تأكيد فوري (مع رابط Meet فريد)<br>
+        2️⃣ إيميل تذكير قبل الموعد بـ 5 دقائق<br>
+        3️⃣ يتم إنشاء حدث في تقويم Google تلقائياً<br>
+        ⏰ سيتم حساب وقت الحجز تلقائياً (بعد 5 دقائق من الآن)
     </div>
     
     <label>الاسم الكامل</label>
@@ -43,21 +44,25 @@
     <label>رقم الهاتف</label>
     <input type="tel" id="phone" placeholder="0771234567">
     
-    <label>📧 البريد الإلكتروني (للتجربة)</label>
+    <label>📧 البريد الإلكتروني</label>
     <input type="email" id="email" placeholder="example@gmail.com">
     
-    <label>📅 التاريخ</label>
-    <input type="date" id="date">
+    <label>نوع الاستشارة</label>
+    <select id="consultType">
+        <option value="استشارة عامة للشعر">استشارة عامة للشعر</option>
+        <option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option>
+        <option value="علاج فروة الرأس">علاج فروة الرأس</option>
+        <option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option>
+    </select>
     
-    <button id="sendBtn">📤 إرسال تجربة التذكير (5 دقائق)</button>
+    <button id="sendBtn">📤 إرسال الاستشارة (تجربة متكاملة)</button>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbn_yHafH-8FPWUI1fBLkU-O5m3_vRNgEn115yYym9gvWzuOJY3-iZiciyTOzCuZlT/exec';
-const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzndADXqE4JFZUfB0z7TMabey9mAV8YhwFlyiiFiYoru1o7fVLQT_pZxLAwjb9i48Mv/exec';
 
 function getBaghdadTime() {
     const now = new Date();
@@ -78,48 +83,57 @@ function updateCurrentTimeDisplay() {
 updateCurrentTimeDisplay();
 setInterval(updateCurrentTimeDisplay, 60000);
 
-function setBaghdadDate() {
-    const now = getBaghdadTime();
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    document.getElementById('date').value = `${year}-${month}-${day}`;
+function formatTimeTo12Hour(time24) {
+    const [hours, minutes] = time24.split(':');
+    let hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'مساءً' : 'صباحاً';
+    let displayHour = hour % 12;
+    if (displayHour === 0) displayHour = 12;
+    return `${displayHour}:${minutes} ${ampm}`;
 }
-setBaghdadDate();
 
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 6000);
+    setTimeout(() => toast.style.display = 'none', 8000);
 }
 
 document.getElementById('sendBtn').onclick = async () => {
     const name = document.getElementById('name').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
-    const date = document.getElementById('date').value;
+    const consultType = document.getElementById('consultType').value;
     
-    if (!name || !phone || !email || !date) {
-        showMessage('⚠️ الرجاء تعبئة جميع الحقول', true);
+    if (!name || !phone || !email) {
+        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف والبريد', true);
         return;
     }
     if (!email.includes('@')) {
         showMessage('⚠️ بريد إلكتروني غير صحيح', true);
         return;
     }
+    if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
+        return;
+    }
     
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
+    btn.innerHTML = '<span class="loader"></span> جاري إنشاء رابط الاستشارة...';
     
     try {
         const now = getBaghdadTime();
         const futureTime = new Date(now.getTime() + 5 * 60000);
+        const year = futureTime.getFullYear();
+        const month = (futureTime.getMonth() + 1).toString().padStart(2, '0');
+        const day = futureTime.getDate().toString().padStart(2, '0');
         const hours = futureTime.getHours().toString().padStart(2, '0');
         const minutes = futureTime.getMinutes().toString().padStart(2, '0');
-        const appointmentTime = `${hours}:${minutes}`;
+        
+        const date = `${year}-${month}-${day}`;
+        const time = `${hours}:${minutes}`;
         
         await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
@@ -131,24 +145,22 @@ document.getElementById('sendBtn').onclick = async () => {
                 phone: phone,
                 email: email,
                 date: date,
-                time: appointmentTime,
-                consultType: 'تجربة 5 دقائق',
-                notes: 'تجربة',
+                time: time,
+                consultType: consultType,
+                notes: 'تجربة متكاملة',
                 water: '',
                 hairLoss: 'لا',
-                meetLink: MEET_LINK,
                 referenceNumber: phone
             })
         });
         
-        const reminderTime = new Date(now.getTime() + 5 * 60000);
-        const reminderHour = reminderTime.getHours();
-        const reminderMinute = reminderTime.getMinutes();
+        const reminderHour = futureTime.getHours();
+        const reminderMinute = futureTime.getMinutes();
         const ampm = reminderHour >= 12 ? 'مساءً' : 'صباحاً';
         let displayHour = reminderHour % 12;
         if (displayHour === 0) displayHour = 12;
         
-        showMessage(`✅ تم الإرسال! سيصلك إيميل التأكيد فوراً، وإيميل رابط الاستشارة بعد 5 دقائق (الساعة ${displayHour}:${reminderMinute.toString().padStart(2, '0')} ${ampm})`);
+        showMessage(`✅ تم الإرسال بنجاح! سيصلك إيميل تأكيد فوري، ثم إيميل تذكير بعد 5 دقائق (الساعة ${displayHour}:${reminderMinute.toString().padStart(2, '0')} ${ampm}) يحتوي رابط Google Meet الفريد.`);
         
         document.getElementById('name').value = '';
         document.getElementById('phone').value = '';
@@ -159,7 +171,7 @@ document.getElementById('sendBtn').onclick = async () => {
         showMessage('❌ حدث خطأ، حاول مرة أخرى', true);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '📤 إرسال تجربة التذكير (5 دقائق)';
+        btn.innerHTML = '📤 إرسال الاستشارة (تجربة متكاملة)';
     }
 };
 </script>
