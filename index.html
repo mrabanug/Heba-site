@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة التذكير - هبة سالم</title>
+<title>تجربة التذكير - هبة سالم (توقيت بغداد)</title>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
@@ -19,13 +19,16 @@
     @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
     .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
     .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
+    .current-time{background:#324A3E;color:white;padding:8px;border-radius:8px;margin-top:10px;text-align:center;font-size:14px;}
 </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="test-badge">🧪 صفحة تجريبية - اختبار وصول رابط الميت</div>
+    <div class="test-badge">🧪 صفحة تجريبية - توقيت بغداد (GMT+3)</div>
     <h1>🔔 تجربة التذكير قبل الموعد</h1>
+    
+    <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
     
     <div class="note">
         ⏰ سيتم إرسال إيميلين:<br>
@@ -45,13 +48,13 @@
     <label>📅 التاريخ</label>
     <input type="date" id="date">
     
-    <label>⏰ الوقت</label>
+    <label>⏰ الوقت (بتوقيت بغداد)</label>
     <select id="time">
         <option value="">-- اختر الوقت --</option>
     </select>
     
     <div class="note" id="timeNote" style="display:none; margin-top:10px;">
-        ✅ الوقت المختار مناسب للتجربة (سيتم إرسال التذكير بعد دقيقتين)
+        ✅ هذا الوقت مناسب للتجربة (سيتم إرسال التذكير بعد دقيقتين)
     </div>
     
     <button id="sendBtn">📤 إرسال تجربة التذكير</button>
@@ -60,22 +63,38 @@
 <div id="toast" class="toast"></div>
 
 <script>
+// ==================== توقيت بغداد (GMT+3) ====================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPjv8IG8W2J0-uGl-JO9cezsmJJrWvGAuaaCiiZFRtXozID3NG0oBlMGnWQPqIaQAm/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
-function showMessage(text, isError) {
-    const toast = document.getElementById('toast');
-    toast.textContent = text;
-    toast.className = 'toast' + (isError ? ' error' : '');
-    toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 4000);
+// الحصول على الوقت الحالي بتوقيت بغداد
+function getBaghdadTime() {
+    const now = new Date();
+    const baghdadTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
+    return baghdadTime;
 }
 
-function formatTimeTo12Hour(time24) {
+// عرض الوقت الحالي بتوقيت بغداد
+function updateCurrentTimeDisplay() {
+    const now = getBaghdadTime();
+    const hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'مساءً' : 'صباحاً';
+    let displayHour = hours % 12;
+    if (displayHour === 0) displayHour = 12;
+    const timeString = `${displayHour}:${minutes} ${ampm}`;
+    const dateString = now.toLocaleDateString('ar-EG');
+    document.getElementById('currentTimeDisplay').innerHTML = `🕐 الوقت الآن بتوقيت بغداد: ${dateString} - ${timeString}`;
+}
+updateCurrentTimeDisplay();
+setInterval(updateCurrentTimeDisplay, 60000); // تحديث كل دقيقة
+
+// تحويل الوقت (24 ساعة) إلى صيغة صباحاً/مساءً فقط
+function formatTimeToBaghdadStyle(time24) {
     if (!time24) return '';
     const [hours, minutes] = time24.split(':');
     let hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'ظهراً' : 'صباحاً';
+    const ampm = hour >= 12 ? 'مساءً' : 'صباحاً';
     let displayHour = hour % 12;
     if (displayHour === 0) displayHour = 12;
     return `${displayHour}:${minutes} ${ampm}`;
@@ -84,23 +103,22 @@ function formatTimeTo12Hour(time24) {
 // إنشاء الأوقات (كل ساعة من 00:00 إلى 23:00)
 function populateTimes() {
     const timeSelect = document.getElementById('time');
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
+    const now = getBaghdadTime();
     
-    // وقت بعد دقيقتين
+    // وقت بعد دقيقتين من الآن بتوقيت بغداد
     const futureTime = new Date(now.getTime() + 2 * 60000);
     const futureHour = futureTime.getHours().toString().padStart(2, '0');
     const futureMinute = futureTime.getMinutes().toString().padStart(2, '0');
     const futureTimeString = `${futureHour}:${futureMinute}`;
     
-    // إضافة الأوقات
+    // إضافة جميع الأوقات (كل ساعة)
+    timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
     for (let i = 0; i < 24; i++) {
         const hour = i.toString().padStart(2, '0');
         const timeString = `${hour}:00`;
         const option = document.createElement('option');
         option.value = timeString;
-        let displayText = formatTimeTo12Hour(timeString);
+        let displayText = formatTimeToBaghdadStyle(timeString);
         
         if (timeString === futureTimeString) {
             displayText += ' (⏰ بعد دقيقتين - مثالي للتجربة)';
@@ -109,19 +127,32 @@ function populateTimes() {
         timeSelect.appendChild(option);
     }
     
-    // تحديد الوقت المناسب تلقائياً (بعد دقيقتين)
-    if (futureTimeString) {
-        timeSelect.value = futureTimeString;
-        document.getElementById('timeNote').style.display = 'block';
-    }
+    // تحديد الوقت المناسب تلقائياً
+    timeSelect.value = futureTimeString;
+    document.getElementById('timeNote').style.display = 'block';
 }
 
-// تعيين التاريخ (اليوم)
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('date').value = today;
-document.getElementById('date').min = '2023-01-01';
+// تعيين التاريخ (اليوم بتوقيت بغداد)
+function setBaghdadDate() {
+    const now = getBaghdadTime();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const todayBaghdad = `${year}-${month}-${day}`;
+    document.getElementById('date').value = todayBaghdad;
+    document.getElementById('date').min = '2023-01-01';
+}
 
+setBaghdadDate();
 populateTimes();
+
+function showMessage(text, isError) {
+    const toast = document.getElementById('toast');
+    toast.textContent = text;
+    toast.className = 'toast' + (isError ? ' error' : '');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 4000);
+}
 
 document.getElementById('sendBtn').onclick = async () => {
     const name = document.getElementById('name').value.trim();
@@ -168,9 +199,10 @@ document.getElementById('sendBtn').onclick = async () => {
             })
         });
         
-        showMessage('✅ تم الإرسال! تفقد بريدك الإلكتروني، سيصلك تأكيد فوري وتذكير بعد دقيقتين.');
+        const timeDisplay = formatTimeToBaghdadStyle(time24);
+        showMessage(`✅ تم الإرسال! سيصلك تأكيد فوري، ثم تذكير بعد دقيقتين عند الساعة ${timeDisplay}`);
         
-        // تنظيف الحقول
+        // تنظيف الحقول (نترك الاسم والهاتف والبريد لسهولة التجربة مرة أخرى)
         document.getElementById('name').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('email').value = '';
