@@ -64,7 +64,7 @@
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzy5sVhw6FHrZPvwLEBtvQ1xkZbvxBsyYcEuTg0pQLYoA5aOeEjOR9ZUAKvpQcx9CqN/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNLW9sUFO0T2N4Sqfp_FrcaDiUzpEsJs_rS-AIVtWH6BR1_LZvZeYMxpWleaO4_pv4zQ/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 // الحصول على الوقت الحالي بتوقيت بغداد
@@ -100,38 +100,21 @@ function formatTimeToBaghdadStyle(time24) {
     return `${displayHour}:${minutes} ${ampm}`;
 }
 
-// إنشاء الأوقات المتاحة (فقط الأوقات القادمة بعد الوقت الحالي)
+// إنشاء الأوقات المتاحة
 function populateTimes() {
     const timeSelect = document.getElementById('time');
     const now = getBaghdadTime();
     const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
     
     timeSelect.innerHTML = '<option value="">-- اختر الوقت (للسجل فقط) --</option>';
     
-    let hasAvailableTime = false;
-    
     for (let i = currentHour; i < 24; i++) {
         const hour = i.toString().padStart(2, '0');
-        
-        let startMinute = 0;
-        if (i === currentHour) {
-            startMinute = currentMinute + 1;
-        }
-        
-        if (startMinute <= 0) {
-            const timeString = `${hour}:00`;
-            const option = document.createElement('option');
-            option.value = timeString;
-            let displayText = formatTimeToBaghdadStyle(timeString);
-            option.textContent = displayText;
-            timeSelect.appendChild(option);
-            hasAvailableTime = true;
-        }
-    }
-    
-    if (!hasAvailableTime) {
-        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة اليوم</option>';
+        const timeString = `${hour}:00`;
+        const option = document.createElement('option');
+        option.value = timeString;
+        option.textContent = formatTimeToBaghdadStyle(timeString);
+        timeSelect.appendChild(option);
     }
     
     document.getElementById('timeNote').style.display = 'block';
@@ -181,7 +164,7 @@ document.getElementById('sendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
     
     try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
