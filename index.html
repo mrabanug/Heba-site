@@ -5,38 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>هبة سالم | استشارات وحجز مواعيد</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
-.hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
-.hero h1{font-size:42px;}
-.hero p{color:#A89676;margin-top:12px;}
-.hero button{padding:14px 32px;border:none;border-radius:40px;background:#A89676;color:#FFF;font-weight:bold;cursor:pointer;margin-top:20px;}
-.container{max-width:950px;margin:auto;padding:30px 20px;}
-.box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
-h2{color:#324A3E;margin-bottom:20px;font-size:22px;border-bottom:2px solid #A89676;display:inline-block;padding-bottom:6px;}
-h3{color:#324A3E;margin:15px 0 10px;font-size:18px;}
-label{display:block;margin-top:12px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
-.radio-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
-.radio-group label{display:inline-block;margin-left:20px;font-weight:normal;}
-.radio-group label input{width:auto;margin-left:5px;display:inline;}
-.required{color:#c0392b;font-size:12px;}
-.optional{color:#7f8c8d;font-size:12px;}
-.file-input{background:#F7F5EB;padding:10px;border-radius:12px;margin:10px 0;}
-.submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
-.submit:disabled{opacity:0.5;cursor:not-allowed;}
-.booking-row{display:flex;gap:15px;flex-wrap:wrap;}
-.booking-row > div{flex:1;min-width:150px;}
-.date-picker,.time-picker{background:#F7F5EB;border:1.5px solid #e0ddd0;border-radius:12px;padding:12px;width:100%;}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;z-index:1000;display:none;text-align:center;max-width:90%;}
-.toast.error{background:#c0392b;}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-.hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
-.upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
-.upload-status.success{background:#d4edda;color:#155724;}
-.upload-status.error{background:#f8d7da;color:#721c24;}
-.upload-status.loading{background:#fff3cd;color:#856404;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+    .hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
+    .hero h1{font-size:42px;}
+    .hero p{color:#A89676;margin-top:12px;}
+    .hero button{padding:14px 32px;border:none;border-radius:40px;background:#A89676;color:#FFF;font-weight:bold;cursor:pointer;margin-top:20px;}
+    .container{max-width:950px;margin:auto;padding:30px 20px;}
+    .box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
+    h2{color:#324A3E;margin-bottom:20px;font-size:22px;border-bottom:2px solid #A89676;display:inline-block;padding-bottom:6px;}
+    h3{color:#324A3E;margin:15px 0 10px;font-size:18px;}
+    label{display:block;margin-top:12px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
+    input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
+    .radio-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
+    .radio-group label{display:inline-block;margin-left:20px;font-weight:normal;}
+    .radio-group label input{width:auto;margin-left:5px;display:inline;}
+    .required{color:#c0392b;font-size:12px;}
+    .optional{color:#7f8c8d;font-size:12px;}
+    .file-input{background:#F7F5EB;padding:10px;border-radius:12px;margin:10px 0;}
+    .submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
+    .submit:disabled{opacity:0.5;cursor:not-allowed;}
+    .booking-row{display:flex;gap:15px;flex-wrap:wrap;}
+    .booking-row > div{flex:1;min-width:150px;}
+    .date-picker,.time-picker{background:#F7F5EB;border:1.5px solid #e0ddd0;border-radius:12px;padding:12px;width:100%;}
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;z-index:1000;display:none;text-align:center;max-width:90%;}
+    .toast.error{background:#c0392b;}
+    .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
+    .upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
+    .upload-status.success{background:#d4edda;color:#155724;}
+    .upload-status.error{background:#f8d7da;color:#721c24;}
+    .upload-status.loading{background:#fff3cd;color:#856404;}
 </style>
 </head>
 <body>
@@ -48,92 +48,91 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 </div>
 
 <div class="container" id="form-start">
-<div class="box">
-<h2>📋 استمارة التشخيص وحجز الموعد</h2>
+    <div class="box">
+        <h2>📋 استمارة التشخيص وحجز الموعد</h2>
 
-<label>الاسم الكامل <span class="required">*</span></label>
-<input type="text" id="fullname" placeholder="الاسم الكامل">
+        <label>الاسم الكامل <span class="required">*</span></label>
+        <input type="text" id="fullname" placeholder="الاسم الكامل">
 
-<label>العمر <span class="required">*</span></label>
-<input type="number" id="age" placeholder="العمر">
+        <label>العمر <span class="required">*</span></label>
+        <input type="number" id="age" placeholder="العمر">
 
-<label>رقم الهاتف <span class="required">*</span></label>
-<input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
-<div class="hint">📞 10 أرقام بالضبط (هذا هو رقمك المرجعي)</div>
+        <label>رقم الهاتف <span class="required">*</span></label>
+        <input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
+        <div class="hint">📞 10 أرقام بالضبط (هذا هو رقمك المرجعي)</div>
 
-<label>البريد الإلكتروني <span class="optional">(اختياري - لكن يفضل الإدخال لتلقي رابط الاستشارة)</span></label>
-<input type="email" id="email" placeholder="example@gmail.com">
-<div class="hint">📧 سيصلك رابط جلسة الاستشارة قبل الموعد بـ 5 دقائق</div>
+        <label>البريد الإلكتروني <span class="optional">(اختياري - لكن يفضل الإدخال لتلقي رابط الاستشارة)</span></label>
+        <input type="email" id="email" placeholder="example@gmail.com">
+        <div class="hint">📧 سيصلك رابط جلسة الاستشارة قبل الموعد بـ 5 دقائق</div>
 
-<div class="booking-row">
-    <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
-    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">⏳ اختاري التاريخ أولاً</option></select></div>
-</div>
+        <div class="booking-row">
+            <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
+            <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">⏳ اختاري التاريخ أولاً</option></select></div>
+        </div>
 
-<label>نوع الاستشارة <span class="required">*</span></label>
-<select id="consultType">
-    <option value="استشارة عامة للشعر">استشارة عامة للشعر</option>
-    <option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option>
-    <option value="علاج فروة الرأس">علاج فروة الرأس</option>
-    <option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option>
-</select>
+        <label>نوع الاستشارة <span class="required">*</span></label>
+        <select id="consultType">
+            <option value="استشارة عامة للشعر">استشارة عامة للشعر</option>
+            <option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option>
+            <option value="علاج فروة الرأس">علاج فروة الرأس</option>
+            <option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option>
+        </select>
 
-<label>كمية شرب الماء يومياً</label>
-<div class="radio-group">
-    <label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label>
-    <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label>
-    <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
-</div>
+        <label>كمية شرب الماء يومياً</label>
+        <div class="radio-group">
+            <label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label>
+            <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label>
+            <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
+        </div>
 
-<label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label>
-<div class="radio-group">
-    <label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label>
-    <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label>
-</div>
+        <label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label>
+        <div class="radio-group">
+            <label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label>
+            <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label>
+        </div>
 
-<h3>📋 أسئلة إضافية</h3>
-<div class="radio-group"><label>مشاكل متكررة في الجهاز الهضمي؟</label><br><label><input type="radio" name="digestive" value="نعم"> نعم</label> <label><input type="radio" name="digestive" value="لا"> لا</label></div>
-<div class="radio-group"><label>إرهاق مستمر أو ضعف عام في الجسم؟</label><br><label><input type="radio" name="fatigue" value="نعم"> نعم</label> <label><input type="radio" name="fatigue" value="لا"> لا</label></div>
-<div class="radio-group"><label>تكسر سريع في الأظافر أو بقع بيضاء؟</label><br><label><input type="radio" name="nails" value="نعم"> نعم</label> <label><input type="radio" name="nails" value="لا"> لا</label></div>
-<div class="radio-group"><label>حمية غذائية قاسية أو نقص مخزون الحديد؟</label><br><label><input type="radio" name="diet" value="نعم"> نعم</label> <label><input type="radio" name="diet" value="لا"> لا</label></div>
-<div class="radio-group"><label>يخف الشعر بسرعة بعد الاستحمام؟</label><br><label><input type="radio" name="quickDry" value="نعم"> نعم</label> <label><input type="radio" name="quickDry" value="لا"> لا</label></div>
-<div class="radio-group"><label>يأخذ وقتاً طويلاً ليجف وتراكم المنتجات؟</label><br><label><input type="radio" name="slowDry" value="نعم"> نعم</label> <label><input type="radio" name="slowDry" value="لا"> لا</label></div>
+        <h3>📋 أسئلة إضافية</h3>
+        <div class="radio-group"><label>مشاكل متكررة في الجهاز الهضمي؟</label><br><label><input type="radio" name="digestive" value="نعم"> نعم</label> <label><input type="radio" name="digestive" value="لا"> لا</label></div>
+        <div class="radio-group"><label>إرهاق مستمر أو ضعف عام في الجسم؟</label><br><label><input type="radio" name="fatigue" value="نعم"> نعم</label> <label><input type="radio" name="fatigue" value="لا"> لا</label></div>
+        <div class="radio-group"><label>تكسر سريع في الأظافر أو بقع بيضاء؟</label><br><label><input type="radio" name="nails" value="نعم"> نعم</label> <label><input type="radio" name="nails" value="لا"> لا</label></div>
+        <div class="radio-group"><label>حمية غذائية قاسية أو نقص مخزون الحديد؟</label><br><label><input type="radio" name="diet" value="نعم"> نعم</label> <label><input type="radio" name="diet" value="لا"> لا</label></div>
+        <div class="radio-group"><label>يخف الشعر بسرعة بعد الاستحمام؟</label><br><label><input type="radio" name="quickDry" value="نعم"> نعم</label> <label><input type="radio" name="quickDry" value="لا"> لا</label></div>
+        <div class="radio-group"><label>يأخذ وقتاً طويلاً ليجف وتراكم المنتجات؟</label><br><label><input type="radio" name="slowDry" value="نعم"> نعم</label> <label><input type="radio" name="slowDry" value="لا"> لا</label></div>
 
-<label>ملاحظات إضافية <span class="optional">(اختياري - حد أقصى 50 حرف)</span></label>
-<textarea id="notes" maxlength="50" rows="2" placeholder="50 حرف كحد أقصى"></textarea>
-<div class="hint" id="charCount">💬 0 / 50 حرف</div>
+        <label>ملاحظات إضافية <span class="optional">(اختياري - حد أقصى 50 حرف)</span></label>
+        <textarea id="notes" maxlength="50" rows="2" placeholder="50 حرف كحد أقصى"></textarea>
+        <div class="hint" id="charCount">💬 0 / 50 حرف</div>
 
-<div class="file-input">
-    <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
-    <input type="file" id="hairImage" accept="image/*">
-    <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
-</div>
-<div class="file-input">
-    <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
-    <input type="file" id="medicalReport" accept="image/*,.pdf">
-    <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
-    <div id="medicalNote" class="hint">💡 إجباري فقط إذا كان تساقط الشعر = نعم</div>
-    <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ يجب رفع التحليل الطبي</div>
-</div>
+        <div class="file-input">
+            <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
+            <input type="file" id="hairImage" accept="image/*">
+            <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
+        </div>
+        <div class="file-input">
+            <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
+            <input type="file" id="medicalReport" accept="image/*,.pdf">
+            <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
+            <div id="medicalNote" class="hint">💡 إجباري فقط إذا كان تساقط الشعر = نعم</div>
+            <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ يجب رفع التحليل الطبي</div>
+        </div>
 
-<button class="submit" id="finalSendBtn">📤 إرسال الاستشارة وتأكيد الحجز</button>
-</div>
+        <button class="submit" id="finalSendBtn">📤 إرسال الاستشارة وتأكيد الحجز</button>
+    </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
 // ==================== الإعدادات ====================
+// الرابط الجديد لتطبيق Google Apps Script
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPjv8IG8W2J0-uGl-JO9cezsmJJrWvGAuaaCiiZFRtXozID3NG0oBlMGnWQPqIaQAm/exec';
 const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkFZCibtu2aN__bD7MJVE8bDp09kjW618Kb3cEB-PlJjznKjIQDHwIGmC0PfLiXLAK/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
-// متغيرات تخزين مؤقتة
 let uploadedHairImageUrl = '';
 let uploadedMedicalReportUrl = '';
 let bookedTimes = {};
 
-// ==================== دوال مساعدة ====================
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
@@ -142,7 +141,6 @@ function showMessage(text, isError) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-// تحويل الوقت من 24 إلى 12 ساعة (صباحاً/مساءً)
 function formatTimeTo12Hour(time24) {
     if (!time24) return '';
     const [hours, minutes] = time24.split(':');
@@ -153,7 +151,6 @@ function formatTimeTo12Hour(time24) {
     return `${displayHour}:${minutes} ${ampm}`;
 }
 
-// رفع صورة إلى ImgBB
 async function uploadToImgBB(file, statusElementId) {
     const statusDiv = document.getElementById(statusElementId);
     statusDiv.style.display = 'block';
@@ -165,10 +162,7 @@ async function uploadToImgBB(file, statusElementId) {
     formData.append('key', IMGBB_KEY);
     
     try {
-        const response = await fetch('https://api.imgbb.com/1/upload', {
-            method: 'POST',
-            body: formData
-        });
+        const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
         const data = await response.json();
         if (data.success) {
             statusDiv.className = 'upload-status success';
@@ -184,35 +178,26 @@ async function uploadToImgBB(file, statusElementId) {
     }
 }
 
-// رفع تلقائي للصور عند الاختيار
 document.getElementById('hairImage').addEventListener('change', async (e) => {
     if (e.target.files.length > 0) {
-        try {
-            uploadedHairImageUrl = await uploadToImgBB(e.target.files[0], 'hairImageStatus');
-        } catch (error) {
-            uploadedHairImageUrl = '';
-        }
+        try { uploadedHairImageUrl = await uploadToImgBB(e.target.files[0], 'hairImageStatus'); } 
+        catch (error) { uploadedHairImageUrl = ''; }
     }
 });
 
 document.getElementById('medicalReport').addEventListener('change', async (e) => {
     if (e.target.files.length > 0) {
-        try {
-            uploadedMedicalReportUrl = await uploadToImgBB(e.target.files[0], 'medicalReportStatus');
-        } catch (error) {
-            uploadedMedicalReportUrl = '';
-        }
+        try { uploadedMedicalReportUrl = await uploadToImgBB(e.target.files[0], 'medicalReportStatus'); } 
+        catch (error) { uploadedMedicalReportUrl = ''; }
     }
 });
 
-// عداد الأحرف
 const notesField = document.getElementById('notes');
 const charCountSpan = document.getElementById('charCount');
 notesField.addEventListener('input', function() {
     charCountSpan.innerHTML = `💬 ${this.value.length} / 50 حرف`;
 });
 
-// تحديث حالة إجبارية التحليل الطبي
 function updateMedicalRequirement() {
     const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
     const label = document.getElementById('medicalRequiredLabel');
@@ -234,47 +219,28 @@ document.getElementById('hairLossYes')?.addEventListener('change', updateMedical
 document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
 updateMedicalRequirement();
 
-// التحقق من رقم الهاتف
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// جلب الأوقات المحجوزة من Google Sheets
 async function fetchBookedTimes(date) {
     try {
         const response = await fetch(`${APPS_SCRIPT_URL}?action=getBookedTimes&date=${date}`);
         const data = await response.json();
-        if (data.status === 'success') {
-            bookedTimes = data.bookedTimes || {};
-        }
-    } catch (error) {
-        console.error('Error fetching booked times:', error);
-        bookedTimes = {};
-    }
+        if (data.status === 'success') { bookedTimes = data.bookedTimes || {}; }
+    } catch (error) { console.error('Error fetching booked times:', error); bookedTimes = {}; }
 }
 
-// تحميل الأوقات المتاحة
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
-    
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
-    
-    // جلب الأوقات المحجوزة لهذا اليوم
     await fetchBookedTimes(date);
-    
-    // الأوقات المتاحة (كل ساعة كاملة)
-    const allTimes = [
-        '10:00', '11:00', '12:00', '13:00', '14:00'
-    ];
-    
-    // تصفية الأوقات غير المحجوزة
+    const allTimes = ['10:00', '11:00', '12:00', '13:00', '14:00'];
     const availableTimes = allTimes.filter(time => !bookedTimes[time]);
-    
     if (availableTimes.length === 0) {
         timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
         return;
     }
-    
     timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
     availableTimes.forEach(time => {
         const option = document.createElement('option');
@@ -286,7 +252,6 @@ async function loadAvailableTimes() {
 
 document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
 
-// ==================== إرسال الاستشارة النهائي ====================
 document.getElementById('finalSendBtn').onclick = async () => {
     const name = document.getElementById('fullname').value.trim();
     const age = document.getElementById('age').value.trim();
@@ -319,23 +284,19 @@ document.getElementById('finalSendBtn').onclick = async () => {
         return;
     }
     
-    // التحقق من أن الوقت لا يزال متاحاً (لم يُحجز أثناء الكتابة)
     await fetchBookedTimes(date);
     if (bookedTimes[time24]) {
         showMessage('⚠️ عذراً، هذا الوقت تم حجزه من قبل مستخدم آخر. الرجاء اختيار وقت آخر.', true);
-        loadAvailableTimes(); // إعادة تحميل الأوقات المتاحة
+        loadAvailableTimes();
         return;
     }
     
-    // التحقق من التحليل الطبي
     if (hairLoss === 'نعم' && !uploadedMedicalReportUrl) {
         document.getElementById('medicalError').style.display = 'block';
         setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
         showMessage('⚠️ يرجى رفع التحليل الطبي', true);
         return;
     }
-    
-    const time12 = formatTimeTo12Hour(time24);
     
     const btn = document.getElementById('finalSendBtn');
     btn.disabled = true;
@@ -358,8 +319,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
         });
         
         showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
-        
-        // مسح الحقول
         document.getElementById('fullname').value = '';
         document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
@@ -376,7 +335,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
         document.getElementById('hairImageStatus').style.display = 'none';
         document.getElementById('medicalReportStatus').style.display = 'none';
         updateMedicalRequirement();
-        
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
@@ -386,10 +344,8 @@ document.getElementById('finalSendBtn').onclick = async () => {
     }
 };
 
-// تعيين الحد الأدنى للتاريخ
 document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
 </script>
-<!-- EmailJS Library -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init('k_uVBPGLWFluR9_gn');</script>
 </body>
