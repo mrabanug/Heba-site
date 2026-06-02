@@ -64,7 +64,7 @@
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNLW9sUFO0T2N4Sqfp_FrcaDiUzpEsJs_rS-AIVtWH6BR1_LZvZeYMxpWleaO4_pv4zQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsPVTTUImZ2B8rb5deIB0tINdULpXAqRRllxsVr74m4uxUNtJPQLBvt5x_-8u3thlA7g/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 // الحصول على الوقت الحالي بتوقيت بغداد
@@ -164,7 +164,7 @@ document.getElementById('sendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
     
     try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
