@@ -43,10 +43,6 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 .upload-status.success{background:#d4edda;color:#155724;}
 .upload-status.error{background:#f8d7da;color:#721c24;}
 .upload-status.loading{background:#fff3cd;color:#856404;}
-.btn-secondary{background:#A89676;margin-top:10px;}
-.btn-secondary:hover{background:#8a7658;}
-.code-input{display:flex;gap:10px;margin:10px 0;}
-.code-input input{width:60px;text-align:center;font-size:24px;padding:10px;}
 </style>
 </head>
 <body>
@@ -69,27 +65,15 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
-<div class="hint">📞 يجب أن يكون 10 أرقام بالضبط (الرقم المرجعي الخاص بك)</div>
+<div class="hint">📞 10 أرقام بالضبط (هذا هو رقمك المرجعي)</div>
 
-<label>البريد الإلكتروني <span class="required">*</span></label>
+<label>البريد الإلكتروني <span class="optional">(اختياري - يفضل الإدخال لتلقي رابط الاستشارة)</span></label>
 <input type="email" id="email" placeholder="example@gmail.com">
-<div class="hint">📧 سيتم إرسال كود تأكيد إلى هذا البريد</div>
-
-<div id="emailVerifySection" style="display:none;">
-    <label>📧 أدخل كود التأكيد (4 أرقام)</label>
-    <div class="code-input">
-        <input type="text" maxlength="1" class="code-digit" data-index="0">
-        <input type="text" maxlength="1" class="code-digit" data-index="1">
-        <input type="text" maxlength="1" class="code-digit" data-index="2">
-        <input type="text" maxlength="1" class="code-digit" data-index="3">
-    </div>
-    <button id="verifyCodeBtn" class="submit btn-secondary" style="margin-top:10px;">✅ تحقق من الكود</button>
-    <div id="codeError" style="color:#c0392b;font-size:12px;display:none;"></div>
-</div>
+<div class="hint">📧 يُنصح بإدخال بريدك الإلكتروني لتلقي رابط جلسة الاستشارة قبل الموعد بـ 10 دقائق</div>
 
 <div class="booking-row">
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
-    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"></select></div>
+    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">⏳ اختاري التاريخ أولاً</option></select></div>
 </div>
 
 <label>نوع الاستشارة <span class="required">*</span></label>
@@ -138,8 +122,7 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ يجب رفع التحليل الطبي</div>
 </div>
 
-<button class="submit" id="sendEmailCodeBtn">📧 إرسال كود التأكيد إلى البريد الإلكتروني</button>
-<button class="submit" id="finalSendBtn" style="background:#A89676;" disabled>📤 إرسال الاستشارة وتأكيد الحجز</button>
+<button class="submit" id="finalSendBtn">📤 إرسال الاستشارة وتأكيد الحجز</button>
 </div>
 </div>
 
@@ -149,12 +132,11 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 // ==================== الإعدادات ====================
 const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkFZCibtu2aN__bD7MJVE8bDp09kjW618Kb3cEB-PlJjznKjIQDHwIGmC0PfLiXLAK/exec';
+const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
-// متغيرات التخزين المؤقت
+// متغيرات تخزين مؤقتة
 let uploadedHairImageUrl = '';
 let uploadedMedicalReportUrl = '';
-let verificationCode = '';
-let isEmailVerified = false;
 
 // ==================== دوال مساعدة ====================
 function showMessage(text, isError) {
@@ -163,6 +145,17 @@ function showMessage(text, isError) {
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
     setTimeout(() => toast.style.display = 'none', 5000);
+}
+
+// تحويل الوقت من 24 إلى 12 ساعة (صباحاً/مساءً)
+function formatTimeTo12Hour(time24) {
+    const [hours, minutes] = time24.split(':');
+    let hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'ظهراً' : 'صباحاً';
+    if (hour > 12) hour -= 12;
+    if (hour === 0) hour = 12;
+    if (hour === 12 && ampm === 'ظهراً') hour = 12;
+    return `${hour}:${minutes} ${ampm}`;
 }
 
 // رفع صورة إلى ImgBB
@@ -196,7 +189,7 @@ async function uploadToImgBB(file, statusElementId) {
     }
 }
 
-// رفع تلقائي للصور عند اختيارها
+// رفع تلقائي للصور عند الاختيار
 document.getElementById('hairImage').addEventListener('change', async (e) => {
     if (e.target.files.length > 0) {
         try {
@@ -249,98 +242,41 @@ updateMedicalRequirement();
 // التحقق من رقم الهاتف
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// توليد كود عشوائي من 4 أرقام
-function generateCode() {
-    return Math.floor(1000 + Math.random() * 9000).toString();
+// تحميل الأوقات المتاحة (محاكاة، سيتم تطويرها لاحقاً مع Google Sheets)
+async function loadAvailableTimes() {
+    const date = document.getElementById('bookingDate').value;
+    if (!date) return;
+    
+    const timeSelect = document.getElementById('bookingTime');
+    timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
+    
+    // الأوقات المتاحة (10:00 صباحاً - 2:00 ظهراً بفارق 15 دقيقة)
+    const allTimes = [
+        '10:00', '10:15', '10:30', '10:45',
+        '11:00', '11:15', '11:30', '11:45',
+        '12:00', '12:15', '12:30', '12:45',
+        '13:00', '13:15', '13:30', '13:45'
+    ];
+    
+    timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
+    allTimes.forEach(time => {
+        const option = document.createElement('option');
+        option.value = time;
+        option.textContent = formatTimeTo12Hour(time);
+        timeSelect.appendChild(option);
+    });
 }
 
-// إرسال كود التأكيد إلى البريد الإلكتروني
-document.getElementById('sendEmailCodeBtn').onclick = async () => {
-    const email = document.getElementById('email').value.trim();
-    
-    if (!email) {
-        showMessage('⚠️ الرجاء إدخال البريد الإلكتروني أولاً', true);
-        return;
-    }
-    if (!email.includes('@') || !email.includes('.')) {
-        showMessage('⚠️ بريد إلكتروني غير صحيح', true);
-        return;
-    }
-    
-    const btn = document.getElementById('sendEmailCodeBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري إرسال الكود...';
-    
-    try {
-        verificationCode = generateCode();
-        
-        // إرسال الكود عبر EmailJS
-        await emailjs.send('service_7zs119e', 'template_nyt2zee', {
-            to_email: email,
-            name: 'الزبون',
-            code: verificationCode
-        });
-        
-        showMessage('✅ تم إرسال كود التأكيد إلى بريدك الإلكتروني');
-        document.getElementById('emailVerifySection').style.display = 'block';
-        
-        // إعادة تعيين حقول الكود
-        document.querySelectorAll('.code-digit').forEach(input => input.value = '');
-        document.getElementById('codeError').style.display = 'none';
-        isEmailVerified = false;
-        document.getElementById('finalSendBtn').disabled = true;
-        
-    } catch (error) {
-        console.error(error);
-        showMessage('❌ فشل إرسال الكود. تأكد من صحة البريد الإلكتروني', true);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '📧 إرسال كود التأكيد إلى البريد الإلكتروني';
-    }
-};
-
-// التنقل بين حقول الكود
-document.querySelectorAll('.code-digit').forEach((input, index) => {
-    input.addEventListener('input', (e) => {
-        if (e.target.value.length === 1 && index < 3) {
-            document.querySelector(`.code-digit[data-index="${index + 1}"]`).focus();
-        }
-    });
-});
-
-// التحقق من الكود
-document.getElementById('verifyCodeBtn').onclick = () => {
-    let enteredCode = '';
-    document.querySelectorAll('.code-digit').forEach(input => {
-        enteredCode += input.value;
-    });
-    
-    if (enteredCode === verificationCode) {
-        isEmailVerified = true;
-        document.getElementById('codeError').style.display = 'none';
-        document.getElementById('finalSendBtn').disabled = false;
-        showMessage('✅ تم تأكيد البريد الإلكتروني بنجاح! يمكنك الآن إرسال الاستشارة');
-    } else {
-        isEmailVerified = false;
-        document.getElementById('finalSendBtn').disabled = true;
-        document.getElementById('codeError').style.display = 'block';
-        document.getElementById('codeError').innerHTML = '⚠️ كود التأكيد غير صحيح. تأكد من كتابته بشكل صحيح. إذا لم يصلك الكود، تأكد من صحة بريدك الإلكتروني';
-    }
-};
+document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
 
 // ==================== إرسال الاستشارة النهائي ====================
 document.getElementById('finalSendBtn').onclick = async () => {
-    if (!isEmailVerified) {
-        showMessage('⚠️ الرجاء تأكيد البريد الإلكتروني أولاً', true);
-        return;
-    }
-    
     const name = document.getElementById('fullname').value.trim();
     const age = document.getElementById('age').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
     const date = document.getElementById('bookingDate').value;
-    const time = document.getElementById('bookingTime').value;
+    const time24 = document.getElementById('bookingTime').value;
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
     
@@ -353,7 +289,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    if (!name || !age || !phone || !date || !time) {
+    if (!name || !age || !phone || !date || !time24) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
     }
@@ -374,6 +310,8 @@ document.getElementById('finalSendBtn').onclick = async () => {
         return;
     }
     
+    const time12 = formatTimeTo12Hour(time24);
+    
     const btn = document.getElementById('finalSendBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الاستشارة...';
@@ -385,10 +323,12 @@ document.getElementById('finalSendBtn').onclick = async () => {
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                name, age, phone, email, date, time, consultType, notes,
+                name, age, phone, email, date, time: time12, consultType, notes,
                 water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
                 hairImageUrl: uploadedHairImageUrl,
-                medicalReportUrl: uploadedMedicalReportUrl
+                medicalReportUrl: uploadedMedicalReportUrl,
+                meetLink: MEET_LINK,
+                referenceNumber: phone
             })
         });
         
@@ -400,21 +340,17 @@ document.getElementById('finalSendBtn').onclick = async () => {
         document.getElementById('phone').value = '';
         document.getElementById('email').value = '';
         document.getElementById('bookingDate').value = '';
-        document.getElementById('bookingTime').value = '';
+        document.getElementById('bookingTime').innerHTML = '<option value="">⏳ اختاري التاريخ أولاً</option>';
         document.getElementById('notes').value = '';
         document.getElementById('hairImage').value = '';
         document.getElementById('medicalReport').value = '';
         document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
         charCountSpan.innerHTML = '💬 0 / 50 حرف';
-        document.getElementById('emailVerifySection').style.display = 'none';
-        document.querySelectorAll('.code-digit').forEach(input => input.value = '');
         uploadedHairImageUrl = '';
         uploadedMedicalReportUrl = '';
         document.getElementById('hairImageStatus').style.display = 'none';
         document.getElementById('medicalReportStatus').style.display = 'none';
         updateMedicalRequirement();
-        isEmailVerified = false;
-        document.getElementById('finalSendBtn').disabled = true;
         
     } catch (error) {
         console.error(error);
@@ -427,43 +363,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
 
 // تعيين الحد الأدنى للتاريخ
 document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
-
-// تحميل الأوقات المتاحة
-async function loadAvailableTimes() {
-    const date = document.getElementById('bookingDate').value;
-    if (!date) return;
-    
-    const timeSelect = document.getElementById('bookingTime');
-    timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
-    
-    // الأوقات المتاحة (10:00 صباحاً - 2:00 ظهراً بفارق 15 دقيقة)
-    const allTimes = [
-        '10:00', '10:15', '10:30', '10:45',
-        '11:00', '11:15', '11:30', '11:45',
-        '12:00', '12:15', '12:30', '12:45',
-        '13:00', '13:15', '13:30', '13:45'
-    ];
-    
-    // تحويل الأوقات إلى نص عربي
-    const timeNames = {
-        '10:00': '10:00 صباحاً', '10:15': '10:15 صباحاً', '10:30': '10:30 صباحاً', '10:45': '10:45 صباحاً',
-        '11:00': '11:00 صباحاً', '11:15': '11:15 صباحاً', '11:30': '11:30 صباحاً', '11:45': '11:45 صباحاً',
-        '12:00': '12:00 ظهراً', '12:15': '12:15 ظهراً', '12:30': '12:30 ظهراً', '12:45': '12:45 ظهراً',
-        '13:00': '01:00 ظهراً', '13:15': '01:15 ظهراً', '13:30': '01:30 ظهراً', '13:45': '01:45 ظهراً'
-    };
-    
-    // محاكاة جلب الأوقات المحجوزة من Google Sheets (سيتم تطويرها لاحقاً)
-    // حالياً نعرض جميع الأوقات متاحة
-    timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
-    allTimes.forEach(time => {
-        const option = document.createElement('option');
-        option.value = time;
-        option.textContent = timeNames[time];
-        timeSelect.appendChild(option);
-    });
-}
-
-document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
 </script>
 <!-- EmailJS Library -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
