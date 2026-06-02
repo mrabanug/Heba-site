@@ -25,7 +25,7 @@
 <body>
 
 <div class="container">
-    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الميت قبل 5 دقائق</div>
+    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الميت بعد 5 دقائق</div>
     <h1>🔔 تجربة التذكير بـ 5 دقائق</h1>
     
     <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
@@ -33,8 +33,8 @@
     <div class="note">
         🧪 هذه التجربة مخصصة للاختبار:<br>
         1️⃣ إيميل تأكيد فوري ✅<br>
-        2️⃣ سيتم جدولة إرسال رابط الاستشارة <strong>بعد 5 دقائق من الآن</strong>.<br>
-        ⏰ يرجى مراقبة بريدك الإلكتروني.
+        2️⃣ سيتم إرسال رابط الاستشارة <strong>بعد 5 دقائق من الآن</strong>.<br>
+        ⏰ يرجى مراقبة بريدك الإلكتروني (والبريد العشوائي).
     </div>
     
     <label>الاسم الكامل</label>
@@ -56,7 +56,7 @@
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGT225jjTMV9ZXlV-hnZ1tON1z1zJFyolFJuRKicteQ4g8i6aux8EXx-BTbQunrFea/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbn_yHafH-8FPWUI1fBLkU-O5m3_vRNgEn115yYym9gvWzuOJY3-iZiciyTOzCuZlT/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 function getBaghdadTime() {
@@ -115,7 +115,6 @@ document.getElementById('sendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
     
     try {
-        // حساب وقت الحجز (الوقت الحالي + 5 دقائق)
         const now = getBaghdadTime();
         const futureTime = new Date(now.getTime() + 5 * 60000);
         const hours = futureTime.getHours().toString().padStart(2, '0');
@@ -151,7 +150,6 @@ document.getElementById('sendBtn').onclick = async () => {
         
         showMessage(`✅ تم الإرسال! سيصلك إيميل التأكيد فوراً، وإيميل رابط الاستشارة بعد 5 دقائق (الساعة ${displayHour}:${reminderMinute.toString().padStart(2, '0')} ${ampm})`);
         
-        // تنظيف الحقول
         document.getElementById('name').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('email').value = '';
