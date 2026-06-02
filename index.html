@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تجربة التذكير - هبة سالم (توقيت بغداد)</title>
-<style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
-    .container{max-width:600px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-    h1{color:#324A3E;margin-bottom:20px;text-align:center;}
-    label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-    input,select{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;margin-bottom:10px;}
-    button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px;}
-    button:hover{background:#2D2D2A;}
-    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
-    .toast.error{background:#c0392b;}
-    .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-    .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
-    .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
-    .current-time{background:#324A3E;color:white;padding:8px;border-radius:8px;margin-top:10px;text-align:center;font-size:14px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تجربة التذكير - هبة سالم</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
+        .container{max-width:550px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
+        h1{color:#324A3E;margin-bottom:20px;text-align:center;}
+        label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
+        input,select{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;margin-bottom:10px;}
+        button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px;}
+        button:hover{background:#2D2D2A;}
+        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
+        .toast.error{background:#c0392b;}
+        .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
+        @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+        .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
+        .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
+        .current-time{background:#324A3E;color:white;padding:8px;border-radius:8px;margin-top:10px;text-align:center;font-size:14px;}
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="test-badge">🧪 صفحة تجريبية - توقيت بغداد (GMT+3)</div>
-    <h1>🔔 تجربة إرسال رابط الاستشارة</h1>
+    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الاستشارة فوراً</div>
+    <h1>🔔 تجربة وصول رابط الميت</h1>
     
     <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
     
     <div class="note">
-        ⏰ ستجري التجربة كالتالي:<br>
-        1️⃣ سيصلك <strong>إيميل تأكيد فوري</strong>.<br>
-        2️⃣ بعد <strong>دقيقتين بالضبط</strong>، سيصلك <strong>إيميل ثانٍ يحتوي رابط Google Meet</strong>.
+        🔬 هذه تجربة نهائية للتأكد من أن النظام يرسل الإيميلين معاً.<br>
+        1️⃣ إيميل تأكيد فوري<br>
+        2️⃣ إيميل رابط الاستشارة (يُرسل فوراً أيضاً)
     </div>
     
     <label>الاسم الكامل</label>
@@ -48,11 +48,6 @@
     <label>📅 التاريخ</label>
     <input type="date" id="date">
     
-    <label>⏰ الوقت (اختياري - لأغراض السجل فقط)</label>
-    <select id="time">
-        <option value="">-- اختر الوقت --</option>
-    </select>
-    
     <button id="sendBtn">📤 إرسال تجربة التذكير</button>
 </div>
 
@@ -60,17 +55,14 @@
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSIpr4f0qmPE6GaVfbsDQBt1ZtTUHsDTCw1H9aGAo-uvs4CxaljT9czoQdos5v6IUS/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLC8pF5UBe41bVpxBoFa1WRnM_TM41-Z_PP1LBeMPiLI5r2cWj2KI1oUjVyEkQtqpe/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
-// الحصول على الوقت الحالي بتوقيت بغداد
 function getBaghdadTime() {
     const now = new Date();
-    const baghdadTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
-    return baghdadTime;
+    return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
 }
 
-// عرض الوقت الحالي بتوقيت بغداد
 function updateCurrentTimeDisplay() {
     const now = getBaghdadTime();
     const hours = now.getHours();
@@ -85,48 +77,14 @@ function updateCurrentTimeDisplay() {
 updateCurrentTimeDisplay();
 setInterval(updateCurrentTimeDisplay, 60000);
 
-// تحويل الوقت (24 ساعة) إلى صيغة صباحاً/مساءً فقط
-function formatTimeToBaghdadStyle(time24) {
-    if (!time24) return '';
-    const [hours, minutes] = time24.split(':');
-    let hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'مساءً' : 'صباحاً';
-    let displayHour = hour % 12;
-    if (displayHour === 0) displayHour = 12;
-    return `${displayHour}:${minutes} ${ampm}`;
-}
-
-// إنشاء الأوقات المتاحة
-function populateTimes() {
-    const timeSelect = document.getElementById('time');
-    const now = getBaghdadTime();
-    const currentHour = now.getHours();
-    
-    timeSelect.innerHTML = '<option value="">-- اختر الوقت (للسجل فقط) --</option>';
-    
-    for (let i = currentHour; i < 24; i++) {
-        const hour = i.toString().padStart(2, '0');
-        const timeString = `${hour}:00`;
-        const option = document.createElement('option');
-        option.value = timeString;
-        option.textContent = formatTimeToBaghdadStyle(timeString);
-        timeSelect.appendChild(option);
-    }
-}
-
-// تعيين التاريخ (اليوم بتوقيت بغداد)
 function setBaghdadDate() {
     const now = getBaghdadTime();
     const year = now.getFullYear();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
-    const todayBaghdad = `${year}-${month}-${day}`;
-    document.getElementById('date').value = todayBaghdad;
-    document.getElementById('date').min = '2023-01-01';
+    document.getElementById('date').value = `${year}-${month}-${day}`;
 }
-
 setBaghdadDate();
-populateTimes();
 
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
@@ -141,13 +99,11 @@ document.getElementById('sendBtn').onclick = async () => {
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
     const date = document.getElementById('date').value;
-    const time24 = document.getElementById('time').value;
     
     if (!name || !phone || !email || !date) {
-        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف والبريد والتاريخ', true);
+        showMessage('⚠️ الرجاء تعبئة جميع الحقول', true);
         return;
     }
-    
     if (!email.includes('@')) {
         showMessage('⚠️ بريد إلكتروني غير صحيح', true);
         return;
@@ -168,7 +124,7 @@ document.getElementById('sendBtn').onclick = async () => {
                 phone: phone,
                 email: email,
                 date: date,
-                time: time24 || '12:00',
+                time: '12:00',
                 consultType: 'تجربة تذكير',
                 notes: 'تجربة',
                 water: '',
@@ -178,7 +134,7 @@ document.getElementById('sendBtn').onclick = async () => {
             })
         });
         
-        showMessage(`✅ تم الإرسال! سيصلك إيميل تأكيد فوري، ثم إيميل رابط الاستشارة بعد دقيقتين بالضبط.`);
+        showMessage(`✅ تم الإرسال! سيصلك إيميل التأكيد وإيميل رابط الاستشارة فوراً.`);
         
         // تنظيف الحقول
         document.getElementById('name').value = '';
