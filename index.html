@@ -1,39 +1,40 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تجربة التذكير - هبة سالم</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
-        .container{max-width:550px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-        h1{color:#324A3E;margin-bottom:20px;text-align:center;}
-        label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-        input,select{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;margin-bottom:10px;}
-        button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px;}
-        button:hover{background:#2D2D2A;}
-        .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
-        .toast.error{background:#c0392b;}
-        .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-        @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-        .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
-        .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
-        .current-time{background:#324A3E;color:white;padding:8px;border-radius:8px;margin-top:10px;text-align:center;font-size:14px;}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تجربة التذكير - 5 دقائق | هبة سالم</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
+    .container{max-width:550px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
+    h1{color:#324A3E;margin-bottom:20px;text-align:center;}
+    label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
+    input,select{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;margin-bottom:10px;}
+    button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px;}
+    button:hover{background:#2D2D2A;}
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
+    .toast.error{background:#c0392b;}
+    .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
+    .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
+    .current-time{background:#324A3E;color:white;padding:8px;border-radius:8px;margin-top:10px;text-align:center;font-size:14px;}
+</style>
 </head>
 <body>
 
 <div class="container">
-    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الاستشارة فوراً</div>
-    <h1>🔔 تجربة وصول رابط الميت</h1>
+    <div class="test-badge">🧪 صفحة تجريبية - إرسال رابط الميت قبل 5 دقائق</div>
+    <h1>🔔 تجربة التذكير بـ 5 دقائق</h1>
     
     <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
     
     <div class="note">
-        🔬 هذه تجربة نهائية للتأكد من أن النظام يرسل الإيميلين معاً.<br>
-        1️⃣ إيميل تأكيد فوري<br>
-        2️⃣ إيميل رابط الاستشارة (يُرسل فوراً أيضاً)
+        🧪 هذه التجربة مخصصة للاختبار:<br>
+        1️⃣ إيميل تأكيد فوري ✅<br>
+        2️⃣ سيتم جدولة إرسال رابط الاستشارة <strong>بعد 5 دقائق من الآن</strong>.<br>
+        ⏰ يرجى مراقبة بريدك الإلكتروني.
     </div>
     
     <label>الاسم الكامل</label>
@@ -48,14 +49,14 @@
     <label>📅 التاريخ</label>
     <input type="date" id="date">
     
-    <button id="sendBtn">📤 إرسال تجربة التذكير</button>
+    <button id="sendBtn">📤 إرسال تجربة التذكير (5 دقائق)</button>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLC8pF5UBe41bVpxBoFa1WRnM_TM41-Z_PP1LBeMPiLI5r2cWj2KI1oUjVyEkQtqpe/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGT225jjTMV9ZXlV-hnZ1tON1z1zJFyolFJuRKicteQ4g8i6aux8EXx-BTbQunrFea/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 function getBaghdadTime() {
@@ -91,7 +92,7 @@ function showMessage(text, isError) {
     toast.textContent = text;
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 4000);
+    setTimeout(() => toast.style.display = 'none', 6000);
 }
 
 document.getElementById('sendBtn').onclick = async () => {
@@ -114,6 +115,13 @@ document.getElementById('sendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
     
     try {
+        // حساب وقت الحجز (الوقت الحالي + 5 دقائق)
+        const now = getBaghdadTime();
+        const futureTime = new Date(now.getTime() + 5 * 60000);
+        const hours = futureTime.getHours().toString().padStart(2, '0');
+        const minutes = futureTime.getMinutes().toString().padStart(2, '0');
+        const appointmentTime = `${hours}:${minutes}`;
+        
         await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -124,8 +132,8 @@ document.getElementById('sendBtn').onclick = async () => {
                 phone: phone,
                 email: email,
                 date: date,
-                time: '12:00',
-                consultType: 'تجربة تذكير',
+                time: appointmentTime,
+                consultType: 'تجربة 5 دقائق',
                 notes: 'تجربة',
                 water: '',
                 hairLoss: 'لا',
@@ -134,7 +142,14 @@ document.getElementById('sendBtn').onclick = async () => {
             })
         });
         
-        showMessage(`✅ تم الإرسال! سيصلك إيميل التأكيد وإيميل رابط الاستشارة فوراً.`);
+        const reminderTime = new Date(now.getTime() + 5 * 60000);
+        const reminderHour = reminderTime.getHours();
+        const reminderMinute = reminderTime.getMinutes();
+        const ampm = reminderHour >= 12 ? 'مساءً' : 'صباحاً';
+        let displayHour = reminderHour % 12;
+        if (displayHour === 0) displayHour = 12;
+        
+        showMessage(`✅ تم الإرسال! سيصلك إيميل التأكيد فوراً، وإيميل رابط الاستشارة بعد 5 دقائق (الساعة ${displayHour}:${reminderMinute.toString().padStart(2, '0')} ${ampm})`);
         
         // تنظيف الحقول
         document.getElementById('name').value = '';
@@ -146,7 +161,7 @@ document.getElementById('sendBtn').onclick = async () => {
         showMessage('❌ حدث خطأ، حاول مرة أخرى', true);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '📤 إرسال تجربة التذكير';
+        btn.innerHTML = '📤 إرسال تجربة التذكير (5 دقائق)';
     }
 };
 </script>
