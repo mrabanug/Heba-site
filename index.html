@@ -24,7 +24,7 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 .optional{color:#7f8c8d;font-size:12px;}
 .file-input{background:#F7F5EB;padding:10px;border-radius:12px;margin:10px 0;}
 .submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
-.submit:hover{background:#2D2D2A;}
+.submit:disabled{opacity:0.5;cursor:not-allowed;}
 .booking-row{display:flex;gap:15px;flex-wrap:wrap;}
 .booking-row > div{flex:1;min-width:150px;}
 .date-picker,.time-picker{background:#F7F5EB;border:1.5px solid #e0ddd0;border-radius:12px;padding:12px;width:100%;}
@@ -39,6 +39,14 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
 @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
 .hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
+.upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
+.upload-status.success{background:#d4edda;color:#155724;}
+.upload-status.error{background:#f8d7da;color:#721c24;}
+.upload-status.loading{background:#fff3cd;color:#856404;}
+.btn-secondary{background:#A89676;margin-top:10px;}
+.btn-secondary:hover{background:#8a7658;}
+.code-input{display:flex;gap:10px;margin:10px 0;}
+.code-input input{width:60px;text-align:center;font-size:24px;padding:10px;}
 </style>
 </head>
 <body>
@@ -61,14 +69,27 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
-<div class="hint">📞 يجب أن يكون 10 أرقام بالضبط</div>
+<div class="hint">📞 يجب أن يكون 10 أرقام بالضبط (الرقم المرجعي الخاص بك)</div>
 
 <label>البريد الإلكتروني <span class="required">*</span></label>
 <input type="email" id="email" placeholder="example@gmail.com">
+<div class="hint">📧 سيتم إرسال كود تأكيد إلى هذا البريد</div>
+
+<div id="emailVerifySection" style="display:none;">
+    <label>📧 أدخل كود التأكيد (4 أرقام)</label>
+    <div class="code-input">
+        <input type="text" maxlength="1" class="code-digit" data-index="0">
+        <input type="text" maxlength="1" class="code-digit" data-index="1">
+        <input type="text" maxlength="1" class="code-digit" data-index="2">
+        <input type="text" maxlength="1" class="code-digit" data-index="3">
+    </div>
+    <button id="verifyCodeBtn" class="submit btn-secondary" style="margin-top:10px;">✅ تحقق من الكود</button>
+    <div id="codeError" style="color:#c0392b;font-size:12px;display:none;"></div>
+</div>
 
 <div class="booking-row">
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
-    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">-- اختر الوقت --</option><option value="10:00">10:00 صباحاً</option><option value="11:00">11:00 صباحاً</option><option value="12:00">12:00 ظهراً</option><option value="13:00">01:00 ظهراً</option><option value="14:00">02:00 ظهراً</option><option value="15:00">03:00 عصراً</option><option value="16:00">04:00 عصراً</option><option value="17:00">05:00 مساءً</option><option value="18:00">06:00 مساءً</option></select></div>
+    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"></select></div>
 </div>
 
 <label>نوع الاستشارة <span class="required">*</span></label>
@@ -107,31 +128,35 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 <div class="file-input">
     <label>📸 صورة الشعر <span class="optional">(اختياري)</span></label>
     <input type="file" id="hairImage" accept="image/*">
+    <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
 </div>
 <div class="file-input">
     <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
     <input type="file" id="medicalReport" accept="image/*,.pdf">
+    <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
     <div id="medicalNote" class="hint">💡 إجباري فقط إذا كان تساقط الشعر = نعم</div>
     <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ يجب رفع التحليل الطبي</div>
 </div>
 
-<button class="submit" id="sendBtn">📤 إرسال الاستشارة وتأكيد الحجز</button>
+<button class="submit" id="sendEmailCodeBtn">📧 إرسال كود التأكيد إلى البريد الإلكتروني</button>
+<button class="submit" id="finalSendBtn" style="background:#A89676;" disabled>📤 إرسال الاستشارة وتأكيد الحجز</button>
 </div>
 </div>
 
 <div id="toast" class="toast"></div>
-<div id="photoModal" class="modal"><div class="modal-content"><p>📸 <strong>صورة الشعر غير إجبارية</strong></p><p>لكنها تساعد في تشخيص دقيق لحالتك.</p><div class="modal-buttons"><button id="confirmSend">متابعة بدون صورة</button><button id="addPhoto">📸 إضافة صورة</button></div></div></div>
 
 <script>
+// ==================== الإعدادات ====================
+const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkFZCibtu2aN__bD7MJVE8bDp09kjW618Kb3cEB-PlJjznKjIQDHwIGmC0PfLiXLAK/exec';
 
-// عداد الأحرف
-const notesField = document.getElementById('notes');
-const charCountSpan = document.getElementById('charCount');
-notesField.addEventListener('input', function() {
-    charCountSpan.innerHTML = `💬 ${this.value.length} / 50 حرف`;
-});
+// متغيرات التخزين المؤقت
+let uploadedHairImageUrl = '';
+let uploadedMedicalReportUrl = '';
+let verificationCode = '';
+let isEmailVerified = false;
 
+// ==================== دوال مساعدة ====================
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
@@ -140,15 +165,66 @@ function showMessage(text, isError) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-    });
+// رفع صورة إلى ImgBB
+async function uploadToImgBB(file, statusElementId) {
+    const statusDiv = document.getElementById(statusElementId);
+    statusDiv.style.display = 'block';
+    statusDiv.className = 'upload-status loading';
+    statusDiv.innerHTML = '⏳ جاري رفع الصورة...';
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('key', IMGBB_KEY);
+    
+    try {
+        const response = await fetch('https://api.imgbb.com/1/upload', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.success) {
+            statusDiv.className = 'upload-status success';
+            statusDiv.innerHTML = '✅ تم رفع الصورة بنجاح';
+            return data.data.url;
+        } else {
+            throw new Error('فشل الرفع');
+        }
+    } catch (error) {
+        statusDiv.className = 'upload-status error';
+        statusDiv.innerHTML = '❌ فشل رفع الصورة، حاول مرة أخرى';
+        throw error;
+    }
 }
 
+// رفع تلقائي للصور عند اختيارها
+document.getElementById('hairImage').addEventListener('change', async (e) => {
+    if (e.target.files.length > 0) {
+        try {
+            uploadedHairImageUrl = await uploadToImgBB(e.target.files[0], 'hairImageStatus');
+        } catch (error) {
+            uploadedHairImageUrl = '';
+        }
+    }
+});
+
+document.getElementById('medicalReport').addEventListener('change', async (e) => {
+    if (e.target.files.length > 0) {
+        try {
+            uploadedMedicalReportUrl = await uploadToImgBB(e.target.files[0], 'medicalReportStatus');
+        } catch (error) {
+            uploadedMedicalReportUrl = '';
+        }
+    }
+});
+
+// عداد الأحرف
+const notesField = document.getElementById('notes');
+const charCountSpan = document.getElementById('charCount');
+notesField.addEventListener('input', function() {
+    charCountSpan.innerHTML = `💬 ${this.value.length} / 50 حرف`;
+});
+
+// تحديث حالة إجبارية التحليل الطبي
 function updateMedicalRequirement() {
     const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
     const label = document.getElementById('medicalRequiredLabel');
@@ -170,50 +246,140 @@ document.getElementById('hairLossYes')?.addEventListener('change', updateMedical
 document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
 updateMedicalRequirement();
 
+// التحقق من رقم الهاتف
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-let pendingSend = false;
+// توليد كود عشوائي من 4 أرقام
+function generateCode() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
 
-async function performSend() {
-    const btn = document.getElementById('sendBtn');
+// إرسال كود التأكيد إلى البريد الإلكتروني
+document.getElementById('sendEmailCodeBtn').onclick = async () => {
+    const email = document.getElementById('email').value.trim();
+    
+    if (!email) {
+        showMessage('⚠️ الرجاء إدخال البريد الإلكتروني أولاً', true);
+        return;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+        showMessage('⚠️ بريد إلكتروني غير صحيح', true);
+        return;
+    }
+    
+    const btn = document.getElementById('sendEmailCodeBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري تجهيز البيانات...';
-    showMessage('⏳ جاري تجهيز وإرسال الاستشارة...');
+    btn.innerHTML = '<span class="loader"></span> جاري إرسال الكود...';
     
     try {
-        const name = document.getElementById('fullname').value.trim();
-        const age = document.getElementById('age').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const date = document.getElementById('bookingDate').value;
-        const time = document.getElementById('bookingTime').value;
-        const consultType = document.getElementById('consultType').value;
-        const notes = document.getElementById('notes').value.trim();
+        verificationCode = generateCode();
         
-        const water = document.querySelector('input[name="water"]:checked')?.value || '';
-        const hairLoss = document.querySelector('input[name="hairLoss"]:checked')?.value || '';
-        const digestive = document.querySelector('input[name="digestive"]:checked')?.value || '';
-        const fatigue = document.querySelector('input[name="fatigue"]:checked')?.value || '';
-        const nails = document.querySelector('input[name="nails"]:checked')?.value || '';
-        const diet = document.querySelector('input[name="diet"]:checked')?.value || '';
-        const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
-        const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
+        // إرسال الكود عبر EmailJS
+        await emailjs.send('service_7zs119e', 'template_nyt2zee', {
+            to_email: email,
+            name: 'الزبون',
+            code: verificationCode
+        });
         
-        const hairImage = document.getElementById('hairImage').files[0];
-        const medicalReport = document.getElementById('medicalReport').files[0];
+        showMessage('✅ تم إرسال كود التأكيد إلى بريدك الإلكتروني');
+        document.getElementById('emailVerifySection').style.display = 'block';
         
-        // تحويل الصور إلى Base64
-        let hairImageBase64 = '';
-        let medicalReportBase64 = '';
+        // إعادة تعيين حقول الكود
+        document.querySelectorAll('.code-digit').forEach(input => input.value = '');
+        document.getElementById('codeError').style.display = 'none';
+        isEmailVerified = false;
+        document.getElementById('finalSendBtn').disabled = true;
         
-        if (hairImage) {
-            hairImageBase64 = await fileToBase64(hairImage);
+    } catch (error) {
+        console.error(error);
+        showMessage('❌ فشل إرسال الكود. تأكد من صحة البريد الإلكتروني', true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📧 إرسال كود التأكيد إلى البريد الإلكتروني';
+    }
+};
+
+// التنقل بين حقول الكود
+document.querySelectorAll('.code-digit').forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+        if (e.target.value.length === 1 && index < 3) {
+            document.querySelector(`.code-digit[data-index="${index + 1}"]`).focus();
         }
-        if (medicalReport) {
-            medicalReportBase64 = await fileToBase64(medicalReport);
-        }
-        
-        // إرسال البيانات إلى Google Apps Script
+    });
+});
+
+// التحقق من الكود
+document.getElementById('verifyCodeBtn').onclick = () => {
+    let enteredCode = '';
+    document.querySelectorAll('.code-digit').forEach(input => {
+        enteredCode += input.value;
+    });
+    
+    if (enteredCode === verificationCode) {
+        isEmailVerified = true;
+        document.getElementById('codeError').style.display = 'none';
+        document.getElementById('finalSendBtn').disabled = false;
+        showMessage('✅ تم تأكيد البريد الإلكتروني بنجاح! يمكنك الآن إرسال الاستشارة');
+    } else {
+        isEmailVerified = false;
+        document.getElementById('finalSendBtn').disabled = true;
+        document.getElementById('codeError').style.display = 'block';
+        document.getElementById('codeError').innerHTML = '⚠️ كود التأكيد غير صحيح. تأكد من كتابته بشكل صحيح. إذا لم يصلك الكود، تأكد من صحة بريدك الإلكتروني';
+    }
+};
+
+// ==================== إرسال الاستشارة النهائي ====================
+document.getElementById('finalSendBtn').onclick = async () => {
+    if (!isEmailVerified) {
+        showMessage('⚠️ الرجاء تأكيد البريد الإلكتروني أولاً', true);
+        return;
+    }
+    
+    const name = document.getElementById('fullname').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const date = document.getElementById('bookingDate').value;
+    const time = document.getElementById('bookingTime').value;
+    const consultType = document.getElementById('consultType').value;
+    const notes = document.getElementById('notes').value.trim();
+    
+    const water = document.querySelector('input[name="water"]:checked')?.value || '';
+    const hairLoss = document.querySelector('input[name="hairLoss"]:checked')?.value || '';
+    const digestive = document.querySelector('input[name="digestive"]:checked')?.value || '';
+    const fatigue = document.querySelector('input[name="fatigue"]:checked')?.value || '';
+    const nails = document.querySelector('input[name="nails"]:checked')?.value || '';
+    const diet = document.querySelector('input[name="diet"]:checked')?.value || '';
+    const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
+    const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
+    
+    if (!name || !age || !phone || !date || !time) {
+        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
+        return;
+    }
+    if (!validatePhone(phone)) {
+        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
+        return;
+    }
+    if (!hairLoss) {
+        showMessage('⚠️ الرجاء الإجابة عن سؤال تساقط الشعر', true);
+        return;
+    }
+    
+    // التحقق من التحليل الطبي
+    if (hairLoss === 'نعم' && !uploadedMedicalReportUrl) {
+        document.getElementById('medicalError').style.display = 'block';
+        setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
+        showMessage('⚠️ يرجى رفع التحليل الطبي', true);
+        return;
+    }
+    
+    const btn = document.getElementById('finalSendBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> جاري إرسال الاستشارة...';
+    showMessage('⏳ جاري إرسال الاستشارة...');
+    
+    try {
         await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -221,7 +387,8 @@ async function performSend() {
             body: JSON.stringify({
                 name, age, phone, email, date, time, consultType, notes,
                 water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
-                hairImageBase64, medicalReportBase64
+                hairImageUrl: uploadedHairImageUrl,
+                medicalReportUrl: uploadedMedicalReportUrl
             })
         });
         
@@ -239,70 +406,67 @@ async function performSend() {
         document.getElementById('medicalReport').value = '';
         document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
         charCountSpan.innerHTML = '💬 0 / 50 حرف';
+        document.getElementById('emailVerifySection').style.display = 'none';
+        document.querySelectorAll('.code-digit').forEach(input => input.value = '');
+        uploadedHairImageUrl = '';
+        uploadedMedicalReportUrl = '';
+        document.getElementById('hairImageStatus').style.display = 'none';
+        document.getElementById('medicalReportStatus').style.display = 'none';
         updateMedicalRequirement();
+        isEmailVerified = false;
+        document.getElementById('finalSendBtn').disabled = true;
         
     } catch (error) {
         console.error(error);
-        showMessage('❌ حدث خطأ: ' + error.message, true);
+        showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
     } finally {
         btn.disabled = false;
         btn.innerHTML = '📤 إرسال الاستشارة وتأكيد الحجز';
-        pendingSend = false;
     }
+};
+
+// تعيين الحد الأدنى للتاريخ
+document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+
+// تحميل الأوقات المتاحة
+async function loadAvailableTimes() {
+    const date = document.getElementById('bookingDate').value;
+    if (!date) return;
+    
+    const timeSelect = document.getElementById('bookingTime');
+    timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
+    
+    // الأوقات المتاحة (10:00 صباحاً - 2:00 ظهراً بفارق 15 دقيقة)
+    const allTimes = [
+        '10:00', '10:15', '10:30', '10:45',
+        '11:00', '11:15', '11:30', '11:45',
+        '12:00', '12:15', '12:30', '12:45',
+        '13:00', '13:15', '13:30', '13:45'
+    ];
+    
+    // تحويل الأوقات إلى نص عربي
+    const timeNames = {
+        '10:00': '10:00 صباحاً', '10:15': '10:15 صباحاً', '10:30': '10:30 صباحاً', '10:45': '10:45 صباحاً',
+        '11:00': '11:00 صباحاً', '11:15': '11:15 صباحاً', '11:30': '11:30 صباحاً', '11:45': '11:45 صباحاً',
+        '12:00': '12:00 ظهراً', '12:15': '12:15 ظهراً', '12:30': '12:30 ظهراً', '12:45': '12:45 ظهراً',
+        '13:00': '01:00 ظهراً', '13:15': '01:15 ظهراً', '13:30': '01:30 ظهراً', '13:45': '01:45 ظهراً'
+    };
+    
+    // محاكاة جلب الأوقات المحجوزة من Google Sheets (سيتم تطويرها لاحقاً)
+    // حالياً نعرض جميع الأوقات متاحة
+    timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
+    allTimes.forEach(time => {
+        const option = document.createElement('option');
+        option.value = time;
+        option.textContent = timeNames[time];
+        timeSelect.appendChild(option);
+    });
 }
 
-document.getElementById('sendBtn').onclick = () => {
-    const name = document.getElementById('fullname').value.trim();
-    const age = document.getElementById('age').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const date = document.getElementById('bookingDate').value;
-    const time = document.getElementById('bookingTime').value;
-    const hairLoss = document.querySelector('input[name="hairLoss"]:checked');
-    
-    if (!name || !age || !phone || !email || !date || !time) {
-        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
-        return;
-    }
-    if (!validatePhone(phone)) {
-        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
-        return;
-    }
-    if (!email.includes('@')) {
-        showMessage('⚠️ بريد إلكتروني غير صحيح', true);
-        return;
-    }
-    if (!hairLoss) {
-        showMessage('⚠️ الرجاء الإجابة عن سؤال تساقط الشعر', true);
-        return;
-    }
-    
-    // التحقق من التحليل الطبي في حالة تساقط الشعر
-    if (hairLoss.value === 'نعم' && document.getElementById('medicalReport').files.length === 0) {
-        document.getElementById('medicalError').style.display = 'block';
-        setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
-        showMessage('⚠️ يرجى رفع التحليل الطبي', true);
-        return;
-    }
-    
-    if (document.getElementById('hairImage').files.length === 0) {
-        document.getElementById('photoModal').style.display = 'flex';
-        pendingSend = true;
-        return;
-    }
-    performSend();
-};
-
-document.getElementById('confirmSend').onclick = () => {
-    document.getElementById('photoModal').style.display = 'none';
-    if (pendingSend) performSend();
-};
-document.getElementById('addPhoto').onclick = () => {
-    document.getElementById('photoModal').style.display = 'none';
-    document.getElementById('hairImage').click();
-};
-window.onclick = (e) => { if (e.target === document.getElementById('photoModal')) e.target.style.display = 'none'; };
-document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
 </script>
+<!-- EmailJS Library -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('k_uVBPGLWFluR9_gn');</script>
 </body>
 </html>
