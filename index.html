@@ -33,7 +33,7 @@
     <div class="note">
         ⏰ سيتم إرسال إيميلين:<br>
         1️⃣ إيميل تأكيد فوري<br>
-        2️⃣ إيميل تذكير قبل الموعد بدقيقتين (يحتوي رابط Google Meet)
+        2️⃣ إيميل رابط الاستشارة <strong>بعد دقيقتين</strong> من الآن (يحتوي رابط Google Meet)
     </div>
     
     <label>الاسم الكامل</label>
@@ -48,13 +48,13 @@
     <label>📅 التاريخ</label>
     <input type="date" id="date">
     
-    <label>⏰ الوقت (بتوقيت بغداد)</label>
+    <label>⏰ الوقت (اختياري - لأغراض السجل فقط)</label>
     <select id="time">
         <option value="">-- اختر الوقت --</option>
     </select>
     
     <div class="note" id="timeNote" style="display:none; margin-top:10px;">
-        ✅ هذا الوقت مناسب للتجربة (سيتم إرسال التذكير بعد دقيقتين)
+        ✅ سيتم إرسال رابط الميت بعد دقيقتين من الآن، بغض النظر عن الوقت المختار
     </div>
     
     <button id="sendBtn">📤 إرسال تجربة التذكير</button>
@@ -63,8 +63,8 @@
 <div id="toast" class="toast"></div>
 
 <script>
-// ==================== توقيت بغداد (GMT+3) ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPjv8IG8W2J0-uGl-JO9cezsmJJrWvGAuaaCiiZFRtXozID3NG0oBlMGnWQPqIaQAm/exec';
+// ==================== الرابط الجديد ====================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzy5sVhw6FHrZPvwLEBtvQ1xkZbvxBsyYcEuTg0pQLYoA5aOeEjOR9ZUAKvpQcx9CqN/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 // الحصول على الوقت الحالي بتوقيت بغداد
@@ -87,7 +87,7 @@ function updateCurrentTimeDisplay() {
     document.getElementById('currentTimeDisplay').innerHTML = `🕐 الوقت الآن بتوقيت بغداد: ${dateString} - ${timeString}`;
 }
 updateCurrentTimeDisplay();
-setInterval(updateCurrentTimeDisplay, 60000); // تحديث كل دقيقة
+setInterval(updateCurrentTimeDisplay, 60000);
 
 // تحويل الوقت (24 ساعة) إلى صيغة صباحاً/مساءً فقط
 function formatTimeToBaghdadStyle(time24) {
@@ -100,35 +100,40 @@ function formatTimeToBaghdadStyle(time24) {
     return `${displayHour}:${minutes} ${ampm}`;
 }
 
-// إنشاء الأوقات (كل ساعة من 00:00 إلى 23:00)
+// إنشاء الأوقات المتاحة (فقط الأوقات القادمة بعد الوقت الحالي)
 function populateTimes() {
     const timeSelect = document.getElementById('time');
     const now = getBaghdadTime();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
     
-    // وقت بعد دقيقتين من الآن بتوقيت بغداد
-    const futureTime = new Date(now.getTime() + 2 * 60000);
-    const futureHour = futureTime.getHours().toString().padStart(2, '0');
-    const futureMinute = futureTime.getMinutes().toString().padStart(2, '0');
-    const futureTimeString = `${futureHour}:${futureMinute}`;
+    timeSelect.innerHTML = '<option value="">-- اختر الوقت (للسجل فقط) --</option>';
     
-    // إضافة جميع الأوقات (كل ساعة)
-    timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
-    for (let i = 0; i < 24; i++) {
+    let hasAvailableTime = false;
+    
+    for (let i = currentHour; i < 24; i++) {
         const hour = i.toString().padStart(2, '0');
-        const timeString = `${hour}:00`;
-        const option = document.createElement('option');
-        option.value = timeString;
-        let displayText = formatTimeToBaghdadStyle(timeString);
         
-        if (timeString === futureTimeString) {
-            displayText += ' (⏰ بعد دقيقتين - مثالي للتجربة)';
+        let startMinute = 0;
+        if (i === currentHour) {
+            startMinute = currentMinute + 1;
         }
-        option.textContent = displayText;
-        timeSelect.appendChild(option);
+        
+        if (startMinute <= 0) {
+            const timeString = `${hour}:00`;
+            const option = document.createElement('option');
+            option.value = timeString;
+            let displayText = formatTimeToBaghdadStyle(timeString);
+            option.textContent = displayText;
+            timeSelect.appendChild(option);
+            hasAvailableTime = true;
+        }
     }
     
-    // تحديد الوقت المناسب تلقائياً
-    timeSelect.value = futureTimeString;
+    if (!hasAvailableTime) {
+        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة اليوم</option>';
+    }
+    
     document.getElementById('timeNote').style.display = 'block';
 }
 
@@ -161,8 +166,8 @@ document.getElementById('sendBtn').onclick = async () => {
     const date = document.getElementById('date').value;
     const time24 = document.getElementById('time').value;
     
-    if (!name || !phone || !email || !date || !time24) {
-        showMessage('⚠️ الرجاء تعبئة جميع الحقول', true);
+    if (!name || !phone || !email || !date) {
+        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف والبريد والتاريخ', true);
         return;
     }
     
@@ -176,7 +181,7 @@ document.getElementById('sendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الطلب...';
     
     try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
@@ -186,7 +191,7 @@ document.getElementById('sendBtn').onclick = async () => {
                 phone: phone,
                 email: email,
                 date: date,
-                time: time24,
+                time: time24 || '12:00',
                 consultType: 'تجربة تذكير',
                 notes: 'تجربة',
                 water: '',
@@ -199,10 +204,9 @@ document.getElementById('sendBtn').onclick = async () => {
             })
         });
         
-        const timeDisplay = formatTimeToBaghdadStyle(time24);
-        showMessage(`✅ تم الإرسال! سيصلك تأكيد فوري، ثم تذكير بعد دقيقتين عند الساعة ${timeDisplay}`);
+        showMessage(`✅ تم الإرسال! سيصلك إيميل تأكيد فوري، ثم إيميل رابط الاستشارة بعد دقيقتين بالضبط.`);
         
-        // تنظيف الحقول (نترك الاسم والهاتف والبريد لسهولة التجربة مرة أخرى)
+        // تنظيف الحقول
         document.getElementById('name').value = '';
         document.getElementById('phone').value = '';
         document.getElementById('email').value = '';
