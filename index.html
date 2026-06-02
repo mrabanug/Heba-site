@@ -26,14 +26,14 @@
 
 <div class="container">
     <div class="test-badge">🧪 صفحة تجريبية - توقيت بغداد (GMT+3)</div>
-    <h1>🔔 تجربة التذكير قبل الموعد</h1>
+    <h1>🔔 تجربة إرسال رابط الاستشارة</h1>
     
     <div class="current-time" id="currentTimeDisplay">⏳ جاري تحميل التوقيت...</div>
     
     <div class="note">
-        ⏰ سيتم إرسال إيميلين:<br>
-        1️⃣ إيميل تأكيد فوري<br>
-        2️⃣ إيميل رابط الاستشارة <strong>بعد دقيقتين</strong> من الآن (يحتوي رابط Google Meet)
+        ⏰ ستجري التجربة كالتالي:<br>
+        1️⃣ سيصلك <strong>إيميل تأكيد فوري</strong>.<br>
+        2️⃣ بعد <strong>دقيقتين بالضبط</strong>، سيصلك <strong>إيميل ثانٍ يحتوي رابط Google Meet</strong>.
     </div>
     
     <label>الاسم الكامل</label>
@@ -53,10 +53,6 @@
         <option value="">-- اختر الوقت --</option>
     </select>
     
-    <div class="note" id="timeNote" style="display:none; margin-top:10px;">
-        ✅ سيتم إرسال رابط الميت بعد دقيقتين من الآن، بغض النظر عن الوقت المختار
-    </div>
-    
     <button id="sendBtn">📤 إرسال تجربة التذكير</button>
 </div>
 
@@ -64,7 +60,7 @@
 
 <script>
 // ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsPVTTUImZ2B8rb5deIB0tINdULpXAqRRllxsVr74m4uxUNtJPQLBvt5x_-8u3thlA7g/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSIpr4f0qmPE6GaVfbsDQBt1ZtTUHsDTCw1H9aGAo-uvs4CxaljT9czoQdos5v6IUS/exec';
 const MEET_LINK = 'https://meet.google.com/yyc-pgok-ztw';
 
 // الحصول على الوقت الحالي بتوقيت بغداد
@@ -116,8 +112,6 @@ function populateTimes() {
         option.textContent = formatTimeToBaghdadStyle(timeString);
         timeSelect.appendChild(option);
     }
-    
-    document.getElementById('timeNote').style.display = 'block';
 }
 
 // تعيين التاريخ (اليوم بتوقيت بغداد)
@@ -179,9 +173,6 @@ document.getElementById('sendBtn').onclick = async () => {
                 notes: 'تجربة',
                 water: '',
                 hairLoss: 'لا',
-                digestive: '', fatigue: '', nails: '', diet: '', quickDry: '', slowDry: '',
-                hairImageUrl: '',
-                medicalReportUrl: '',
                 meetLink: MEET_LINK,
                 referenceNumber: phone
             })
