@@ -15,7 +15,6 @@ body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
 .box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
 h2{color:#324A3E;margin-bottom:20px;font-size:22px;border-bottom:2px solid #A89676;display:inline-block;padding-bottom:6px;}
 h3{color:#324A3E;margin:20px 0 15px;font-size:18px;border-right:3px solid #A89676;padding-right:10px;}
-h4{color:#324A3E;margin:15px 0 10px;font-size:16px;}
 label{display:block;margin-top:12px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
 input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
 .radio-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
@@ -41,6 +40,9 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 .upload-status.success{background:#d4edda;color:#155724;}
 .upload-status.error{background:#f8d7da;color:#721c24;}
 .upload-status.loading{background:#fff3cd;color:#856404;}
+.footer-credit{text-align:center;padding:20px;margin-top:20px;font-size:12px;color:#A89676;border-top:1px solid #e0ddd0;}
+.footer-credit a{color:#324A3E;text-decoration:none;font-weight:bold;}
+.footer-credit a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -70,7 +72,6 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 <div class="box">
 <h2>📋 استمارة التشخيص المتكامل</h2>
 
-<!-- ===== المعلومات الأساسية ===== -->
 <label>الاسم الكامل <span class="required">*</span></label>
 <input type="text" id="fullname" placeholder="الاسم الكامل">
 
@@ -79,13 +80,12 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
-<div class="hint">📞 يجب أن يكون 10 أرقام (هذا هو رقمك المرجعي)</div>
+<div class="hint">📞 10 أرقام (هذا هو رقمك المرجعي)</div>
 
-<label>البريد الإلكتروني <span class="optional">(اختياري - ولكن يُفضل الإدخال لتلقي رابط الاستشارة)</span></label>
+<label>البريد الإلكتروني <span class="optional">(اختياري - لتلقي رابط الاستشارة)</span></label>
 <input type="email" id="email" placeholder="example@gmail.com">
 <div class="hint">📧 سيصلك رابط جلسة الاستشارة على هذا البريد</div>
 
-<!-- ===== حجز الموعد ===== -->
 <div class="booking-row">
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
     <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">⏳ اختاري التاريخ أولاً</option></select></div>
@@ -99,7 +99,6 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <option value="وصف نظام غذائي للشعر">وصف نظام غذائي للشعر</option>
 </select>
 
-<!-- ===== الأهداف الرئيسية من الاستشارة العلاجية ===== -->
 <h3>🎯 الأهداف الرئيسية من الاستشارة العلاجية</h3>
 
 <label>1. هل هدفك إيقاف تساقط الشعر وتحفيز نمو بصيلات الشعر؟</label>
@@ -114,18 +113,17 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <label><input type="radio" name="goalDryness" value="لا"> لا</label>
 </div>
 
-<label>3. هل الهدف علاج مشاكل الفروة؟</label>
-<div class="checkbox-group" id="scalpIssuesGroup">
+<label>3. هل الهدف علاج مشاكل الفروة؟ (يمكن اختيار أكثر من إجابة)</label>
+<div class="checkbox-group">
     <label><input type="checkbox" name="scalpIssue" value="قشرة"> قشرة</label>
     <label><input type="checkbox" name="scalpIssue" value="حكة"> حكة</label>
     <label><input type="checkbox" name="scalpIssue" value="دهون زائدة"> دهون زائدة</label>
     <label><input type="checkbox" name="scalpIssue" value="التهاب"> التهاب</label>
     <label><input type="checkbox" name="scalpIssue" value="أخرى"> أخرى</label>
-    <input type="text" id="scalpIssueOther" placeholder="يرجى التوضيح" style="margin-top:8px; display:none;">
 </div>
+<input type="text" id="scalpIssueOther" placeholder="يرجى التوضيح (في حالة اختيار أخرى)" style="width:100%; padding:8px; margin-top:5px; border:1px solid #e0ddd0; border-radius:12px; background:#F7F5EB; display:none;">
 
-<!-- ===== تشخيص تساقط الشعر وهوس نتف الشعر ===== -->
-<h3>🩺 تشخيص تساقط الشعر وهوس نتف الشعر</h3>
+<h3>🩺 تشخيص تساقط الشعر</h3>
 
 <label>1. هل تعانين من تساقط شعر مكثف ومستمر يتجاوز الحد الطبيعي؟</label>
 <div class="radio-group">
@@ -151,8 +149,8 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <label><input type="radio" name="stubbornDandruff" value="لا"> لا</label>
 </div>
 
-<label>5. هل تم تشخيصك سابقاً أو تعانين من أمراض الفروة؟</label>
-<div class="checkbox-group" id="scalpDiseasesGroup">
+<label>5. هل تم تشخيصك سابقاً أو تعانين من أمراض الفروة؟ (يمكن اختيار أكثر من إجابة)</label>
+<div class="checkbox-group">
     <label><input type="checkbox" name="scalpDisease" value="إكزيما"> إكزيما</label>
     <label><input type="checkbox" name="scalpDisease" value="صدفية"> صدفية</label>
     <label><input type="checkbox" name="scalpDisease" value="ثعلبة"> ثعلبة</label>
@@ -160,14 +158,19 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <label><input type="checkbox" name="scalpDisease" value="لم يسبق تشخيصي"> لم يسبق تشخيصي</label>
 </div>
 
-<!-- ===== الأسئلة الإضافية السابقة ===== -->
-<h3>📋 أسئلة إضافية</h3>
+<h3>📋 تقييم نمط الحياة والصحة العامة</h3>
 
 <label>كمية شرب الماء يومياً</label>
 <div class="radio-group">
     <label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label>
     <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label>
     <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label>
+</div>
+
+<label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label>
+<div class="radio-group">
+    <label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label>
+    <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label>
 </div>
 
 <label>هل تعانين من مشاكل متكررة في الجهاز الهضمي؟</label>
@@ -207,12 +210,11 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 </div>
 
 <label>ملاحظات إضافية <span class="optional">(اختياري - حد أقصى 50 حرف)</span></label>
-<textarea id="notes" maxlength="50" rows="2" placeholder="50 حرف كحد أقصى"></textarea>
+<textarea id="notes" maxlength="50" rows="2" placeholder="أضيفي أي ملاحظات إضافية (50 حرف كحد أقصى)"></textarea>
 <div class="hint" id="charCount">💬 0 / 50 حرف</div>
 
-<!-- ===== رفع الملفات ===== -->
 <div class="file-input">
-    <label>📸 صورة الشعر <span class="optional">(اختياري - ولكن مفيدة جداً للتشخيص)</span></label>
+    <label>📸 صورة الشعر <span class="optional">(اختياري - مفيدة للتشخيص)</span></label>
     <input type="file" id="hairImage" accept="image/*">
     <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
 </div>
@@ -220,7 +222,7 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
     <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
     <input type="file" id="medicalReport" accept="image/*,.pdf">
     <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
-    <div id="medicalNote" class="hint">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كنت تعانين من تساقط الشعر</div>
+    <div id="medicalNote" class="hint">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كان تساقط الشعر = نعم</div>
     <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي</div>
 </div>
 
@@ -230,9 +232,13 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 
 <div id="toast" class="toast"></div>
 
+<div class="footer-credit">
+    برمجة: <a href="#" target="_blank">محمد العزاوي</a>
+</div>
+
 <script>
 // ==================== الإعدادات ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzndADXqE4JFZUfB0z7TMabey9mAV8YhwFlyiiFiYoru1o7fVLQT_pZxLAwjb9i48Mv/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0h7u6YW7eqBEqht3IkMxRClaTy5bgaxLFOvHiAiGk89b45L22Y1GJ5S_Nt46L-GiD/exec';
 const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 
 let uploadedHairImageUrl = '';
@@ -325,7 +331,7 @@ document.getElementById('hairLossYes')?.addEventListener('change', updateMedical
 document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
 updateMedicalRequirement();
 
-// إظهار حقل "أخرى" عند اختياره في مشاكل الفروة
+// إظهار حقل "أخرى" عند اختياره
 document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
     checkbox.addEventListener('change', function() {
         const otherField = document.getElementById('scalpIssueOther');
@@ -333,6 +339,7 @@ document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
             otherField.style.display = 'block';
         } else {
             otherField.style.display = 'none';
+            otherField.value = '';
         }
     });
 });
@@ -384,7 +391,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
     
-    // جمع البيانات من الأسئلة الجديدة
+    // جمع البيانات
     const goalHairLoss = document.querySelector('input[name="goalHairLoss"]:checked')?.value || '';
     const goalDryness = document.querySelector('input[name="goalDryness"]:checked')?.value || '';
     const scalpIssues = Array.from(document.querySelectorAll('input[name="scalpIssue"]:checked')).map(cb => cb.value).join(', ');
@@ -394,8 +401,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const whiteBulb = document.querySelector('input[name="whiteBulb"]:checked')?.value || '';
     const stubbornDandruff = document.querySelector('input[name="stubbornDandruff"]:checked')?.value || '';
     const scalpDiseases = Array.from(document.querySelectorAll('input[name="scalpDisease"]:checked')).map(cb => cb.value).join(', ');
-    
-    // جمع البيانات من الأسئلة السابقة
     const water = document.querySelector('input[name="water"]:checked')?.value || '';
     const hairLoss = document.querySelector('input[name="hairLoss"]:checked')?.value || '';
     const digestive = document.querySelector('input[name="digestive"]:checked')?.value || '';
@@ -437,7 +442,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الاستشارة...';
     showMessage('⏳ جاري إرسال الاستشارة...');
     
-    // تجميع جميع البيانات في نص واحد للإرسال
     const allData = {
         name, age, phone, email, date, time: time24, consultType, notes,
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
@@ -458,7 +462,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
         
         showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك رابط الاستشارة على بريدك الإلكتروني.');
         
-        // تنظيف الحقول
         document.getElementById('fullname').value = '';
         document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
