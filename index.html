@@ -6,19 +6,21 @@
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
         select, button { padding: 10px; margin: 10px; font-size: 16px; }
+        pre { background:#f4f4f4; padding:15px; text-align:right; direction:ltr; white-space: pre-wrap; }
     </style>
 </head>
 <body>
     <h1>🧪 صفحة اختبار: جلب الأوقات المتاحة</h1>
+    <p>هذا الاختبار للتحقق من اتصال الخادم الجديد</p>
     <label for="testDate">اختر تاريخ:</label>
     <input type="date" id="testDate">
     <button onclick="fetchTimes()">جلب الأوقات</button>
     <h3>النتيجة:</h3>
-    <pre id="result" style="background:#f4f4f4; padding:15px; text-align:right; direction:ltr;">سيتم عرض الأوقات هنا...</pre>
+    <pre id="result">سيتم عرض الأوقات هنا...</pre>
 
     <script>
-        // 👇 هذا هو الرابط الجديد لتطبيق Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAyqMnZQPXNOx5WYhhLow2JFdzGhfIEAUvPbjxumDkllqYs2wmC3laLKmc7l5mv7BL/exec';
+        // 👇 الرابط الجديد لتطبيق Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwaRUyuEZlup1iGJcO7LRNX5jXEC54HKDjzvRGusIw1v9wcjtEwditiVRNvb44MxO5ng/exec';
 
         async function fetchTimes() {
             const date = document.getElementById('testDate').value;
