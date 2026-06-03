@@ -348,51 +348,61 @@ document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-async function fetchBookedTimes(date) {
-    try {
-        const response = await fetch(`${APPS_SCRIPT_URL}?action=getBookedTimes&date=${date}`);
-        const data = await response.json();
-        if (data.status === 'success') { bookedTimes = data.bookedTimes || {}; }
-    } catch (error) { console.error('Error fetching booked times:', error); bookedTimes = {}; }
-}
-
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
     
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
-    await fetchBookedTimes(date);
     
-    const allTimes = ['10:00', '11:00', '12:00', '13:00', '14:00'];
-    const now = getBaghdadTime();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
-    const today = now.toISOString().split('T')[0];
-    const isToday = (date === today);
-    
-    const availableTimes = allTimes.filter(time => {
-        if (bookedTimes[time]) return false;
-        if (isToday) {
-            const [hour, minute] = time.split(':').map(Number);
-            if (hour < currentHour) return false;
-            if (hour === currentHour && minute <= currentMinute) return false;
+    try {
+        const response = await fetch(`${APPS_SCRIPT_URL}?date=${date}`);
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            bookedTimes = data.bookedTimes || {};
+            const allTimes = [
+                '10:00', '10:15', '10:30', '10:45',
+                '11:00', '11:15', '11:30', '11:45',
+                '12:00', '12:15', '12:30', '12:45',
+                '13:00', '13:15', '13:30', '13:45', '14:00'
+            ];
+            
+            const now = getBaghdadTime();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const today = now.toISOString().split('T')[0];
+            const isToday = (date === today);
+            
+            const availableTimes = allTimes.filter(time => {
+                if (bookedTimes[time]) return false;
+                if (isToday) {
+                    const [hour, minute] = time.split(':').map(Number);
+                    if (hour < currentHour) return false;
+                    if (hour === currentHour && minute <= currentMinute) return false;
+                }
+                return true;
+            });
+            
+            if (availableTimes.length === 0) {
+                timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
+                return;
+            }
+            
+            timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
+            availableTimes.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = formatTimeTo12Hour(time);
+                timeSelect.appendChild(option);
+            });
+        } else {
+            timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
         }
-        return true;
-    });
-    
-    if (availableTimes.length === 0) {
-        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
-        return;
+    } catch (error) {
+        console.error('Error loading times:', error);
+        timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
     }
-    
-    timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
-    availableTimes.forEach(time => {
-        const option = document.createElement('option');
-        option.value = time;
-        option.textContent = formatTimeTo12Hour(time);
-        timeSelect.appendChild(option);
-    });
 }
 
 document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
@@ -439,13 +449,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
         return;
     }
     
-    await fetchBookedTimes(date);
-    if (bookedTimes[time24]) {
-        showMessage('⚠️ عذراً، هذا الوقت تم حجزه من قبل مستخدم آخر. الرجاء اختيار وقت آخر.', true);
-        loadAvailableTimes();
-        return;
-    }
-    
     if (hairLoss === 'نعم' && !uploadedMedicalReportUrl) {
         document.getElementById('medicalError').style.display = 'block';
         setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
@@ -469,7 +472,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     };
     
     try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
