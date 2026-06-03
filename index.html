@@ -41,8 +41,6 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 .upload-status.error{background:#f8d7da;color:#721c24;}
 .upload-status.loading{background:#fff3cd;color:#856404;}
 .footer-credit{text-align:center;padding:20px;margin-top:20px;font-size:12px;color:#A89676;border-top:1px solid #e0ddd0;}
-.footer-credit a{color:#324A3E;text-decoration:none;font-weight:bold;}
-.footer-credit a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -233,12 +231,12 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 <div id="toast" class="toast"></div>
 
 <div class="footer-credit">
-    برمجة: <a href="#" target="_blank">محمد العزاوي</a>
+    برمجة: محمد العزاوي
 </div>
 
 <script>
 // ==================== الإعدادات ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby0h7u6YW7eqBEqht3IkMxRClaTy5bgaxLFOvHiAiGk89b45L22Y1GJ5S_Nt46L-GiD/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAyqMnZQPXNOx5WYhhLow2JFdzGhfIEAUvPbjxumDkllqYs2wmC3laLKmc7l5mv7BL/exec';
 const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 
 let uploadedHairImageUrl = '';
@@ -251,6 +249,11 @@ function showMessage(text, isError) {
     toast.className = 'toast' + (isError ? ' error' : '');
     toast.style.display = 'block';
     setTimeout(() => toast.style.display = 'none', 5000);
+}
+
+function getBaghdadTime() {
+    const now = new Date();
+    return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
 }
 
 function formatTimeTo12Hour(time24) {
@@ -331,7 +334,6 @@ document.getElementById('hairLossYes')?.addEventListener('change', updateMedical
 document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
 updateMedicalRequirement();
 
-// إظهار حقل "أخرى" عند اختياره
 document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
     checkbox.addEventListener('change', function() {
         const otherField = document.getElementById('scalpIssueOther');
@@ -361,8 +363,23 @@ async function loadAvailableTimes() {
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
     await fetchBookedTimes(date);
+    
     const allTimes = ['10:00', '11:00', '12:00', '13:00', '14:00'];
-    const availableTimes = allTimes.filter(time => !bookedTimes[time]);
+    const now = getBaghdadTime();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const today = now.toISOString().split('T')[0];
+    const isToday = (date === today);
+    
+    const availableTimes = allTimes.filter(time => {
+        if (bookedTimes[time]) return false;
+        if (isToday) {
+            const [hour, minute] = time.split(':').map(Number);
+            if (hour < currentHour) return false;
+            if (hour === currentHour && minute <= currentMinute) return false;
+        }
+        return true;
+    });
     
     if (availableTimes.length === 0) {
         timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
@@ -391,7 +408,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
     
-    // جمع البيانات
     const goalHairLoss = document.querySelector('input[name="goalHairLoss"]:checked')?.value || '';
     const goalDryness = document.querySelector('input[name="goalDryness"]:checked')?.value || '';
     const scalpIssues = Array.from(document.querySelectorAll('input[name="scalpIssue"]:checked')).map(cb => cb.value).join(', ');
