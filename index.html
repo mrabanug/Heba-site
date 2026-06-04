@@ -5,42 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>هبة سالم | استشارات وحجز مواعيد</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
-.hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
-.hero h1{font-size:42px;}
-.hero p{color:#A89676;margin-top:12px;}
-.hero button{padding:14px 32px;border:none;border-radius:40px;background:#A89676;color:#FFF;font-weight:bold;cursor:pointer;margin-top:20px;}
-.container{max-width:950px;margin:auto;padding:30px 20px;}
-.box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
-h2{color:#324A3E;margin-bottom:20px;font-size:22px;border-bottom:2px solid #A89676;display:inline-block;padding-bottom:6px;}
-h3{color:#324A3E;margin:20px 0 15px;font-size:18px;border-right:3px solid #A89676;padding-right:10px;}
-label{display:block;margin-top:12px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
-.radio-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
-.radio-group label{display:inline-block;margin-left:20px;font-weight:normal;}
-.radio-group label input{width:auto;margin-left:5px;display:inline;}
-.checkbox-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
-.checkbox-group label{display:inline-block;margin-left:20px;font-weight:normal;margin-bottom:8px;}
-.checkbox-group label input{width:auto;margin-left:5px;display:inline;}
-.required{color:#c0392b;font-size:12px;}
-.optional{color:#7f8c8d;font-size:12px;}
-.file-input{background:#F7F5EB;padding:10px;border-radius:12px;margin:10px 0;}
-.submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
-.submit:hover{background:#2D2D2A;}
-.booking-row{display:flex;gap:15px;flex-wrap:wrap;}
-.booking-row > div{flex:1;min-width:150px;}
-.date-picker,.time-picker{background:#F7F5EB;border:1.5px solid #e0ddd0;border-radius:12px;padding:12px;width:100%;}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;z-index:1000;display:none;text-align:center;max-width:90%;}
-.toast.error{background:#c0392b;}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-.hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
-.upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
-.upload-status.success{background:#d4edda;color:#155724;}
-.upload-status.error{background:#f8d7da;color:#721c24;}
-.upload-status.loading{background:#fff3cd;color:#856404;}
-.footer-credit{text-align:center;padding:20px;margin-top:20px;font-size:12px;color:#A89676;border-top:1px solid #e0ddd0;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+    .hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
+    .hero h1{font-size:42px;}
+    .hero p{color:#A89676;margin-top:12px;}
+    .hero button{padding:14px 32px;border:none;border-radius:40px;background:#A89676;color:#FFF;font-weight:bold;cursor:pointer;margin-top:20px;}
+    .container{max-width:950px;margin:auto;padding:30px 20px;}
+    .box{background:#FFF;margin:25px 0;padding:28px;border-radius:20px;border-right:6px solid #324A3E;}
+    h2{color:#324A3E;margin-bottom:20px;font-size:22px;border-bottom:2px solid #A89676;display:inline-block;padding-bottom:6px;}
+    h3{color:#324A3E;margin:20px 0 15px;font-size:18px;border-right:3px solid #A89676;padding-right:10px;}
+    label{display:block;margin-top:12px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
+    input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;font-family:inherit;}
+    .radio-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
+    .radio-group label{display:inline-block;margin-left:20px;font-weight:normal;}
+    .radio-group label input{width:auto;margin-left:5px;display:inline;}
+    .checkbox-group{background:#F7F5EB;padding:12px;border-radius:12px;margin:8px 0;}
+    .checkbox-group label{display:inline-block;margin-left:20px;font-weight:normal;margin-bottom:8px;}
+    .checkbox-group label input{width:auto;margin-left:5px;display:inline;}
+    .required{color:#c0392b;font-size:12px;}
+    .optional{color:#7f8c8d;font-size:12px;}
+    .file-input{background:#F7F5EB;padding:10px;border-radius:12px;margin:10px 0;}
+    .submit{width:100%;background:#324A3E;color:#FFF;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:20px;}
+    .submit:hover{background:#2D2D2A;}
+    .booking-row{display:flex;gap:15px;flex-wrap:wrap;}
+    .booking-row > div{flex:1;min-width:150px;}
+    .date-picker,.time-picker{background:#F7F5EB;border:1.5px solid #e0ddd0;border-radius:12px;padding:12px;width:100%;}
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;z-index:1000;display:none;text-align:center;max-width:90%;}
+    .toast.error{background:#c0392b;}
+    .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
+    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    .hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
+    .upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
+    .upload-status.success{background:#d4edda;color:#155724;}
+    .upload-status.error{background:#f8d7da;color:#721c24;}
+    .upload-status.loading{background:#fff3cd;color:#856404;}
+    .footer-credit{text-align:center;padding:20px;margin-top:20px;font-size:12px;color:#A89676;border-top:1px solid #e0ddd0;}
 </style>
 </head>
 <body>
@@ -235,7 +235,7 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 </div>
 
 <script>
-// ==================== الرابط الجديد ====================
+// ==================== الرابط ====================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwY0try6y4mfn9PeiKSpfHmUZE_i1mqWfiXZ1hNRlbNiBlr0GMZDXn7fpm5FFTFzDvZMw/exec';
 const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
 
@@ -359,27 +359,20 @@ async function loadAvailableTimes() {
         const data = await response.json();
         
         if (data.status === 'success') {
-            const allTimes = data.allTimes || [
-                '10:00', '10:15', '10:30', '10:45',
-                '11:00', '11:15', '11:30', '11:45',
-                '12:00', '12:15', '12:30', '12:45',
-                '13:00', '13:15', '13:30', '13:45', '14:00'
-            ];
+            const allTimes = data.allTimes || ['10:00', '11:00', '12:00', '13:00', '14:00'];
             
             const now = getBaghdadTime();
             const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
             const today = now.toISOString().split('T')[0];
             const isToday = (date === today);
             
-            const availableTimes = allTimes.filter(time => {
-                if (isToday) {
-                    const [hour, minute] = time.split(':').map(Number);
-                    if (hour < currentHour) return false;
-                    if (hour === currentHour && minute <= currentMinute) return false;
-                }
-                return true;
-            });
+            let availableTimes = [...allTimes];
+            if (isToday) {
+                availableTimes = allTimes.filter(time => {
+                    const [hour] = time.split(':').map(Number);
+                    return hour > currentHour;
+                });
+            }
             
             if (availableTimes.length === 0) {
                 timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
@@ -389,7 +382,7 @@ async function loadAvailableTimes() {
             timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
             availableTimes.forEach(time => {
                 const option = document.createElement('option');
-                option.value = time;
+                option.value = time.split(':')[0]; // نرسل الساعة فقط (10, 11, 12...)
                 option.textContent = formatTimeTo12Hour(time);
                 timeSelect.appendChild(option);
             });
@@ -411,9 +404,21 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
     const date = document.getElementById('bookingDate').value;
-    const time24 = document.getElementById('bookingTime').value;
+    const selectedHour = document.getElementById('bookingTime').value; // القيمة هنا هي الساعة فقط (10, 11, 12...)
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
+    
+    if (!name || !age || !phone || !date || !selectedHour) {
+        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
+        return;
+    }
+    if (!validatePhone(phone)) {
+        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
+        return;
+    }
+    
+    // تحويل الساعة المختارة إلى نص "ساعة:00" لنظام الخادم
+    const selectedHourFormatted = `${selectedHour.toString().padStart(2, '0')}:00`;
     
     const goalHairLoss = document.querySelector('input[name="goalHairLoss"]:checked')?.value || '';
     const goalDryness = document.querySelector('input[name="goalDryness"]:checked')?.value || '';
@@ -433,14 +438,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    if (!name || !age || !phone || !date || !time24) {
-        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
-        return;
-    }
-    if (!validatePhone(phone)) {
-        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
-        return;
-    }
     if (!hairLoss) {
         showMessage('⚠️ الرجاء الإجابة عن سؤال تساقط الشعر', true);
         return;
@@ -459,7 +456,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     showMessage('⏳ جاري إرسال الاستشارة...');
     
     const allData = {
-        name, age, phone, email, date, time: time24, consultType, notes,
+        name, age, phone, email, date, selectedHour: selectedHourFormatted, consultType, notes,
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
         excessiveHairLoss, trichotillomania, whiteBulb, stubbornDandruff, scalpDiseases,
         water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
