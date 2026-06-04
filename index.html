@@ -9,7 +9,7 @@
 </style>
 </head>
 <body>
-    <h2>🧪 اختبار النعل</h2>
+    <h2>🧪 اختبار إرسال البيانات</h2>
     <input type="text" id="name" placeholder="الاسم">
     <input type="tel" id="phone" placeholder="الهاتف">
     <input type="email" id="email" placeholder="البريد الإلكتروني">
@@ -33,13 +33,19 @@
         result.innerHTML = '⏳ جاري الإرسال...';
         
         try {
-            const response = await fetch(URL, {
+            // استخدام no-cors لتجاوز مشاكل CORS
+            await fetch(URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone, email })
             });
-            const data = await response.json();
-            result.innerHTML = '✅ ' + (data.message || 'تم الإرسال');
+            result.innerHTML = '✅ تم الإرسال! يرجى فحص بريدك الإلكتروني (والبريد العشوائي).';
+            
+            // تنظيف الحقول
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
         } catch(error) {
             result.innerHTML = '❌ خطأ: ' + error.message;
         }
