@@ -475,7 +475,7 @@ async function loadAvailableTimes() {
         const data = await response.json();
         
         if (data.status === 'success') {
-            const slots = data.slots || [];
+            const slots = data.allTimes || [];
             
             const now = getBaghdadTime();
             const today = now.toISOString().split('T')[0];
