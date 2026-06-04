@@ -2,192 +2,48 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختبار بسيط - هبة سالم</title>
+<title>اختبار بسيط</title>
 <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:40px 20px;}
-    .container{max-width:500px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.05);}
-    h1{color:#324A3E;margin-bottom:20px;text-align:center;}
-    label{display:block;margin-top:15px;margin-bottom:5px;font-weight:bold;color:#324A3E;}
-    input,select{width:100%;padding:12px;border:1.5px solid #e0ddd0;border-radius:12px;background:#F7F5EB;margin-bottom:10px;}
-    button{width:100%;background:#324A3E;color:white;padding:16px;border:none;border-radius:40px;font-size:18px;font-weight:bold;cursor:pointer;margin-top:10px;}
-    button:hover{background:#2D2D2A;}
-    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#324A3E;color:white;padding:15px 30px;border-radius:50px;display:none;z-index:1000;}
-    .toast.error{background:#c0392b;}
-    .loader{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #A89676;border-radius:50%;animation:spin 1s linear infinite;margin-right:10px;}
-    @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-    .test-badge{background:#A89676;color:white;padding:5px 10px;border-radius:20px;font-size:12px;display:inline-block;margin-bottom:15px;}
-    .note{background:#fff3cd;color:#856404;padding:10px;border-radius:8px;margin-top:15px;font-size:14px;text-align:center;}
+    body{font-family:Arial;padding:20px;text-align:center;}
+    input,button{padding:10px;margin:10px;font-size:16px;}
 </style>
 </head>
 <body>
+    <h2>🧪 اختبار إرسال البيانات</h2>
+    <input type="text" id="name" placeholder="الاسم">
+    <input type="tel" id="phone" placeholder="الهاتف">
+    <input type="email" id="email" placeholder="البريد الإلكتروني">
+    <button onclick="send()">إرسال</button>
+    <p id="result"></p>
 
-<div class="container">
-    <div class="test-badge">🧪 صفحة اختبار بسيطة</div>
-    <h1>🔔 اختبار إرسال الإيميل</h1>
-    
-    <div class="note">
-        ⏰ سيتم إرسال:<br>
-        1️⃣ إيميل تأكيد للعميل<br>
-        2️⃣ إيميل PDF للمسؤول
-    </div>
-    
-    <label>الاسم الكامل</label>
-    <input type="text" id="name" placeholder="الاسم الكامل">
-    
-    <label>رقم الهاتف</label>
-    <input type="tel" id="phone" placeholder="0771234567">
-    
-    <label>📧 البريد الإلكتروني</label>
-    <input type="email" id="email" placeholder="example@gmail.com">
-    
-    <label>نوع الاستشارة</label>
-    <select id="consultType">
-        <option value="استشارة عامة للشعر">استشارة عامة للشعر</option>
-        <option value="تشخيص تساقط الشعر">تشخيص تساقط الشعر</option>
-    </select>
-    
-    <div class="file-input">
-        <label>📸 صورة الشعر (اختياري - للاختبار)</label>
-        <input type="file" id="hairImage" accept="image/*">
-        <div id="hairImageStatus" style="font-size:12px;margin-top:5px;color:#7f8c8d;"></div>
-    </div>
-    
-    <button id="sendBtn">📤 إرسال اختبار</button>
-</div>
+    <script>
+    const URL = 'https://script.google.com/macros/s/AKfycbxwthhOYpTnj_iTslYbVYScOmR47PstD8hZL_hkNpEMkhOi4FwrLJi8VECaVWx8t1MY/exec';
 
-<div id="toast" class="toast"></div>
-
-<script>
-// ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwthhOYpTnj_iTslYbVYScOmR47PstD8hZL_hkNpEMkhOi4FwrLJi8VECaVWx8t1MY/exec';
-
-let uploadedHairImageBase64 = '';
-
-function showMessage(text, isError) {
-    const toast = document.getElementById('toast');
-    toast.textContent = text;
-    toast.className = 'toast' + (isError ? ' error' : '');
-    toast.style.display = 'block';
-    setTimeout(() => toast.style.display = 'none', 5000);
-}
-
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-    });
-}
-
-document.getElementById('hairImage').addEventListener('change', async (e) => {
-    if (e.target.files.length > 0) {
-        const statusDiv = document.getElementById('hairImageStatus');
-        statusDiv.innerHTML = '⏳ جاري تجهيز الصورة...';
-        statusDiv.style.color = '#856404';
+    async function send() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        const result = document.getElementById('result');
+        
+        if (!name || !phone || !email) {
+            result.innerHTML = '⚠️ الرجاء تعبئة جميع الحقول';
+            return;
+        }
+        
+        result.innerHTML = '⏳ جاري الإرسال...';
+        
         try {
-            uploadedHairImageBase64 = await fileToBase64(e.target.files[0]);
-            statusDiv.innerHTML = '✅ الصورة جاهزة للإرسال';
-            statusDiv.style.color = '#155724';
-        } catch (error) {
-            statusDiv.innerHTML = '❌ فشل تجهيز الصورة';
-            statusDiv.style.color = '#c0392b';
-            uploadedHairImageBase64 = '';
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone, email })
+            });
+            const data = await response.json();
+            result.innerHTML = '✅ ' + (data.message || 'تم الإرسال');
+        } catch(error) {
+            result.innerHTML = '❌ خطأ: ' + error.message;
         }
     }
-});
-
-document.getElementById('sendBtn').onclick = async () => {
-    const name = document.getElementById('name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const consultType = document.getElementById('consultType').value;
-    
-    if (!name || !phone || !email) {
-        showMessage('⚠️ الرجاء تعبئة الاسم والهاتف والبريد', true);
-        return;
-    }
-    if (!email.includes('@')) {
-        showMessage('⚠️ بريد إلكتروني غير صحيح', true);
-        return;
-    }
-    
-    const btn = document.getElementById('sendBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loader"></span> جاري الإرسال...';
-    showMessage('⏳ جاري إرسال الطلب...');
-    
-    // حساب تاريخ ووقت افتراضي (بعد 30 دقيقة من الآن)
-    const now = new Date();
-    const futureTime = new Date(now.getTime() + 30 * 60000);
-    const year = futureTime.getFullYear();
-    const month = (futureTime.getMonth() + 1).toString().padStart(2, '0');
-    const day = futureTime.getDate().toString().padStart(2, '0');
-    const hours = futureTime.getHours().toString().padStart(2, '0');
-    const minutes = futureTime.getMinutes().toString().padStart(2, '0');
-    const date = `${year}-${month}-${day}`;
-    const selectedHour = `${hours}:00`;
-    
-    const allData = {
-        name: name,
-        age: '30',
-        phone: phone,
-        email: email,
-        date: date,
-        selectedHour: selectedHour,
-        consultType: consultType,
-        notes: 'هذا اختبار بسيط',
-        goalHairLoss: 'نعم',
-        goalDryness: 'لا',
-        scalpIssues: '',
-        scalpIssueOther: '',
-        excessiveHairLoss: 'لا',
-        trichotillomania: 'لا',
-        whiteBulb: 'لا',
-        stubbornDandruff: 'لا',
-        scalpDiseases: '',
-        water: '1-2 لتر',
-        hairLoss: 'لا',
-        digestive: 'لا',
-        fatigue: 'لا',
-        nails: 'لا',
-        diet: 'لا',
-        quickDry: 'لا',
-        slowDry: 'لا',
-        hairImageBase64: uploadedHairImageBase64,
-        medicalReportBase64: ''
-    };
-    
-    try {
-        const response = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(allData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            showMessage(result.message || '✅ تم الإرسال بنجاح! سيصلك إيميل خلال دقائق.');
-            document.getElementById('name').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('hairImage').value = '';
-            uploadedHairImageBase64 = '';
-            document.getElementById('hairImageStatus').innerHTML = '';
-        } else {
-            showMessage(result.message || '❌ حدث خطأ، حاول مرة أخرى', true);
-        }
-    } catch (error) {
-        console.error(error);
-        showMessage('❌ خطأ في الاتصال: ' + error.message, true);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '📤 إرسال اختبار';
-    }
-};
-</script>
+    </script>
 </body>
 </html>
