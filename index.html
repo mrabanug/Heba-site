@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>هبة سالم | استشارات وحجز مواعيد</title>
 <style>
+/* نفس الأنماط السابقة - يمكنك الاحتفاظ بها كما هي */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#F7F5EB;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
 .hero{background:#324A3E;color:#FFF;text-align:center;padding:75px 20px;}
@@ -78,11 +79,11 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="tel" id="phone" placeholder="مثال: 0771234567" maxlength="10">
-<div class="hint">📞 10 أرقام (هذا هو رقمك المرجعي)</div>
+<div class="hint">📞 10 أرقام</div>
 
-<label>البريد الإلكتروني <span class="optional">(اختياري - لتلقي رابط الاستشارة)</span></label>
+<label>البريد الإلكتروني <span class="required">*</span></label>
 <input type="email" id="email" placeholder="example@gmail.com">
-<div class="hint">📧 سيصلك رابط جلسة الاستشارة على هذا البريد</div>
+<div class="hint">📧 سيصلك رابط الاستشارة على هذا البريد</div>
 
 <div class="booking-row">
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
@@ -148,12 +149,11 @@ input,select,textarea{width:100%;padding:12px;margin:5px 0 10px;border:1.5px sol
 </div>
 
 <script>
-// ==================== الرابط الجديد ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTgjyZMl3OdmfAhE37uFqSQxJpraXl3oWTTLSUMAJepDEwiKXxqB9w6B-nv-S5VPq0/exec';
-const IMGBB_KEY = 'd7d3d4f980737a479c46312bcb4ae4e7';
+// ==================== الرابط ====================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTgjyZMl3OdmfAhE37uFqSQxJpraXl3oWTTLSUMAJepDEwiKXxqB9w6B-nv-S5VPq0/exec'; // استبدلي بالرابط الجديد
 
-let uploadedHairImageUrl = '';
-let uploadedMedicalReportUrl = '';
+let uploadedHairImageBase64 = '';
+let uploadedMedicalReportBase64 = '';
 
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
@@ -178,44 +178,48 @@ function formatTimeTo12Hour(time24) {
     return `${displayHour}:${minutes} ${ampm}`;
 }
 
-async function uploadToImgBB(file, statusElementId) {
-    const statusDiv = document.getElementById(statusElementId);
-    statusDiv.style.display = 'block';
-    statusDiv.className = 'upload-status loading';
-    statusDiv.innerHTML = '⏳ جاري رفع الصورة...';
-    
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', IMGBB_KEY);
-    
-    try {
-        const response = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: formData });
-        const data = await response.json();
-        if (data.success) {
-            statusDiv.className = 'upload-status success';
-            statusDiv.innerHTML = '✅ تم رفع الصورة بنجاح';
-            return data.data.url;
-        } else {
-            throw new Error('فشل الرفع');
-        }
-    } catch (error) {
-        statusDiv.className = 'upload-status error';
-        statusDiv.innerHTML = '❌ فشل رفع الصورة، حاولي مرة أخرى';
-        throw error;
-    }
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+    });
 }
 
 document.getElementById('hairImage').addEventListener('change', async (e) => {
     if (e.target.files.length > 0) {
-        try { uploadedHairImageUrl = await uploadToImgBB(e.target.files[0], 'hairImageStatus'); } 
-        catch (error) { uploadedHairImageUrl = ''; }
+        const statusDiv = document.getElementById('hairImageStatus');
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'upload-status loading';
+        statusDiv.innerHTML = '⏳ جاري تجهيز الصورة...';
+        try {
+            uploadedHairImageBase64 = await fileToBase64(e.target.files[0]);
+            statusDiv.className = 'upload-status success';
+            statusDiv.innerHTML = '✅ الصورة جاهزة للإرسال';
+        } catch (error) {
+            statusDiv.className = 'upload-status error';
+            statusDiv.innerHTML = '❌ فشل تجهيز الصورة';
+            uploadedHairImageBase64 = '';
+        }
     }
 });
 
 document.getElementById('medicalReport').addEventListener('change', async (e) => {
     if (e.target.files.length > 0) {
-        try { uploadedMedicalReportUrl = await uploadToImgBB(e.target.files[0], 'medicalReportStatus'); } 
-        catch (error) { uploadedMedicalReportUrl = ''; }
+        const statusDiv = document.getElementById('medicalReportStatus');
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'upload-status loading';
+        statusDiv.innerHTML = '⏳ جاري تجهيز الملف...';
+        try {
+            uploadedMedicalReportBase64 = await fileToBase64(e.target.files[0]);
+            statusDiv.className = 'upload-status success';
+            statusDiv.innerHTML = '✅ الملف جاهز للإرسال';
+        } catch (error) {
+            statusDiv.className = 'upload-status error';
+            statusDiv.innerHTML = '❌ فشل تجهيز الملف';
+            uploadedMedicalReportBase64 = '';
+        }
     }
 });
 
@@ -339,7 +343,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    if (!name || !age || !phone || !date || !selectedHour) {
+    if (!name || !age || !phone || !email || !date || !selectedHour) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
     }
@@ -352,7 +356,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
         return;
     }
     
-    if (hairLoss === 'نعم' && !uploadedMedicalReportUrl) {
+    if (hairLoss === 'نعم' && !uploadedMedicalReportBase64) {
         document.getElementById('medicalError').style.display = 'block';
         setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
         showMessage('⚠️ يرجى رفع التحليل الطبي', true);
@@ -371,41 +375,44 @@ document.getElementById('finalSendBtn').onclick = async () => {
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
         excessiveHairLoss, trichotillomania, whiteBulb, stubbornDandruff, scalpDiseases,
         water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
-        hairImageUrl: uploadedHairImageUrl,
-        medicalReportUrl: uploadedMedicalReportUrl,
-        referenceNumber: phone
+        hairImageBase64: uploadedHairImageBase64,
+        medicalReportBase64: uploadedMedicalReportBase64
     };
     
     try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(allData)
         });
         
-        showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك رابط الاستشارة على بريدك الإلكتروني.');
+        const result = await response.json();
         
-        document.getElementById('fullname').value = '';
-        document.getElementById('age').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('bookingDate').value = '';
-        document.getElementById('bookingTime').innerHTML = '<option value="">⏳ اختاري التاريخ أولاً</option>';
-        document.getElementById('notes').value = '';
-        document.getElementById('hairImage').value = '';
-        document.getElementById('medicalReport').value = '';
-        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-        document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-        document.getElementById('scalpIssueOther').style.display = 'none';
-        document.getElementById('scalpIssueOther').value = '';
-        charCountSpan.innerHTML = '💬 0 / 50 حرف';
-        uploadedHairImageUrl = '';
-        uploadedMedicalReportUrl = '';
-        document.getElementById('hairImageStatus').style.display = 'none';
-        document.getElementById('medicalReportStatus').style.display = 'none';
-        updateMedicalRequirement();
-        
+        if (result.status === 'success') {
+            showMessage(result.message || '✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
+            
+            document.getElementById('fullname').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('bookingDate').value = '';
+            document.getElementById('bookingTime').innerHTML = '<option value="">⏳ اختاري التاريخ أولاً</option>';
+            document.getElementById('notes').value = '';
+            document.getElementById('hairImage').value = '';
+            document.getElementById('medicalReport').value = '';
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+            document.getElementById('scalpIssueOther').style.display = 'none';
+            document.getElementById('scalpIssueOther').value = '';
+            charCountSpan.innerHTML = '💬 0 / 50 حرف';
+            uploadedHairImageBase64 = '';
+            uploadedMedicalReportBase64 = '';
+            document.getElementById('hairImageStatus').style.display = 'none';
+            document.getElementById('medicalReportStatus').style.display = 'none';
+            updateMedicalRequirement();
+        } else {
+            showMessage(result.message || '❌ حدث خطأ، يرجى المحاولة مرة أخرى.', true);
+        }
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
@@ -415,7 +422,5 @@ document.getElementById('finalSendBtn').onclick = async () => {
     }
 };
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>emailjs.init('k_uVBPGLWFluR9_gn');</script>
 </body>
 </html>
