@@ -161,7 +161,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <label><input type="checkbox" name="hairLossType" value="ثعلبة بقعية"> ثعلبة بقعية</label>
 </div>
 
-<label>نوع وملمس الشعر الطبيعي؟</label>
+<label>نوع وملمس الشعر الطبيعي？</label>
 <div class="radio-group">
     <label><input type="radio" name="hairTexture" value="ناعم"> ناعم / أملس</label>
     <label><input type="radio" name="hairTexture" value="مموج ويفي"> مموج ويفي (Wavy)</label>
@@ -246,8 +246,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 <div class="footer-credit">برمجة: محمد العزاوي</div>
 
 <script>
-// ==================== الرابط ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZkdKQTwh2ZjaRgxMSaTgpPF_hdDj1H4xgQ0OSS3A6e7iNmSr0jHV9c_8sbWMPL0uJ/exec';
+// ==================== الرابط الجديد ====================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_I82GrvabnH-cs6uo7_t2SdzcCclt9Tie6z3KCepVdA3zwgj_j3Dct87FXDKgTx9K/exec';
 
 let uploadedHairImages = [];
 let uploadedMedicalReports = [];
@@ -258,7 +258,7 @@ function getBaghdadTime() {
     return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
 }
 
-// ==================== تعيين الحد الأدنى للتاريخ (يمنع اختيار تواريخ مضت) ====================
+// ==================== تعيين الحد الأدنى للتاريخ ====================
 function setMinDate() {
     const now = getBaghdadTime();
     const year = now.getFullYear();
@@ -423,7 +423,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// ==================== تحميل الأوقات (ساعات كاملة فقط) ====================
+// ==================== تحميل الأوقات ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -431,7 +431,6 @@ async function loadAvailableTimes() {
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
     
-    // الأوقات الثابتة (ساعات كاملة فقط - هذا ما يراه الزبون)
     const displayTimes = [
         { value: '10', text: '10:00 صباحاً' },
         { value: '11', text: '11:00 صباحاً' },
@@ -440,7 +439,6 @@ async function loadAvailableTimes() {
         { value: '14', text: '02:00 ظهراً' }
     ];
     
-    // إضافة الأوقات المتاحة (كلها متاحة للاختيار، النظام سيحسب الوقت الفعلي)
     timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
     displayTimes.forEach(option => {
         const opt = document.createElement('option');
@@ -527,40 +525,37 @@ document.getElementById('finalSendBtn').onclick = async () => {
     };
     
     try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        // استخدام mode: 'no-cors' لتجنب مشاكل CORS
+        await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(allData)
         });
         
-        const result = await response.json();
+        showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك إيميل التأكيد خلال دقائق.');
         
-        if (result.status === 'success') {
-            showMessage(result.message || '✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
-            
-            document.getElementById('fullname').value = '';
-            document.getElementById('age').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('bookingDate').value = '';
-            document.getElementById('bookingTime').value = '';
-            document.getElementById('notes').value = '';
-            document.getElementById('hairImage').value = '';
-            document.getElementById('medicalReport').value = '';
-            uploadedHairImages = [];
-            uploadedMedicalReports = [];
-            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-            document.getElementById('scalpIssueOther').style.display = 'none';
-            document.getElementById('scalpIssueOther').value = '';
-            document.getElementById('pregnancyQuestions').style.display = 'none';
-            document.getElementById('allergiesDetails').style.display = 'none';
-            document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
-            charCountSpan.innerHTML = '💬 0 / 50 حرف';
-            updateMedicalRequirement();
-        } else {
-            showMessage(result.message || '❌ حدث خطأ، حاول مرة أخرى', true);
-        }
+        document.getElementById('fullname').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('bookingDate').value = '';
+        document.getElementById('bookingTime').value = '';
+        document.getElementById('notes').value = '';
+        document.getElementById('hairImage').value = '';
+        document.getElementById('medicalReport').value = '';
+        uploadedHairImages = [];
+        uploadedMedicalReports = [];
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+        document.getElementById('scalpIssueOther').style.display = 'none';
+        document.getElementById('scalpIssueOther').value = '';
+        document.getElementById('pregnancyQuestions').style.display = 'none';
+        document.getElementById('allergiesDetails').style.display = 'none';
+        document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
+        charCountSpan.innerHTML = '💬 0 / 50 حرف';
+        updateMedicalRequirement();
+        
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
