@@ -418,7 +418,7 @@ async function loadAvailableTimes() {
         const data = await response.json();
         
         if (data.status === 'success') {
-            const slots = data.slots || [];
+            const slots = data.allTimes || [];
             if (slots.length === 0) {
                 timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
                 return;
