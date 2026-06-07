@@ -83,7 +83,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 <!-- حجز الموعد -->
 <div class="booking-row">
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
-    <div><label>اختر الوقت <span class="required">*</span></label><select id="bookingTime" class="time-picker"><option value="">⏳ اختاري التاريخ أولاً</option></select></div>
+    <div><label>اختر الوقت <span class="required">*</span></label>
+        <select id="bookingTime" class="time-picker">
+            <option value="">⏳ اختاري التاريخ أولاً</option>
+            <option value="10">10:00 صباحاً</option>
+            <option value="11">11:00 صباحاً</option>
+            <option value="12">12:00 ظهراً</option>
+            <option value="13">01:00 ظهراً</option>
+            <option value="14">02:00 ظهراً</option>
+        </select>
+    </div>
 </div>
 
 <label>نوع الاستشارة <span class="required">*</span></label>
@@ -414,7 +423,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// ==================== تحميل الأوقات (مع منع الأوقات الماضية) ====================
+// ==================== تحميل الأوقات (ساعات كاملة فقط) ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -422,45 +431,23 @@ async function loadAvailableTimes() {
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
     
-    try {
-        const response = await fetch(`${APPS_SCRIPT_URL}?date=${date}`);
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            const allTimes = data.allTimes || ['10:00', '11:00', '12:00', '13:00', '14:00'];
-            
-            const now = getBaghdadTime();
-            const currentHour = now.getHours();
-            const today = now.toISOString().split('T')[0];
-            const isToday = (date === today);
-            
-            let availableTimes = allTimes;
-            if (isToday) {
-                availableTimes = allTimes.filter(time => {
-                    const [hour] = time.split(':').map(Number);
-                    return hour > currentHour;
-                });
-            }
-            
-            if (availableTimes.length === 0) {
-                timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
-                return;
-            }
-            
-            timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
-            availableTimes.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
-                option.textContent = formatTimeTo12Hour(time);
-                timeSelect.appendChild(option);
-            });
-        } else {
-            timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
-        }
-    } catch (error) {
-        console.error('Error loading times:', error);
-        timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
-    }
+    // الأوقات الثابتة (ساعات كاملة فقط - هذا ما يراه الزبون)
+    const displayTimes = [
+        { value: '10', text: '10:00 صباحاً' },
+        { value: '11', text: '11:00 صباحاً' },
+        { value: '12', text: '12:00 ظهراً' },
+        { value: '13', text: '01:00 ظهراً' },
+        { value: '14', text: '02:00 ظهراً' }
+    ];
+    
+    // إضافة الأوقات المتاحة (كلها متاحة للاختيار، النظام سيحسب الوقت الفعلي)
+    timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
+    displayTimes.forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option.value;
+        opt.textContent = option.text;
+        timeSelect.appendChild(opt);
+    });
 }
 
 document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
@@ -472,7 +459,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
     const date = document.getElementById('bookingDate').value;
-    const time = document.getElementById('bookingTime').value;
+    const selectedHour = document.getElementById('bookingTime').value;
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
     
@@ -504,7 +491,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    if (!name || !age || !phone || !email || !date || !time) {
+    if (!name || !age || !phone || !email || !date || !selectedHour) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
     }
@@ -529,7 +516,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     showMessage('⏳ جاري إرسال الاستشارة...');
     
     const allData = {
-        name, age, phone, email, date, time, consultType, notes,
+        name, age, phone, email, date, selectedHour: selectedHour, consultType, notes,
         isPregnant, pregnancyHairLoss, pregnancyTrimester, pregnancyScalp, pregnancyVitamins,
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
         hairLossRate, hairLossType, hairTexture,
@@ -540,36 +527,40 @@ document.getElementById('finalSendBtn').onclick = async () => {
     };
     
     try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(allData)
         });
         
-        showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
+        const result = await response.json();
         
-        document.getElementById('fullname').value = '';
-        document.getElementById('age').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('bookingDate').value = '';
-        document.getElementById('bookingTime').innerHTML = '<option value="">⏳ اختاري التاريخ أولاً</option>';
-        document.getElementById('notes').value = '';
-        document.getElementById('hairImage').value = '';
-        document.getElementById('medicalReport').value = '';
-        uploadedHairImages = [];
-        uploadedMedicalReports = [];
-        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-        document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-        document.getElementById('scalpIssueOther').style.display = 'none';
-        document.getElementById('scalpIssueOther').value = '';
-        document.getElementById('pregnancyQuestions').style.display = 'none';
-        document.getElementById('allergiesDetails').style.display = 'none';
-        document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
-        charCountSpan.innerHTML = '💬 0 / 50 حرف';
-        updateMedicalRequirement();
-        
+        if (result.status === 'success') {
+            showMessage(result.message || '✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
+            
+            document.getElementById('fullname').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('bookingDate').value = '';
+            document.getElementById('bookingTime').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('hairImage').value = '';
+            document.getElementById('medicalReport').value = '';
+            uploadedHairImages = [];
+            uploadedMedicalReports = [];
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+            document.getElementById('scalpIssueOther').style.display = 'none';
+            document.getElementById('scalpIssueOther').value = '';
+            document.getElementById('pregnancyQuestions').style.display = 'none';
+            document.getElementById('allergiesDetails').style.display = 'none';
+            document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
+            charCountSpan.innerHTML = '💬 0 / 50 حرف';
+            updateMedicalRequirement();
+        } else {
+            showMessage(result.message || '❌ حدث خطأ، حاول مرة أخرى', true);
+        }
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
