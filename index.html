@@ -96,7 +96,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 
 <!-- ===== سؤال الحمل ===== -->
 <h3>🤰 أسئلة خاصة بالحمل</h3>
-<label>هل أنت حامل حالياً？ <span class="required">*</span></label>
+<label>هل أنت حامل حالياً؟ <span class="required">*</span></label>
 <div class="radio-group">
     <label><input type="radio" name="isPregnant" value="نعم" id="pregnantYes"> نعم</label>
     <label><input type="radio" name="isPregnant" value="لا" id="pregnantNo"> لا</label>
@@ -210,7 +210,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 <textarea id="notes" maxlength="50" rows="2" placeholder="أضيفي أي ملاحظات إضافية (50 حرف كحد أقصى)"></textarea>
 <div class="hint" id="charCount">💬 0 / 50 حرف</div>
 
-<!-- ===== رفع الصور (اختيار متعدد - حتى صورتين) ===== -->
+<!-- ===== رفع الصور ===== -->
 <h3>📸 رفع الملفات</h3>
 
 <div class="file-input">
@@ -240,7 +240,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 // ==================== الرابط ====================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZkdKQTwh2ZjaRgxMSaTgpPF_hdDj1H4xgQ0OSS3A6e7iNmSr0jHV9c_8sbWMPL0uJ/exec';
 
-// تخزين الصور
 let uploadedHairImages = [];
 let uploadedMedicalReports = [];
 
@@ -278,7 +277,7 @@ document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
     });
 });
 
-// ==================== دوال رفع الصور المتعددة ====================
+// ==================== دوال رفع الصور ====================
 function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -361,14 +360,12 @@ function formatTimeTo12Hour(time24) {
     return `${displayHour}:${minutes} ${ampm}`;
 }
 
-// عداد الأحرف
 const notesField = document.getElementById('notes');
 const charCountSpan = document.getElementById('charCount');
 notesField.addEventListener('input', function() {
     charCountSpan.innerHTML = `💬 ${this.value.length} / 50 حرف`;
 });
 
-// تحديث إجبارية التحليل الطبي (يكفي ملف واحد على الأقل)
 function updateMedicalRequirement() {
     const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
     const label = document.getElementById('medicalRequiredLabel');
@@ -405,7 +402,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// تحميل الأوقات
+// ==================== تحميل الأوقات (مع منع الأوقات الماضية) ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -418,13 +415,31 @@ async function loadAvailableTimes() {
         const data = await response.json();
         
         if (data.status === 'success') {
-            const slots = data.allTimes || [];
-            if (slots.length === 0) {
+            const allTimes = data.allTimes || ['10:00', '11:00', '12:00', '13:00', '14:00'];
+            
+            // الحصول على الوقت الحالي في بغداد
+            const now = getBaghdadTime();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const today = now.toISOString().split('T')[0];
+            const isToday = (date === today);
+            
+            // تصفية الأوقات: إزالة الأوقات التي مضت إذا كان التاريخ هو اليوم
+            let availableTimes = allTimes;
+            if (isToday) {
+                availableTimes = allTimes.filter(time => {
+                    const [hour] = time.split(':').map(Number);
+                    return hour > currentHour;
+                });
+            }
+            
+            if (availableTimes.length === 0) {
                 timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
                 return;
             }
+            
             timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
-            slots.forEach(time => {
+            availableTimes.forEach(time => {
                 const option = document.createElement('option');
                 option.value = time;
                 option.textContent = formatTimeTo12Hour(time);
@@ -453,7 +468,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
     
-    // جمع البيانات
     const isPregnant = document.querySelector('input[name="isPregnant"]:checked')?.value || '';
     const pregnancyHairLoss = document.querySelector('input[name="pregnancyHairLoss"]:checked')?.value || '';
     const pregnancyTrimester = document.querySelector('input[name="pregnancyTrimester"]:checked')?.value || '';
@@ -482,7 +496,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    // التحقق من الحقول الإجبارية
     if (!name || !age || !phone || !email || !date || !time) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
@@ -528,7 +541,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
         
         showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح!');
         
-        // تنظيف الحقول
         document.getElementById('fullname').value = '';
         document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
