@@ -12,8 +12,6 @@ body{
     background: linear-gradient(135deg,#F7F5EB,#EFE9DB);
     color:#2D2D2A;
 }
-
-/* HERO */
 .hero{
     background: linear-gradient(135deg,#324A3E,#2D3E34);
     color:#fff;
@@ -22,224 +20,79 @@ body{
     position:relative;
     overflow:hidden;
 }
-
-.hero h1{
-    font-size:48px;
-    letter-spacing:1px;
-    margin-top:10px;
-}
-
-.hero p{
-    color:#D4C5A9;
-    margin-top:10px;
-    font-size:18px;
-}
-
+.hero h1{font-size:48px;letter-spacing:1px;margin-top:10px;}
+.hero p{color:#D4C5A9;margin-top:10px;font-size:18px;}
 .hero button{
-    margin-top:25px;
-    padding:14px 40px;
-    border:none;
-    border-radius:50px;
+    margin-top:25px;padding:14px 40px;border:none;border-radius:50px;
     background: linear-gradient(135deg,#A89676,#c2ad86);
-    color:#fff;
-    font-weight:bold;
-    cursor:pointer;
-    transition:0.3s;
+    color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;
     box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
-
-.hero button:hover{
-    transform:translateY(-2px);
-}
-
-/* CONTAINER */
-.container{
-    max-width:900px;
-    margin:auto;
-    padding:30px 15px;
-}
-
-/* CARD STYLE */
+.hero button:hover{transform:translateY(-2px);}
+.container{max-width:900px;margin:auto;padding:30px 15px;}
 .box{
-    background:#fff;
-    padding:30px;
-    margin:25px 0;
-    border-radius:20px;
-    box-shadow:0 10px 35px rgba(0,0,0,0.08);
-    border:1px solid #eee;
-    transition:0.3s;
+    background:#fff;padding:30px;margin:25px 0;border-radius:20px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.08);border:1px solid #eee;transition:0.3s;
 }
-
-.box:hover{
-    transform:translateY(-3px);
-}
-
-/* HEADINGS */
-h2{
-    color:#324A3E;
-    font-size:22px;
-    margin-bottom:20px;
-    border-right:4px solid #A89676;
-    padding-right:10px;
-}
-
-h3{
-    color:#324A3E;
-    margin-top:25px;
-    font-size:18px;
-    border-right:3px solid #D4C5A9;
-    padding-right:10px;
-}
-
-/* INPUTS */
+.box:hover{transform:translateY(-3px);}
+h2{color:#324A3E;font-size:22px;margin-bottom:20px;border-right:4px solid #A89676;padding-right:10px;}
+h3{color:#324A3E;margin-top:25px;font-size:18px;border-right:3px solid #D4C5A9;padding-right:10px;}
 input,select,textarea{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    border:1px solid #e5e0d4;
-    background:#faf8f2;
-    transition:0.3s;
-    font-size:14px;
+    width:100%;padding:14px;border-radius:12px;border:1px solid #e5e0d4;
+    background:#faf8f2;transition:0.3s;font-size:14px;
 }
-
 input:focus,select:focus,textarea:focus{
-    outline:none;
-    border-color:#A89676;
-    box-shadow:0 0 0 3px rgba(168,150,118,0.15);
+    outline:none;border-color:#A89676;box-shadow:0 0 0 3px rgba(168,150,118,0.15);
 }
-
-/* LABELS */
-label{
-    display:block;
-    margin-top:15px;
-    margin-bottom:6px;
-    font-weight:600;
-    color:#324A3E;
-}
-
-/* RADIO / CHECKBOX */
-.radio-group,.checkbox-group{
-    background:#faf8f2;
-    padding:12px;
-    border-radius:12px;
-    margin:10px 0;
-}
-
-.radio-group label, .checkbox-group label{
-    display:inline-block;
-    margin-left:20px;
-    font-weight:normal;
-    margin-top:5px;
-}
-
-.radio-group label input, .checkbox-group label input{
-    width:auto;
-    margin-left:5px;
-}
-
-/* BUTTON */
+label{display:block;margin-top:15px;margin-bottom:6px;font-weight:600;color:#324A3E;}
+.radio-group,.checkbox-group{background:#faf8f2;padding:12px;border-radius:12px;margin:10px 0;}
+.radio-group label, .checkbox-group label{display:inline-block;margin-left:20px;font-weight:normal;margin-top:5px;}
+.radio-group label input, .checkbox-group label input{width:auto;margin-left:5px;}
 .submit{
-    width:100%;
-    padding:16px;
-    border:none;
-    border-radius:50px;
+    width:100%;padding:16px;border:none;border-radius:50px;
     background: linear-gradient(135deg,#324A3E,#2D3E34);
-    color:#fff;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:25px;
-    transition:0.3s;
+    color:#fff;font-size:18px;font-weight:bold;cursor:pointer;margin-top:25px;transition:0.3s;
     box-shadow:0 15px 40px rgba(50,74,62,0.25);
 }
-
-.submit:hover{
-    transform:translateY(-2px);
-}
-
-/* BOOKING ROW */
-.booking-row{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
-}
-
-.booking-row > div{
-    flex:1;
-    min-width:150px;
-}
-
-/* TOAST */
+.submit:hover{transform:translateY(-2px);}
+.booking-row{display:flex;gap:15px;flex-wrap:wrap;}
+.booking-row > div{flex:1;min-width:150px;}
 .toast{
-    position:fixed;
-    bottom:25px;
-    left:50%;
-    transform:translateX(-50%);
-    padding:14px 25px;
-    border-radius:50px;
-    background:#324A3E;
-    color:#fff;
-    display:none;
-    z-index:999;
-    box-shadow:0 10px 30px rgba(0,0,0,0.2);
-    text-align:center;
+    position:fixed;bottom:25px;left:50%;transform:translateX(-50%);
+    padding:14px 25px;border-radius:50px;background:#324A3E;color:#fff;
+    display:none;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.2);text-align:center;
 }
-.toast.error{
-    background:#c0392b;
-}
-
-/* LOADER */
+.toast.error{background:#c0392b;}
 .loader{
-    width:18px;
-    height:18px;
-    border:3px solid #fff;
-    border-top:3px solid #A89676;
-    border-radius:50%;
-    display:inline-block;
-    animation:spin 1s linear infinite;
-    margin-right:8px;
-    vertical-align:middle;
+    width:18px;height:18px;border:3px solid #fff;border-top:3px solid #A89676;
+    border-radius:50%;display:inline-block;animation:spin 1s linear infinite;
+    margin-right:8px;vertical-align:middle;
 }
-
-@keyframes spin{
-    0%{transform:rotate(0);}
-    100%{transform:rotate(360deg);}
-}
-
-/* FOOTER */
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
 .footer-credit{
-    text-align:center;
-    padding:20px;
-    font-size:12px;
-    color:#A89676;
-    margin-top:30px;
-    border-top:1px solid #e5e0d4;
+    text-align:center;padding:20px;font-size:12px;color:#A89676;
+    margin-top:30px;border-top:1px solid #e5e0d4;
 }
+.hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
+.upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
+.upload-status.success{background:#d4edda;color:#155724;}
+.upload-status.error{background:#f8d7da;color:#721c24;}
+.upload-status.loading{background:#fff3cd;color:#856404;}
 
-.hint{
-    font-size:12px;
-    color:#7f8c8d;
-    margin-top:-8px;
-    margin-bottom:5px;
+/* تنسيق مجموعة رفع الصور */
+.upload-group{
+    background:#faf8f2;border:1px solid #e5e0d4;border-radius:16px;
+    padding:18px;margin-top:15px;
 }
-
-.upload-status{
-    font-size:12px;
-    margin-top:5px;
-    padding:5px;
-    border-radius:8px;
+.upload-group-title{
+    font-weight:700;color:#324A3E;font-size:15px;margin-bottom:12px;
+    display:flex;align-items:center;gap:6px;
 }
-.upload-status.success{
-    background:#d4edda;
-    color:#155724;
-}
-.upload-status.error{
-    background:#f8d7da;
-    color:#721c24;
-}
-.upload-status.loading{
-    background:#fff3cd;
-    color:#856404;
+.upload-pair{display:flex;gap:12px;flex-wrap:wrap;}
+.upload-item{flex:1;min-width:200px;}
+.upload-item label{margin-top:0;font-size:13px;color:#5a6a62;font-weight:600;}
+.upload-item input[type="file"]{
+    padding:8px;font-size:13px;cursor:pointer;
 }
 </style>
 </head>
@@ -256,7 +109,7 @@ label{
                 <circle cx="0" cy="0" r="3.5" fill="#A89676"/>
                 <circle cx="0" cy="0" r="1.8" fill="#324A3E"/>
             </g>
-            <text x="140" y="58" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="15" font-weight="bold" fill="#A89676" letter-spacing="3">halcyon hair & wellness</text>
+            <text x="140" y="58" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="15" font-weight="bold" fill="#A89676" letter-spacing="3">halcyon hair &amp; wellness</text>
             <line x1="70" y1="67" x2="210" y2="67" stroke="#D4C5A9" stroke-width="0.7" opacity="0.6"/>
             <text x="140" y="80" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="9" fill="#D4C5A9" letter-spacing="4">serene beauty ritual</text>
         </svg>
@@ -324,17 +177,40 @@ label{
 <textarea id="notes" maxlength="50" rows="2" placeholder="أضيفي أي ملاحظات إضافية (50 حرف كحد أقصى)"></textarea>
 <div class="hint" id="charCount">💬 0 / 50 حرف</div>
 
-<div class="file-input">
-    <label>📸 صورة الشعر <span class="optional">(اختياري - مفيدة للتشخيص)</span></label>
-    <input type="file" id="hairImage" accept="image/*">
-    <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
+<!-- ===== قسم رفع صور الشعر ===== -->
+<div class="upload-group">
+    <div class="upload-group-title">📸 صور الشعر <span style="font-weight:400;font-size:13px;color:#7f8c8d;">(اختياري - مفيدة للتشخيص)</span></div>
+    <div class="upload-pair">
+        <div class="upload-item">
+            <label>الصورة الأولى</label>
+            <input type="file" id="hairImage1" accept="image/*">
+            <div id="hairImage1Status" class="upload-status" style="display:none;"></div>
+        </div>
+        <div class="upload-item">
+            <label>الصورة الثانية</label>
+            <input type="file" id="hairImage2" accept="image/*">
+            <div id="hairImage2Status" class="upload-status" style="display:none;"></div>
+        </div>
+    </div>
 </div>
-<div class="file-input">
-    <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
-    <input type="file" id="medicalReport" accept="image/*,.pdf">
-    <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
-    <div id="medicalNote" class="hint">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كان تساقط الشعر = نعم</div>
-    <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي</div>
+
+<!-- ===== قسم رفع التحليل الطبي ===== -->
+<div class="upload-group" style="margin-top:15px;">
+    <div class="upload-group-title">🩺 التحليل الطبي <span id="medicalRequiredLabel" style="font-weight:400;font-size:13px;color:#c0392b;">(إجباري في حالة وجود تساقط)</span></div>
+    <div id="medicalNote" class="hint" style="margin-bottom:10px;">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كان تساقط الشعر = نعم</div>
+    <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;margin-bottom:8px;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي</div>
+    <div class="upload-pair">
+        <div class="upload-item">
+            <label>الصورة الأولى</label>
+            <input type="file" id="medicalReport1" accept="image/*,.pdf">
+            <div id="medicalReport1Status" class="upload-status" style="display:none;"></div>
+        </div>
+        <div class="upload-item">
+            <label>الصورة الثانية</label>
+            <input type="file" id="medicalReport2" accept="image/*,.pdf">
+            <div id="medicalReport2Status" class="upload-status" style="display:none;"></div>
+        </div>
+    </div>
 </div>
 
 <button class="submit" id="finalSendBtn">📤 إرسال الاستشارة وتأكيد الحجز</button>
@@ -348,11 +224,12 @@ label{
 </div>
 
 <script>
-// ==================== الرابط الجديد ====================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZkdKQTwh2ZjaRgxMSaTgpPF_hdDj1H4xgQ0OSS3A6e7iNmSr0jHV9c_8sbWMPL0uJ/exec';
 
-let uploadedHairImageBase64 = '';
-let uploadedMedicalReportBase64 = '';
+let uploadedHairImage1Base64 = '';
+let uploadedHairImage2Base64 = '';
+let uploadedMedicalReport1Base64 = '';
+let uploadedMedicalReport2Base64 = '';
 
 function showMessage(text, isError) {
     const toast = document.getElementById('toast');
@@ -386,41 +263,31 @@ function fileToBase64(file) {
     });
 }
 
-document.getElementById('hairImage').addEventListener('change', async (e) => {
-    if (e.target.files.length > 0) {
-        const statusDiv = document.getElementById('hairImageStatus');
-        statusDiv.style.display = 'block';
-        statusDiv.className = 'upload-status loading';
-        statusDiv.innerHTML = '⏳ جاري تجهيز الصورة...';
-        try {
-            uploadedHairImageBase64 = await fileToBase64(e.target.files[0]);
-            statusDiv.className = 'upload-status success';
-            statusDiv.innerHTML = '✅ الصورة جاهزة للإرسال';
-        } catch (error) {
-            statusDiv.className = 'upload-status error';
-            statusDiv.innerHTML = '❌ فشل تجهيز الصورة';
-            uploadedHairImageBase64 = '';
+function setupFileUpload(inputId, statusId, storageVar) {
+    document.getElementById(inputId).addEventListener('change', async (e) => {
+        if (e.target.files.length > 0) {
+            const statusDiv = document.getElementById(statusId);
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'upload-status loading';
+            statusDiv.innerHTML = '⏳ جاري تجهيز الملف...';
+            try {
+                const base64 = await fileToBase64(e.target.files[0]);
+                window[storageVar] = base64;
+                statusDiv.className = 'upload-status success';
+                statusDiv.innerHTML = '✅ الملف جاهز للإرسال';
+            } catch (error) {
+                statusDiv.className = 'upload-status error';
+                statusDiv.innerHTML = '❌ فشل تجهيز الملف';
+                window[storageVar] = '';
+            }
         }
-    }
-});
+    });
+}
 
-document.getElementById('medicalReport').addEventListener('change', async (e) => {
-    if (e.target.files.length > 0) {
-        const statusDiv = document.getElementById('medicalReportStatus');
-        statusDiv.style.display = 'block';
-        statusDiv.className = 'upload-status loading';
-        statusDiv.innerHTML = '⏳ جاري تجهيز الملف...';
-        try {
-            uploadedMedicalReportBase64 = await fileToBase64(e.target.files[0]);
-            statusDiv.className = 'upload-status success';
-            statusDiv.innerHTML = '✅ الملف جاهز للإرسال';
-        } catch (error) {
-            statusDiv.className = 'upload-status error';
-            statusDiv.innerHTML = '❌ فشل تجهيز الملف';
-            uploadedMedicalReportBase64 = '';
-        }
-    }
-});
+setupFileUpload('hairImage1', 'hairImage1Status', 'uploadedHairImage1Base64');
+setupFileUpload('hairImage2', 'hairImage2Status', 'uploadedHairImage2Base64');
+setupFileUpload('medicalReport1', 'medicalReport1Status', 'uploadedMedicalReport1Base64');
+setupFileUpload('medicalReport2', 'medicalReport2Status', 'uploadedMedicalReport2Base64');
 
 const notesField = document.getElementById('notes');
 const charCountSpan = document.getElementById('charCount');
@@ -466,30 +333,19 @@ function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
-    
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
-    
     try {
         const response = await fetch(`${APPS_SCRIPT_URL}?date=${date}`);
         const data = await response.json();
-        
         if (data.status === 'success') {
             const slots = data.allTimes || [];
-            
-            const now = getBaghdadTime();
-            const today = now.toISOString().split('T')[0];
-            const isToday = (date === today);
-            
-            let availableTimes = [...slots];
-            
-            if (availableTimes.length === 0) {
+            if (slots.length === 0) {
                 timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
                 return;
             }
-            
             timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
-            availableTimes.forEach(time => {
+            slots.forEach(time => {
                 const option = document.createElement('option');
                 option.value = time;
                 option.textContent = formatTimeTo12Hour(time);
@@ -499,7 +355,6 @@ async function loadAvailableTimes() {
             timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
         }
     } catch (error) {
-        console.error('Error loading times:', error);
         timeSelect.innerHTML = '<option value="">❌ خطأ في تحميل الأوقات</option>';
     }
 }
@@ -516,7 +371,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const time = document.getElementById('bookingTime').value;
     const consultType = document.getElementById('consultType').value;
     const notes = document.getElementById('notes').value.trim();
-    
+
     const goalHairLoss = document.querySelector('input[name="goalHairLoss"]:checked')?.value || '';
     const goalDryness = document.querySelector('input[name="goalDryness"]:checked')?.value || '';
     const scalpIssues = Array.from(document.querySelectorAll('input[name="scalpIssue"]:checked')).map(cb => cb.value).join(', ');
@@ -534,7 +389,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const diet = document.querySelector('input[name="diet"]:checked')?.value || '';
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
-    
+
     if (!name || !age || !phone || !email || !date || !time) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
@@ -547,38 +402,39 @@ document.getElementById('finalSendBtn').onclick = async () => {
         showMessage('⚠️ الرجاء الإجابة عن سؤال تساقط الشعر', true);
         return;
     }
-    
-    if (hairLoss === 'نعم' && !uploadedMedicalReportBase64) {
+    if (hairLoss === 'نعم' && !uploadedMedicalReport1Base64) {
         document.getElementById('medicalError').style.display = 'block';
         setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
-        showMessage('⚠️ يرجى رفع التحليل الطبي', true);
+        showMessage('⚠️ يرجى رفع التحليل الطبي (الصورة الأولى على الأقل)', true);
         return;
     }
-    
+
     const btn = document.getElementById('finalSendBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="loader"></span> جاري إرسال الاستشارة...';
     showMessage('⏳ جاري إرسال الاستشارة...');
-    
+
     const allData = {
         name, age, phone, email, date, time, consultType, notes,
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
         excessiveHairLoss, trichotillomania, whiteBulb, stubbornDandruff, scalpDiseases,
         water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
-        hairImageBase64: uploadedHairImageBase64,
-        medicalReportBase64: uploadedMedicalReportBase64
+        hairImage1Base64: uploadedHairImage1Base64,
+        hairImage2Base64: uploadedHairImage2Base64,
+        medicalReport1Base64: uploadedMedicalReport1Base64,
+        medicalReport2Base64: uploadedMedicalReport2Base64
     };
-    
+
     try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(allData)
         });
-        
+
         showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك رابط الاستشارة على بريدك الإلكتروني.');
-        
+
         document.getElementById('fullname').value = '';
         document.getElementById('age').value = '';
         document.getElementById('phone').value = '';
@@ -586,19 +442,23 @@ document.getElementById('finalSendBtn').onclick = async () => {
         document.getElementById('bookingDate').value = '';
         document.getElementById('bookingTime').innerHTML = '<option value="">⏳ اختاري التاريخ أولاً</option>';
         document.getElementById('notes').value = '';
-        document.getElementById('hairImage').value = '';
-        document.getElementById('medicalReport').value = '';
+        ['hairImage1','hairImage2','medicalReport1','medicalReport2'].forEach(id => {
+            document.getElementById(id).value = '';
+        });
+        ['hairImage1Status','hairImage2Status','medicalReport1Status','medicalReport2Status'].forEach(id => {
+            document.getElementById(id).style.display = 'none';
+        });
         document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
         document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
         document.getElementById('scalpIssueOther').style.display = 'none';
         document.getElementById('scalpIssueOther').value = '';
         charCountSpan.innerHTML = '💬 0 / 50 حرف';
-        uploadedHairImageBase64 = '';
-        uploadedMedicalReportBase64 = '';
-        document.getElementById('hairImageStatus').style.display = 'none';
-        document.getElementById('medicalReportStatus').style.display = 'none';
+        uploadedHairImage1Base64 = '';
+        uploadedHairImage2Base64 = '';
+        uploadedMedicalReport1Base64 = '';
+        uploadedMedicalReport2Base64 = '';
         updateMedicalRequirement();
-        
+
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
