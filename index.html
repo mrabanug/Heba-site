@@ -243,6 +243,23 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZkdKQTwh2ZjaR
 let uploadedHairImages = [];
 let uploadedMedicalReports = [];
 
+// ==================== الحصول على الوقت الحقيقي بتوقيت بغداد ====================
+function getBaghdadTime() {
+    const now = new Date();
+    return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
+}
+
+// ==================== تعيين الحد الأدنى للتاريخ (يمنع اختيار تواريخ مضت) ====================
+function setMinDate() {
+    const now = getBaghdadTime();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+    document.getElementById('bookingDate').min = todayStr;
+}
+setMinDate();
+
 // ==================== إظهار/إخفاء أسئلة الحمل ====================
 document.getElementById('pregnantYes').addEventListener('change', function() {
     document.getElementById('pregnancyQuestions').style.display = 'block';
@@ -345,11 +362,6 @@ function showMessage(text, isError) {
     setTimeout(() => toast.style.display = 'none', 5000);
 }
 
-function getBaghdadTime() {
-    const now = new Date();
-    return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
-}
-
 function formatTimeTo12Hour(time24) {
     if (!time24) return '';
     const [hours, minutes] = time24.split(':');
@@ -417,14 +429,11 @@ async function loadAvailableTimes() {
         if (data.status === 'success') {
             const allTimes = data.allTimes || ['10:00', '11:00', '12:00', '13:00', '14:00'];
             
-            // الحصول على الوقت الحالي في بغداد
             const now = getBaghdadTime();
             const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
             const today = now.toISOString().split('T')[0];
             const isToday = (date === today);
             
-            // تصفية الأوقات: إزالة الأوقات التي مضت إذا كان التاريخ هو اليوم
             let availableTimes = allTimes;
             if (isToday) {
                 availableTimes = allTimes.filter(time => {
@@ -455,7 +464,6 @@ async function loadAvailableTimes() {
 }
 
 document.getElementById('bookingDate').addEventListener('change', loadAvailableTimes);
-document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
 
 // ==================== إرسال الاستشارة ====================
 document.getElementById('finalSendBtn').onclick = async () => {
