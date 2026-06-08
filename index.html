@@ -85,7 +85,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <div><label>اختر التاريخ <span class="required">*</span></label><input type="date" id="bookingDate" class="date-picker"></div>
     <div><label>اختر الوقت <span class="required">*</span></label>
         <select id="bookingTime" class="time-picker">
-            <option value="">⏳ اختاري التاريخ أولاً</option>
+            <option value="">-- اختاري الوقت --</option>
             <option value="10">10:00 صباحاً</option>
             <option value="11">11:00 صباحاً</option>
             <option value="12">12:00 ظهراً</option>
@@ -161,7 +161,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <label><input type="checkbox" name="hairLossType" value="ثعلبة بقعية"> ثعلبة بقعية</label>
 </div>
 
-<label>نوع وملمس الشعر الطبيعي？</label>
+<label>نوع وملمس الشعر الطبيعي؟</label>
 <div class="radio-group">
     <label><input type="radio" name="hairTexture" value="ناعم"> ناعم / أملس</label>
     <label><input type="radio" name="hairTexture" value="مموج ويفي"> مموج ويفي (Wavy)</label>
@@ -258,7 +258,7 @@ function getBaghdadTime() {
     return new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Baghdad' }));
 }
 
-// ==================== تعيين الحد الأدنى للتاريخ ====================
+// ==================== تعيين الحد الأدنى للتاريخ (يمنع اختيار تواريخ مضت) ====================
 function setMinDate() {
     const now = getBaghdadTime();
     const year = now.getFullYear();
@@ -423,7 +423,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// ==================== تحميل الأوقات ====================
+// ==================== تحميل الأوقات (ساعات كاملة فقط) ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -439,8 +439,24 @@ async function loadAvailableTimes() {
         { value: '14', text: '02:00 ظهراً' }
     ];
     
+    // الحصول على الوقت الحالي في بغداد لمنع الأوقات الماضية
+    const now = getBaghdadTime();
+    const currentHour = now.getHours();
+    const today = now.toISOString().split('T')[0];
+    const isToday = (date === today);
+    
+    let availableTimes = displayTimes;
+    if (isToday) {
+        availableTimes = displayTimes.filter(option => parseInt(option.value) > currentHour);
+    }
+    
+    if (availableTimes.length === 0) {
+        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
+        return;
+    }
+    
     timeSelect.innerHTML = '<option value="">-- اختاري الوقت --</option>';
-    displayTimes.forEach(option => {
+    availableTimes.forEach(option => {
         const opt = document.createElement('option');
         opt.value = option.value;
         opt.textContent = option.text;
@@ -525,7 +541,6 @@ document.getElementById('finalSendBtn').onclick = async () => {
     };
     
     try {
-        // استخدام mode: 'no-cors' لتجنب مشاكل CORS
         await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
