@@ -246,7 +246,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 <div class="footer-credit">برمجة: محمد العزاوي</div>
 
 <script>
-// ==================== الرابط الجديد ====================
+// ==================== الرابط ====================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ9PvibYfOj5urOJHnGCcLjdlyv0KysqiGOwD26C3gxfoP-VsPBXe4Ih-3BxgjX2Nd/exec';
 
 let uploadedHairImages = [];
@@ -418,7 +418,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// ==================== تحميل الأوقات ====================
+// ==================== تحميل الأوقات (المُصحح) ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -436,16 +436,23 @@ async function loadAvailableTimes() {
     
     const now = getBaghdadTime();
     const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
     const today = now.toISOString().split('T')[0];
     const isToday = (date === today);
     
-    let availableTimes = displayTimes;
+    let availableTimes = [...displayTimes];
+    
     if (isToday) {
-        availableTimes = displayTimes.filter(option => parseInt(option.value) > currentHour);
+        availableTimes = displayTimes.filter(option => {
+            const hour = parseInt(option.value);
+            if (hour > currentHour) return true;
+            if (hour === currentHour && currentMinute < 30) return true;
+            return false;
+        });
     }
     
     if (availableTimes.length === 0) {
-        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم</option>';
+        timeSelect.innerHTML = '<option value="">❌ لا توجد أوقات متاحة لهذا اليوم، جربي اليوم التالي</option>';
         return;
     }
     
