@@ -35,6 +35,16 @@ tr:hover{background:#F7F5EB;}
 .refresh-btn:hover{background:#8a7658;}
 .logout-btn{background:#c0392b;color:white;padding:8px 16px;border:none;border-radius:30px;cursor:pointer;}
 .logout-btn:hover{background:#a93226;}
+.settings-btn{background:#324A3E;color:white;padding:8px 16px;border:none;border-radius:30px;cursor:pointer;margin-left:10px;}
+.forgot-link{display:block;margin-top:10px;font-size:12px;color:#A89676;text-decoration:none;}
+.forgot-link:hover{text-decoration:underline;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:1000;}
+.modal-content{background:white;border-radius:20px;padding:30px;max-width:400px;width:90%;text-align:center;}
+.modal-content input{width:100%;padding:12px;margin:10px 0;border:1px solid #e5e0d4;border-radius:10px;}
+.modal-buttons{display:flex;gap:10px;justify-content:center;margin-top:20px;}
+.modal-buttons button{padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
+.modal-buttons button:first-child{background:#324A3E;color:white;}
+.modal-buttons button:last-child{background:#A89676;color:white;}
 </style>
 </head>
 <body>
@@ -49,11 +59,12 @@ tr:hover{background:#F7F5EB;}
         <p style="color:#7f8c8d;margin-bottom:20px;">أدخل كلمة المرور للمتابعة</p>
         <input type="password" id="password" placeholder="كلمة المرور" onkeypress="if(event.keyCode===13) login()">
         <button class="btn" onclick="login()" style="width:100%;">دخول</button>
+        <a href="#" class="forgot-link" onclick="showForgotModal(); return false;">نسيت كلمة المرور؟</a>
         <p id="loginError" style="color:#c0392b;margin-top:15px;display:none;">⚠️ كلمة المرور غير صحيحة</p>
     </div>
 </div>
 
-<!-- ==================== لوحة التحكم (تظهر بعد تسجيل الدخول) ==================== -->
+<!-- ==================== لوحة التحكم ==================== -->
 <div id="adminView" style="display:none;">
     <div class="container">
         <div class="header-bar">
@@ -62,6 +73,7 @@ tr:hover{background:#F7F5EB;}
                 <p style="color:#7f8c8d;">إدارة الحجوزات والاستشارات</p>
             </div>
             <div>
+                <button class="settings-btn" onclick="showSettingsModal()">⚙️ الإعدادات</button>
                 <button class="refresh-btn" onclick="refreshData()">🔄 تحديث</button>
                 <button class="logout-btn" onclick="logout()">🚪 تسجيل الخروج</button>
             </div>
@@ -69,18 +81,9 @@ tr:hover{background:#F7F5EB;}
 
         <!-- الإحصاءات -->
         <div class="stats">
-            <div class="stat-card">
-                <div class="number" id="totalBookings">0</div>
-                <div class="label">إجمالي الحجوزات</div>
-            </div>
-            <div class="stat-card">
-                <div class="number" id="todayBookings">0</div>
-                <div class="label">حجوزات اليوم</div>
-            </div>
-            <div class="stat-card">
-                <div class="number" id="pendingCount">0</div>
-                <div class="label">قيد المراجعة</div>
-            </div>
+            <div class="stat-card"><div class="number" id="totalBookings">0</div><div class="label">إجمالي الحجوزات</div></div>
+            <div class="stat-card"><div class="number" id="todayBookings">0</div><div class="label">حجوزات اليوم</div></div>
+            <div class="stat-card"><div class="number" id="pendingCount">0</div><div class="label">قيد المراجعة</div></div>
         </div>
 
         <!-- قائمة الحجوزات -->
@@ -89,23 +92,8 @@ tr:hover{background:#F7F5EB;}
             <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث بالاسم أو رقم الهاتف...">
             <div style="overflow-x:auto;">
                 <table id="bookingsTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>الرقم المرجعي</th>
-                            <th>الاسم</th>
-                            <th>العمر</th>
-                            <th>رقم الهاتف</th>
-                            <th>البريد الإلكتروني</th>
-                            <th>تاريخ الحجز</th>
-                            <th>الوقت</th>
-                            <th>نوع الاستشارة</th>
-                            <th>تاريخ الإرسال</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr><td colspan="10" style="text-align:center;"><span class="loader"></span> جاري التحميل...</td></tr>
-                    </tbody>
+                    <thead><tr><th>#</th><th>الرقم المرجعي</th><th>الاسم</th><th>العمر</th><th>رقم الهاتف</th><th>البريد الإلكتروني</th><th>تاريخ الحجز</th><th>الوقت</th><th>نوع الاستشارة</th><th>تاريخ الإرسال</th></tr></thead>
+                    <tbody id="tableBody"><tr><td colspan="10" style="text-align:center;"><span class="loader"></span> جاري التحميل...<\/td></tr></tbody>
                 </table>
             </div>
             <div style="margin-top:20px;text-align:center;">
@@ -115,17 +103,78 @@ tr:hover{background:#F7F5EB;}
     </div>
 </div>
 
+<!-- ==================== نافذة إعدادات تغيير كلمة المرور ==================== -->
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <h3>⚙️ تغيير كلمة المرور</h3>
+        <input type="password" id="currentPassword" placeholder="كلمة المرور الحالية">
+        <input type="password" id="newPassword" placeholder="كلمة المرور الجديدة">
+        <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور الجديدة">
+        <div class="modal-buttons">
+            <button onclick="changePassword()">تغيير</button>
+            <button onclick="closeSettingsModal()">إلغاء</button>
+        </div>
+        <p id="settingsError" style="color:#c0392b;font-size:12px;margin-top:10px;display:none;"></p>
+    </div>
+</div>
+
+<!-- ==================== نافذة نسيت كلمة المرور ==================== -->
+<div id="forgotModal" class="modal">
+    <div class="modal-content">
+        <h3>🔐 استعادة كلمة المرور</h3>
+        <p style="color:#7f8c8d;margin-bottom:15px;">سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني</p>
+        <input type="email" id="resetEmail" placeholder="البريد الإلكتروني المسجل">
+        <div class="modal-buttons">
+            <button onclick="sendResetLink()">إرسال رابط إعادة التعيين</button>
+            <button onclick="closeForgotModal()">إلغاء</button>
+        </div>
+        <p id="forgotError" style="color:#c0392b;font-size:12px;margin-top:10px;display:none;"></p>
+        <p id="forgotSuccess" style="color:#27ae60;font-size:12px;margin-top:10px;display:none;"></p>
+    </div>
+</div>
+
+<!-- ==================== نافذة إعادة تعيين كلمة المرور (تظهر من رابط الإيميل) ==================== -->
+<div id="resetModal" class="modal">
+    <div class="modal-content">
+        <h3>🔐 إعادة تعيين كلمة المرور</h3>
+        <p style="color:#7f8c8d;margin-bottom:15px;">أدخل كلمة المرور الجديدة</p>
+        <input type="password" id="resetNewPassword" placeholder="كلمة المرور الجديدة">
+        <input type="password" id="resetConfirmPassword" placeholder="تأكيد كلمة المرور الجديدة">
+        <div class="modal-buttons">
+            <button onclick="submitNewPassword()">حفظ</button>
+            <button onclick="closeResetModal()">إلغاء</button>
+        </div>
+        <p id="resetError" style="color:#c0392b;font-size:12px;margin-top:10px;display:none;"></p>
+    </div>
+</div>
+
 <script>
 // ==================== الإعدادات ====================
-const SCRIPT_URL = 'const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ9PvibYfOj5urOJHnGCcLjdlyv0KysqiGOwD26C3gxfoP-VsPBXe4Ih-3BxgjX2Nd/exec';
-const ADMIN_PASSWORD = 'heba2024'; // 🔴 يمكنك تغيير كلمة المرور هنا
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ9PvibYfOj5urOJHnGCcLjdlyv0KysqiGOwD26C3gxfoP-VsPBXe4Ih-3BxgjX2Nd/exec';
+const ADMIN_EMAIL = 'mohammad.alazzawi@gmail.com';
+
+// تخزين كلمة المرور
+let adminPassword = localStorage.getItem('admin_password') || 'heba2024';
 
 let allBookings = [];
+let resetToken = null;
+
+// التحقق من وجود token في الرابط (لإعادة التعيين)
+function checkForResetToken() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('reset');
+    if (token) {
+        resetToken = token;
+        document.getElementById('resetModal').style.display = 'flex';
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+}
 
 // ==================== دوال المصادقة ====================
 function login() {
     const password = document.getElementById('password').value;
-    if (password === ADMIN_PASSWORD) {
+    if (password === adminPassword) {
         localStorage.setItem('admin_auth', 'true');
         document.getElementById('loginView').style.display = 'none';
         document.getElementById('adminView').style.display = 'block';
@@ -151,10 +200,169 @@ function checkAuth() {
     }
 }
 
+// ==================== إدارة كلمة المرور ====================
+function showSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'flex';
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.getElementById('settingsError').style.display = 'none';
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+}
+
+function changePassword() {
+    const current = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const errorDiv = document.getElementById('settingsError');
+    
+    if (current !== adminPassword) {
+        errorDiv.textContent = '⚠️ كلمة المرور الحالية غير صحيحة';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    if (newPass.length < 6) {
+        errorDiv.textContent = '⚠️ كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    if (newPass !== confirm) {
+        errorDiv.textContent = '⚠️ كلمة المرور الجديدة وتأكيدها غير متطابقين';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    adminPassword = newPass;
+    localStorage.setItem('admin_password', adminPassword);
+    
+    errorDiv.style.color = '#27ae60';
+    errorDiv.textContent = '✅ تم تغيير كلمة المرور بنجاح';
+    errorDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        closeSettingsModal();
+    }, 1500);
+}
+
+// ==================== نافذة نسيت كلمة المرور ====================
+function showForgotModal() {
+    document.getElementById('forgotModal').style.display = 'flex';
+    document.getElementById('resetEmail').value = '';
+    document.getElementById('forgotError').style.display = 'none';
+    document.getElementById('forgotSuccess').style.display = 'none';
+}
+
+function closeForgotModal() {
+    document.getElementById('forgotModal').style.display = 'none';
+}
+
+function closeResetModal() {
+    document.getElementById('resetModal').style.display = 'none';
+    resetToken = null;
+}
+
+async function sendResetLink() {
+    const email = document.getElementById('resetEmail').value.trim();
+    const errorDiv = document.getElementById('forgotError');
+    const successDiv = document.getElementById('forgotSuccess');
+    
+    if (!email) {
+        errorDiv.textContent = '⚠️ الرجاء إدخال البريد الإلكتروني';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (email !== ADMIN_EMAIL) {
+        errorDiv.textContent = '⚠️ البريد الإلكتروني غير مسجل في النظام';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    const token = btoa(Date.now() + ':' + Math.random().toString(36).substring(2, 15));
+    const resetLink = window.location.origin + window.location.pathname + '?reset=' + encodeURIComponent(token);
+    
+    localStorage.setItem('reset_token_' + token, adminPassword);
+    localStorage.setItem('reset_token_expiry_' + token, Date.now() + 24 * 60 * 60 * 1000);
+    
+    // إرسال إيميل عبر Apps Script
+    try {
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'sendResetLink',
+                email: email,
+                resetLink: resetLink
+            })
+        });
+        successDiv.innerHTML = '✅ تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني';
+        successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+    } catch(e) {
+        successDiv.innerHTML = '✅ تم إنشاء رابط إعادة التعيين (للاختبار: <br><a href="' + resetLink + '">اضغط هنا</a>)';
+        successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+    }
+    
+    console.log('رابط إعادة التعيين:', resetLink);
+}
+
+function submitNewPassword() {
+    const newPass = document.getElementById('resetNewPassword').value;
+    const confirm = document.getElementById('resetConfirmPassword').value;
+    const errorDiv = document.getElementById('resetError');
+    
+    if (!resetToken) {
+        errorDiv.textContent = '⚠️ رابط غير صالح';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    const storedPassword = localStorage.getItem('reset_token_' + resetToken);
+    const expiry = localStorage.getItem('reset_token_expiry_' + resetToken);
+    
+    if (!storedPassword || !expiry || Date.now() > parseInt(expiry)) {
+        errorDiv.textContent = '⚠️ رابط إعادة التعيين منتهي الصلاحية أو غير صالح';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (newPass.length < 6) {
+        errorDiv.textContent = '⚠️ كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (newPass !== confirm) {
+        errorDiv.textContent = '⚠️ كلمة المرور وتأكيدها غير متطابقين';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    adminPassword = newPass;
+    localStorage.setItem('admin_password', adminPassword);
+    
+    localStorage.removeItem('reset_token_' + resetToken);
+    localStorage.removeItem('reset_token_expiry_' + resetToken);
+    
+    errorDiv.style.color = '#27ae60';
+    errorDiv.textContent = '✅ تم تغيير كلمة المرور بنجاح';
+    errorDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        closeResetModal();
+        logout();
+    }, 1500);
+}
+
 // ==================== جلب البيانات ====================
 async function loadBookings() {
     const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;"><span class="loader"></span> جاري التحميل...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;"><span class="loader"></span> جاري التحميل...<\/td></tr>';
     
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getBookings`);
@@ -165,97 +373,67 @@ async function loadBookings() {
             displayBookings(allBookings);
             updateStats(allBookings);
         } else {
-            tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c0392b;">❌ فشل في تحميل البيانات</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c0392b;">❌ فشل في تحميل البيانات<\/td></tr>';
         }
     } catch (error) {
         console.error(error);
-        tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c0392b;">❌ خطأ في الاتصال بالخادم</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c0392b;">❌ خطأ في الاتصال بالخادم<\/td></tr>';
     }
 }
 
-function refreshData() {
-    loadBookings();
-}
+function refreshData() { loadBookings(); }
 
 function displayBookings(bookings) {
-    const tableBody = document.getElementById('tableBody');
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    
-    let filtered = bookings;
-    if (searchTerm) {
-        filtered = bookings.filter(b => 
-            (b.name && b.name.toLowerCase().includes(searchTerm)) ||
-            (b.phone && b.phone.includes(searchTerm)) ||
-            (b.referenceNumber && b.referenceNumber.toLowerCase().includes(searchTerm))
-        );
-    }
+    const filtered = searchTerm ? bookings.filter(b => (b.name && b.name.toLowerCase().includes(searchTerm)) || (b.phone && b.phone.includes(searchTerm))) : bookings;
+    const tableBody = document.getElementById('tableBody');
     
     if (filtered.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">📭 لا توجد حجوزات</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="10" style="text-align:center;">📭 لا توجد حجوزات<\/td></tr>';
         return;
     }
     
-    tableBody.innerHTML = filtered.map((booking, index) => `
+    tableBody.innerHTML = filtered.map((b, i) => `
         <tr>
-            <td>${index + 1}</td>
-            <td><strong>${booking.referenceNumber || '-'}</strong></td>
-            <td>${booking.name || '-'}</td>
-            <td>${booking.age || '-'}</td>
-            <td dir="ltr">${booking.phone || '-'}</td>
-            <td>${booking.email || '-'}</td>
-            <td>${booking.bookingDate || '-'}</td>
-            <td>${booking.bookingTime || '-'}</td>
-            <td>${booking.consultType || '-'}</td>
-            <td style="font-size:12px;">${booking.createdDate || '-'}</td>
+            <td>${i+1}</td>
+            <td><strong>${b.referenceNumber || '-'}<\/strong></td>
+            <td>${b.name || '-'}</td>
+            <td>${b.age || '-'}</td>
+            <td dir="ltr">${b.phone || '-'}<\/td>
+            <td>${b.email || '-'}<\/td>
+            <td>${b.bookingDate || '-'}<\/td>
+            <td>${b.bookingTime || '-'}<\/td>
+            <td>${b.consultType || '-'}<\/td>
+            <td style="font-size:12px;">${b.createdDate || '-'}<\/td>
         </tr>
     `).join('');
 }
 
 function updateStats(bookings) {
     document.getElementById('totalBookings').innerText = bookings.length;
-    
     const today = new Date().toISOString().split('T')[0];
-    const todayCount = bookings.filter(b => b.bookingDate === today).length;
-    document.getElementById('todayBookings').innerText = todayCount;
+    document.getElementById('todayBookings').innerText = bookings.filter(b => b.bookingDate === today).length;
     document.getElementById('pendingCount').innerText = bookings.filter(b => !b.status || b.status === 'جديد').length;
 }
 
 function exportToExcel() {
-    if (allBookings.length === 0) {
-        alert('لا توجد بيانات للتصدير');
-        return;
-    }
-    
-    const headers = ['الرقم المرجعي', 'الاسم', 'العمر', 'رقم الهاتف', 'البريد الإلكتروني', 'تاريخ الحجز', 'الوقت', 'نوع الاستشارة', 'ملاحظات', 'تاريخ الإرسال'];
-    const rows = allBookings.map(b => [
-        b.referenceNumber || '',
-        b.name || '',
-        b.age || '',
-        b.phone || '',
-        b.email || '',
-        b.bookingDate || '',
-        b.bookingTime || '',
-        b.consultType || '',
-        b.notes || '',
-        b.createdDate || ''
-    ]);
-    
-    const csvContent = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    if (allBookings.length === 0) { alert('لا توجد بيانات للتصدير'); return; }
+    const headers = ['الرقم المرجعي','الاسم','العمر','رقم الهاتف','البريد الإلكتروني','تاريخ الحجز','الوقت','نوع الاستشارة','ملاحظات','تاريخ الإرسال'];
+    const rows = allBookings.map(b => [b.referenceNumber, b.name, b.age, b.phone, b.email, b.bookingDate, b.bookingTime, b.consultType, b.notes, b.createdDate]);
+    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell || ''}"`).join(',')).join('\n');
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.href = url;
-    link.setAttribute('download', `bookings_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
+    link.href = URL.createObjectURL(blob);
+    link.download = `bookings_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(link.href);
 }
 
 document.getElementById('searchInput').addEventListener('input', () => displayBookings(allBookings));
 
-// التحقق من المصادقة عند تحميل الصفحة
+// التحقق من المصادقة
 checkAuth();
+checkForResetToken();
 </script>
 </body>
 </html>
