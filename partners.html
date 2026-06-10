@@ -25,6 +25,98 @@
         .nav-links a{color:#324A3E;text-decoration:none;font-weight:500;padding:5px 10px;}
         .nav-links a:hover{color:#A89676;}
         .footer-credit{text-align:center;padding:20px;font-size:12px;color:#A89676;border-top:1px solid #e5e0d4;margin-top:30px;}
+        
+        /* نموذج طلب الشراكة */
+        .partnership-form {
+            background: #F7F5EB;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+        .partnership-form label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #324A3E;
+        }
+        .partnership-form input, 
+        .partnership-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0d5c0;
+            border-radius: 12px;
+            background: white;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .partnership-form input:focus, 
+        .partnership-form textarea:focus {
+            outline: none;
+            border-color: #A89676;
+        }
+        .partnership-form button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #324A3E, #2D3E34);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+        .partnership-form button:hover {
+            background: linear-gradient(135deg, #A89676, #c2ad86);
+        }
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 25px;
+            border-radius: 50px;
+            background: #324A3E;
+            color: #fff;
+            display: none;
+            z-index: 999;
+            font-size: 14px;
+        }
+        .toast.error {
+            background: #c0392b;
+        }
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 3px solid #fff;
+            border-top: 3px solid #A89676;
+            border-radius: 50%;
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
+        }
+        .required {
+            color: #c0392b;
+        }
+        .hint {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .row-2 {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .row-2 > div {
+            flex: 1;
+            min-width: 150px;
+        }
     </style>
 </head>
 <body>
@@ -60,13 +152,95 @@
     
     <div class="card">
         <h2>📢 هل تريدين الشراكة معنا؟</h2>
-        <p>إذا كنتِ تمثلين علامة تجارية أو متجراً وترغبين في التعاون، تواصلي معنا عبر البريد الإلكتروني:</p>
-        <p style="background:#F7F5EB; padding:15px; border-radius:10px; text-align:center; margin-top:15px;">
-            📧 <strong>mohammad.alazzawi@gmail.com</strong>
-        </p>
+        <p>إذا كنتِ تمثلين علامة تجارية أو متجراً وترغبين في التعاون، املئي النموذج أدناه وسنرد عليكِ خلال 24 ساعة.</p>
+        
+        <!-- نموذج طلب الشراكة - يرسل إلى Web App المنفصل -->
+        <div class="partnership-form">
+            <form id="partnershipForm">
+                <label>الاسم الكامل <span class="required">*</span></label>
+                <input type="text" id="partnerName" placeholder="الاسم الكامل" required>
+                
+                <div class="row-2">
+                    <div>
+                        <label>البريد الإلكتروني <span class="required">*</span></label>
+                        <input type="email" id="partnerEmail" placeholder="example@domain.com" required>
+                    </div>
+                    <div>
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="partnerPhone" placeholder="0771234567">
+                        <div class="hint">📞 اختياري - لتسهيل التواصل</div>
+                    </div>
+                </div>
+                
+                <label>رسالة طلب الشراكة <span class="required">*</span></label>
+                <textarea id="partnerMessage" rows="5" placeholder="اكتبي اسم المتجر / العلامة التجارية، ونوع التعاون المطلوب..." required></textarea>
+                
+                <button type="submit" id="sendBtn">📩 إرسال طلب الشراكة</button>
+            </form>
+        </div>
     </div>
 </div>
 
+<div id="toast" class="toast"></div>
 <div class="footer-credit">برمجة: محمد العزاوي</div>
+
+<script>
+    // رابط Google Apps Script الجديد (الخاص بطلبات الشراكة)
+    const PARTNERSHIP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwyPiYlBSmyKi-Ai5lgmR2DD_AG9q4l-CqZqlWNI4xpdWCQ8i0w6-VaCFSHpS5Mb5COAA/exec';
+    
+    function showMessage(text, isError) {
+        const toast = document.getElementById('toast');
+        toast.textContent = text;
+        toast.className = 'toast' + (isError ? ' error' : '');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 5000);
+    }
+    
+    document.getElementById('partnershipForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('partnerName').value.trim();
+        const email = document.getElementById('partnerEmail').value.trim();
+        const phone = document.getElementById('partnerPhone').value.trim();
+        const message = document.getElementById('partnerMessage').value.trim();
+        
+        if (!name || !email || !message) {
+            showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
+            return;
+        }
+        
+        const btn = document.getElementById('sendBtn');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loader"></span> جاري الإرسال...';
+        
+        const formData = {
+            type: 'partnership_request',
+            name: name,
+            email: email,
+            phone: phone,
+            message: message
+        };
+        
+        try {
+            await fetch(PARTNERSHIP_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            showMessage('✅ تم إرسال طلب الشراكة بنجاح! سنتواصل معك قريباً.');
+            document.getElementById('partnershipForm').reset();
+            
+        } catch (error) {
+            console.error(error);
+            showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    });
+</script>
 </body>
 </html>
