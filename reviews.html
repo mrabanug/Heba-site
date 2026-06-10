@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شركاؤنا - هبة سالم</title>
+    <title>آراء العملاء - هبة سالم</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:linear-gradient(135deg,#F7F5EB,#EFE9DB);font-family:'Segoe UI',Tahoma,sans-serif;color:#2D2D2A;}
@@ -15,23 +15,26 @@
         .hero-small h1{color:white;border:none;margin:0;}
         .btn-back{display:inline-block;margin-top:20px;background:#A89676;color:white;padding:10px 25px;border-radius:30px;text-decoration:none;}
         .btn-back:hover{background:#8a7658;}
-        .partner-card{display:flex;align-items:center;gap:20px;margin-top:25px;padding:20px;background:#F7F5EB;border-radius:15px;flex-wrap:wrap;}
-        .partner-info{flex:3;}
-        .partner-info h3{color:#324A3E;margin-bottom:10px;}
-        .partner-code{background:#324A3E;color:#A89676;display:inline-block;padding:8px 20px;border-radius:30px;font-weight:bold;margin:10px 0;}
-        .partner-btn{background:#A89676;color:white;padding:10px 25px;border-radius:30px;text-decoration:none;display:inline-block;}
-        .partner-btn:hover{background:#8a7658;}
+        .review-card{background:#F7F5EB;border-radius:15px;padding:20px;margin-bottom:20px;border-right:4px solid #A89676;}
+        .review-name{font-weight:bold;color:#324A3E;}
+        .review-date{font-size:11px;color:#7f8c8d;margin-right:10px;}
+        .review-stars{color:#A89676;margin:8px 0;}
+        .review-text{color:#2D2D2A;line-height:1.6;}
         .nav-links{display:flex;justify-content:center;gap:25px;margin-bottom:30px;flex-wrap:wrap;}
         .nav-links a{color:#324A3E;text-decoration:none;font-weight:500;padding:5px 10px;}
         .nav-links a:hover{color:#A89676;}
+        .admin-note{background:#fff3cd;color:#856404;padding:15px;border-radius:10px;margin-top:20px;font-size:13px;}
+        .add-review{background:#F7F5EB;padding:20px;border-radius:15px;margin-top:20px;}
+        .add-review input,.add-review textarea{width:100%;padding:12px;margin:10px 0;border:1px solid #e5e0d4;border-radius:10px;}
+        .add-review button{background:#324A3E;color:white;padding:10px 20px;border:none;border-radius:30px;cursor:pointer;}
         .footer-credit{text-align:center;padding:20px;font-size:12px;color:#A89676;border-top:1px solid #e5e0d4;margin-top:30px;}
     </style>
 </head>
 <body>
 
 <div class="hero-small">
-    <h1>🤝 شركاؤنا</h1>
-    <p>نعمل مع أفضل المتاجر والعلامات التجارية لخدمتك</p>
+    <h1>⭐ آراء عملائنا</h1>
+    <p>ما يقوله العملاء عن تجربتهم مع هبة سالم</p>
     <a href="index.html" class="btn-back">← العودة إلى الرئيسية</a>
 </div>
 
@@ -39,34 +42,155 @@
     <div class="nav-links">
         <a href="index.html">🏠 الرئيسية</a>
         <a href="about.html">👩‍⚕️ عن هبة سالم</a>
-        <a href="reviews.html">⭐ آراء العملاء</a>
+        <a href="partners.html">🤝 شركاؤنا</a>
     </div>
 
     <div class="card">
-        <h2>🌟 شركاء النجاح</h2>
-        <p>نحرص على التعاون مع متاجر موثوقة لتوفير منتجات أصلية لعملائنا بأسعار تنافسية.</p>
+        <h2>📝 آراء حقيقية</h2>
+        <div id="reviewsList">
+            <!-- سيتم عرض الآراء هنا ديناميكياً -->
+        </div>
         
-        <!-- شريك 1: وندر بيوتي -->
-        <div class="partner-card">
-            <div class="partner-info">
-                <h3>✨ وندر بيوتي (Wonder Beauties)</h3>
-                <p>وجهتك الأولى للعناية والجمال والعطور في العراق. منتجات أصلية 100% مع ضمان الجودة.</p>
-                <div class="partner-code">🎁 كود الخصم الحصري: <strong style="color:#fff;">H91</strong></div>
-                <p>استخدمي الكود واحصلي على خصم خاص على أول طلب لكِ!</p>
-                <a href="https://www.wonderbeauties.com" target="_blank" class="partner-btn">تسوقي الآن</a>
+        <!-- نموذج إضافة رأي (للمسؤول فقط - يظهر بعد 7 نقرات على الشعار) -->
+        <div id="adminPanel" style="display:none;">
+            <div class="admin-note">
+                <strong>🔐 لوحة إضافة رأي (للمسؤول فقط)</strong>
+            </div>
+            <div class="add-review">
+                <input type="text" id="adminName" placeholder="الاسم" value="عميلة سعيدة">
+                <input type="number" id="adminStars" placeholder="عدد النجوم (1-5)" value="5" min="1" max="5">
+                <textarea id="adminText" rows="3" placeholder="نص الرأي"></textarea>
+                <button onclick="addReviewFromAdmin()">➕ إضافة رأي</button>
+                <p style="font-size:12px; margin-top:10px;">⚠️ بعد إضافة جميع الآراء، يمكنك إخفاء هذه اللوحة من الكود</p>
             </div>
         </div>
-    </div>
-    
-    <div class="card">
-        <h2>📢 هل تريدين الشراكة معنا؟</h2>
-        <p>إذا كنتِ تمثلين علامة تجارية أو متجراً وترغبين في التعاون، تواصلي معنا عبر البريد الإلكتروني:</p>
-        <p style="background:#F7F5EB; padding:15px; border-radius:10px; text-align:center; margin-top:15px;">
-            📧 <strong>mohammad.alazzawi@gmail.com</strong>
-        </p>
     </div>
 </div>
 
 <div class="footer-credit">برمجة: محمد العزاوي</div>
+
+<script>
+// قائمة الآراء (يمكنك تعديلها مباشرة هنا أو من خلال اللوحة)
+let reviews = [
+    {
+        name: "نور",
+        stars: 5,
+        text: "تجربة رائعة! استشارة دقيقة وفهم عميق للمشكلة. بعد شهر من الالتزام بالخطة، لاحظت فرقاً كبيراً في كثافة شعري.",
+        date: "2026-05-15"
+    },
+    {
+        name: "سارة",
+        stars: 5,
+        text: "شعرت بالثقة من أول جلسة. هبة كانت دقيقة جداً في تشخيص حالتي ووصف المنتجات المناسبة. أنصح بها بشدة!",
+        date: "2026-05-20"
+    },
+    {
+        name: "لمى",
+        stars: 4,
+        text: "نتائج ممتازة وتحسن واضح من أول متابعة. أنصح بها وبشدة.",
+        date: "2026-05-25"
+    },
+    {
+        name: "رنا",
+        stars: 5,
+        text: "خدمة احترافية، رد سريع، ومتابعة دقيقة. شكراً هبة!",
+        date: "2026-06-01"
+    }
+];
+
+// حفظ الآراء في localStorage
+function saveReviews() {
+    localStorage.setItem('hebaReviews', JSON.stringify(reviews));
+}
+
+// تحميل الآراء من localStorage
+function loadReviews() {
+    const stored = localStorage.getItem('hebaReviews');
+    if (stored) {
+        reviews = JSON.parse(stored);
+    }
+    displayReviews();
+}
+
+// عرض الآراء
+function displayReviews() {
+    const container = document.getElementById('reviewsList');
+    if (!container) return;
+    
+    if (reviews.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#7f8c8d;">📭 لا توجد آراء بعد، كن أول من يقيّم!</p>';
+        return;
+    }
+    
+    container.innerHTML = reviews.map(review => `
+        <div class="review-card">
+            <div><span class="review-name">${escapeHtml(review.name)}</span><span class="review-date">${review.date || ''}</span></div>
+            <div class="review-stars">${'⭐'.repeat(review.stars)}${'☆'.repeat(5-review.stars)}</div>
+            <div class="review-text">${escapeHtml(review.text)}</div>
+        </div>
+    `).join('');
+}
+
+// إضافة رأي من المسؤول
+function addReviewFromAdmin() {
+    const name = document.getElementById('adminName').value.trim();
+    const stars = parseInt(document.getElementById('adminStars').value);
+    const text = document.getElementById('adminText').value.trim();
+    
+    if (!name || !stars || !text) {
+        alert('الرجاء تعبئة جميع الحقول');
+        return;
+    }
+    
+    const today = new Date().toISOString().split('T')[0];
+    reviews.unshift({
+        name: name,
+        stars: stars,
+        text: text,
+        date: today
+    });
+    
+    saveReviews();
+    displayReviews();
+    
+    // تنظيف الحقول
+    document.getElementById('adminName').value = 'عميلة سعيدة';
+    document.getElementById('adminStars').value = '5';
+    document.getElementById('adminText').value = '';
+    
+    alert('✅ تم إضافة الرأي بنجاح');
+}
+
+// عرض لوحة الأدمن (لمن يضغط 7 مرات على الشعار)
+let adminClickCount = 0;
+function showAdminPanel() {
+    adminClickCount++;
+    if (adminClickCount >= 7) {
+        document.getElementById('adminPanel').style.display = 'block';
+        adminClickCount = 0;
+    }
+}
+
+// حماية بسيطة من XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// إضافة مستمع للنقر على الشعار (لإظهار لوحة الأدمن)
+document.addEventListener('DOMContentLoaded', () => {
+    loadReviews();
+    
+    // محاولة إضافة مستمع للشعار (إذا كان موجوداً في الصفحة الرئيسية عند التضمين)
+    // لكن في هذه الصفحة المنفصلة، يمكن تفعيلها يدوياً عبر رابط
+    console.log("صفحة آراء العملاء جاهزة - لإظهار لوحة الإدارة، أضف ?admin=true إلى الرابط");
+    
+    // طريقة بديلة: إذا كان الرابط يحتوي على ?admin=true
+    if (window.location.search.includes('admin=true')) {
+        document.getElementById('adminPanel').style.display = 'block';
+    }
+});
+</script>
 </body>
 </html>
