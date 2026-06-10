@@ -169,6 +169,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <label><input type="radio" name="hairTexture" value="أفريقي خشن"> أفريقي خشن (Coily/Kinky)</label>
 </div>
 
+<!-- ===== مسامية الشعر (جديد) ===== -->
+<h3>💧 مسامية الشعر (Hair Porosity)</h3>
+<p class="hint" style="margin-bottom:10px;">مسامية الشعر هي قدرة الشعر على امتصاص الرطوبة والمنتجات</p>
+
+<label>1. هل يجف شعرك بسرعة عالية بعد الاستحمام ويمتص الزيوت والمنتجات دون لمعان؟ (مسامية عالية)</label>
+<div class="radio-group">
+    <label><input type="radio" name="highPorosity" value="نعم"> نعم</label>
+    <label><input type="radio" name="highPorosity" value="لا"> لا</label>
+</div>
+
+<label>2. هل يأخذ شعرك ساعات طويلة جداً حتى يجف وتلاحظين تراكم المنتجات على سطح الشعرة دون امتصاصها؟ (مسامية منخفضة)</label>
+<div class="radio-group">
+    <label><input type="radio" name="lowPorosity" value="نعم"> نعم</label>
+    <label><input type="radio" name="lowPorosity" value="لا"> لا</label>
+</div>
+
 <label>هل لديك حساسية معروفة من مواد معينة؟</label>
 <div class="radio-group">
     <label><input type="radio" name="hasAllergies" value="نعم" id="allergiesYes"> نعم</label>
@@ -210,7 +226,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 <div class="radio-group"><label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label><br><label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label> <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label></div>
 <div class="radio-group"><label>هل تعانين من مشاكل متكررة في الجهاز الهضمي؟</label><br><label><input type="radio" name="digestive" value="نعم"> نعم</label> <label><input type="radio" name="digestive" value="لا"> لا</label></div>
 <div class="radio-group"><label>هل تعانين من إرهاق مستمر أو ضعف عام في الجسم؟</label><br><label><input type="radio" name="fatigue" value="نعم"> نعم</label> <label><input type="radio" name="fatigue" value="لا"> لا</label></div>
-<div class="radio-group"><label>هل تلاحظين تكسراً سريعاً في الأظافر أو ظهور بقع بيضاء عليها؟</label><br><label><input type="radio" name="nails" value="نعم"> نعم</label> <label><input type="radio" name="nails" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل تلاحظين تكسراً سريعاً في الأظافر أو ظهور بقع بيضاء عليها？</label><br><label><input type="radio" name="nails" value="نعم"> نعم</label> <label><input type="radio" name="nails" value="لا"> لا</label></div>
 <div class="radio-group"><label>هل تتبعين حمية غذائية قاسية أو عانيت من نقص مخزون الحديد؟</label><br><label><input type="radio" name="diet" value="نعم"> نعم</label> <label><input type="radio" name="diet" value="لا"> لا</label></div>
 <div class="radio-group"><label>هل يخف شعرك بسرعة فائقة بعد الاستحمام؟</label><br><label><input type="radio" name="quickDry" value="نعم"> نعم</label> <label><input type="radio" name="quickDry" value="لا"> لا</label></div>
 <div class="radio-group"><label>هل يأخذ شعرك ساعات طويلة جداً ليجف وتلاحظين تراكم المنتجات فوقه دون امتصاص؟</label><br><label><input type="radio" name="slowDry" value="نعم"> نعم</label> <label><input type="radio" name="slowDry" value="لا"> لا</label></div>
@@ -247,7 +263,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 
 <script>
 // ==================== الرابط ====================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxk_g1713kOA66xEzcoOPHZCpsU65IRd3rZIBkAkmw00_5x9EQzSHOihpmJqEOQTFdu/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQ9PvibYfOj5urOJHnGCcLjdlyv0KysqiGOwD26C3gxfoP-VsPBXe4Ih-3BxgjX2Nd/exec';
 
 let uploadedHairImages = [];
 let uploadedMedicalReports = [];
@@ -418,7 +434,7 @@ updateMedicalRequirement();
 
 function validatePhone(phone) { return /^[0-9]{10}$/.test(phone); }
 
-// ==================== تحميل الأوقات (المُصحح) ====================
+// ==================== تحميل الأوقات ====================
 async function loadAvailableTimes() {
     const date = document.getElementById('bookingDate').value;
     if (!date) return;
@@ -491,6 +507,11 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const hairLossRate = document.querySelector('input[name="hairLossRate"]:checked')?.value || '';
     const hairLossType = Array.from(document.querySelectorAll('input[name="hairLossType"]:checked')).map(cb => cb.value).join(', ');
     const hairTexture = document.querySelector('input[name="hairTexture"]:checked')?.value || '';
+    
+    // أسئلة مسامية الشعر
+    const highPorosity = document.querySelector('input[name="highPorosity"]:checked')?.value || '';
+    const lowPorosity = document.querySelector('input[name="lowPorosity"]:checked')?.value || '';
+    
     const hasAllergies = document.querySelector('input[name="hasAllergies"]:checked')?.value || '';
     const allergyType = Array.from(document.querySelectorAll('input[name="allergyType"]:checked')).map(cb => cb.value).join(', ');
     const nutritionDeficiency = Array.from(document.querySelectorAll('input[name="nutritionDeficiency"]:checked')).map(cb => cb.value).join(', ');
@@ -535,6 +556,7 @@ document.getElementById('finalSendBtn').onclick = async () => {
         isPregnant, pregnancyHairLoss, pregnancyTrimester, pregnancyScalp, pregnancyVitamins,
         goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
         hairLossRate, hairLossType, hairTexture,
+        highPorosity, lowPorosity,
         hasAllergies, allergyType, nutritionDeficiency, thyroidDisorder, hormonalChanges,
         water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
         hairImageBase64: uploadedHairImages.join('||'),
