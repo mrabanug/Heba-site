@@ -1,3 +1,7 @@
+<!-- ============================================================ -->
+<!--  HTML (index.html) - صفحة الحجز مع الأوقات الجديدة -->
+<!-- ============================================================ -->
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -5,6 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>هبة سالم | استشارات وحجز مواعيد</title>
 <style>
+/* نفس الـ CSS الموجود سابقاً */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:linear-gradient(135deg,#F7F5EB,#EFE9DB);font-family:'Segoe UI',Tahoma,sans-serif;color:#2D2D2A;}
 .hero{background:linear-gradient(135deg,#324A3E,#2D3E34);color:#fff;text-align:center;padding:90px 20px;}
@@ -43,11 +48,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 .promo-banner a{color:#324A3E;text-decoration:none;background:#fff;padding:4px 12px;border-radius:20px;margin-right:10px;transition:0.3s;display:inline-block;}
 .promo-banner a:hover{background:#F7F5EB;}
 .close-banner{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;margin-right:15px;vertical-align:middle;}
+.required{color:#c0392b;}
+.optional{color:#7f8c8d;font-weight:normal;}
 </style>
 </head>
 <body>
 
-<!-- شريط إعلاني - خصم وندر بيوتي -->
+<!-- شريط إعلاني -->
 <div class="promo-banner" id="promoBanner">
     <span>✨ خصم خاص لدى وندر بيوتي! استخدمي كود الخصم <strong style="background:#324A3E; padding:2px 8px; border-radius:15px;">H91</strong> واحصلي على خصم حصري. 🛍️</span>
     <a href="https://www.wonderbeauties.com" target="_blank" rel="noopener noreferrer">تسوقي الآن</a>
@@ -80,6 +87,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <a href="about.html">👩‍⚕️ عن هبة سالم</a>
     <a href="partners.html">🤝 شركاؤنا</a>
     <a href="reviews.html">⭐ آراء العملاء</a>
+    <a href="consult-only.html">📝 استشارة بدون حجز</a>
 </div>
 
 <div class="container" id="form-start">
@@ -95,11 +103,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
 
 <label>رقم الهاتف <span class="required">*</span></label>
 <input type="tel" id="phone" placeholder="مثال: 07712345678" maxlength="11">
-<div class="hint">📞 10 أرقام (هذا هو رقمك المرجعي)</div>
+<div class="hint">📞 11 رقم</div>
 
-<label>البريد الإلكتروني <span class="required">*</span></label>
+<label>البريد الإلكتروني <span class="optional">(اختياري)</span></label>
 <input type="email" id="email" placeholder="example@gmail.com">
-<div class="hint">📧 سيصلك رابط الاستشارة على هذا البريد</div>
+<div class="hint">📧 سيصلك رابط الاستشارة على هذا البريد (اختياري)</div>
 
 <!-- حجز الموعد -->
 <div class="booking-row">
@@ -107,11 +115,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
     <div><label>اختر الوقت <span class="required">*</span></label>
         <select id="bookingTime" class="time-picker">
             <option value="">-- اختاري الوقت --</option>
-            <option value="10">10:00 صباحاً</option>
-            <option value="11">11:00 صباحاً</option>
-            <option value="12">12:00 ظهراً</option>
-            <option value="13">01:00 ظهراً</option>
-            <option value="14">02:00 ظهراً</option>
+            <!-- 🔴 الأوقات الجديدة: من 1 مساءً إلى 6 مساءً -->
+            <option value="13">01:00 مساءً</option>
+            <option value="14">02:00 مساءً</option>
+            <option value="15">03:00 مساءً</option>
+            <option value="16">04:00 مساءً</option>
+            <option value="17">05:00 مساءً</option>
+            <option value="18">06:00 مساءً</option>
         </select>
     </div>
 </div>
@@ -463,12 +473,14 @@ async function loadAvailableTimes() {
     const timeSelect = document.getElementById('bookingTime');
     timeSelect.innerHTML = '<option value="">⏳ جاري تحميل الأوقات...</option>';
     
+    // 🔴 الأوقات الجديدة: من 1 مساءً إلى 6 مساءً
     const displayTimes = [
-        { value: '10', text: '10:00 صباحاً' },
-        { value: '11', text: '11:00 صباحاً' },
-        { value: '12', text: '12:00 ظهراً' },
-        { value: '13', text: '01:00 ظهراً' },
-        { value: '14', text: '02:00 ظهراً' }
+        { value: '13', text: '01:00 مساءً' },
+        { value: '14', text: '02:00 مساءً' },
+        { value: '15', text: '03:00 مساءً' },
+        { value: '16', text: '04:00 مساءً' },
+        { value: '17', text: '05:00 مساءً' },
+        { value: '18', text: '06:00 مساءً' }
     ];
     
     const now = getBaghdadTime();
@@ -547,12 +559,12 @@ document.getElementById('finalSendBtn').onclick = async () => {
     const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
     const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
     
-    if (!name || !age || !phone || !email || !date || !selectedHour) {
+    if (!name || !age || !phone || !date || !selectedHour) {
         showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية', true);
         return;
     }
     if (!validatePhone(phone)) {
-        showMessage('⚠️ رقم الهاتف يجب أن يكون 10 أرقام', true);
+        showMessage('⚠️ رقم الهاتف يجب أن يكون 11 رقم', true);
         return;
     }
     if (!hairLoss) {
@@ -584,36 +596,40 @@ document.getElementById('finalSendBtn').onclick = async () => {
     };
     
     try {
-        await fetch(APPS_SCRIPT_URL, {
+        const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(allData)
         });
         
-        showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك إيميل التأكيد خلال دقائق.');
+        const result = await response.json();
         
-        document.getElementById('fullname').value = '';
-        document.getElementById('age').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('bookingDate').value = '';
-        document.getElementById('bookingTime').value = '';
-        document.getElementById('notes').value = '';
-        document.getElementById('hairImage').value = '';
-        document.getElementById('medicalReport').value = '';
-        uploadedHairImages = [];
-        uploadedMedicalReports = [];
-        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-        document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-        document.getElementById('scalpIssueOther').style.display = 'none';
-        document.getElementById('scalpIssueOther').value = '';
-        document.getElementById('pregnancyQuestions').style.display = 'none';
-        document.getElementById('allergiesDetails').style.display = 'none';
-        document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
-        charCountSpan.innerHTML = '💬 0 / 50 حرف';
-        updateMedicalRequirement();
-        
+        if (result.status === 'success') {
+            showMessage('✅ تم إرسال الاستشارة وتأكيد الحجز بنجاح! سيصلك إيميل التأكيد خلال دقائق.');
+            
+            document.getElementById('fullname').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('bookingDate').value = '';
+            document.getElementById('bookingTime').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('hairImage').value = '';
+            document.getElementById('medicalReport').value = '';
+            uploadedHairImages = [];
+            uploadedMedicalReports = [];
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+            document.getElementById('scalpIssueOther').style.display = 'none';
+            document.getElementById('scalpIssueOther').value = '';
+            document.getElementById('pregnancyQuestions').style.display = 'none';
+            document.getElementById('allergiesDetails').style.display = 'none';
+            document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
+            charCountSpan.innerHTML = '💬 0 / 50 حرف';
+            updateMedicalRequirement();
+        } else {
+            showMessage('❌ حدث خطأ: ' + result.message, true);
+        }
     } catch (error) {
         console.error(error);
         showMessage('❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', true);
