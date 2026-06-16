@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هبة سالم | استشارة بدون حجز</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(135deg,#F7F5EB,#EFE9DB);font-family:'Segoe UI',Tahoma,sans-serif;color:#2D2D2A;}
+.hero{background:linear-gradient(135deg,#324A3E,#2D3E34);color:#fff;text-align:center;padding:60px 20px;}
+.hero h1{font-size:36px;margin-top:10px;}
+.hero p{color:#D4C5A9;margin-top:10px;font-size:18px;}
+.container{max-width:900px;margin:auto;padding:30px 15px;}
+.box{background:#fff;padding:30px;margin:25px 0;border-radius:20px;box-shadow:0 10px 35px rgba(0,0,0,0.08);border:1px solid #eee;}
+h2{color:#324A3E;font-size:22px;margin-bottom:20px;border-right:4px solid #A89676;padding-right:10px;}
+h3{color:#324A3E;margin-top:25px;font-size:18px;border-right:3px solid #D4C5A9;padding-right:10px;}
+label{display:block;margin-top:15px;margin-bottom:6px;font-weight:600;color:#324A3E;}
+input,select,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid #e5e0d4;background:#faf8f2;font-size:14px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#A89676;}
+.radio-group,.checkbox-group{background:#faf8f2;padding:12px;border-radius:12px;margin:10px 0;}
+.radio-group label,.checkbox-group label{display:inline-block;margin-left:20px;font-weight:normal;}
+.radio-group label input,.checkbox-group label input{width:auto;margin-left:5px;}
+.submit{width:100%;padding:16px;border:none;border-radius:50px;background:linear-gradient(135deg,#324A3E,#2D3E34);color:#fff;font-size:18px;font-weight:bold;cursor:pointer;margin-top:25px;}
+.submit:hover{opacity:0.9;}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);padding:14px 25px;border-radius:50px;background:#324A3E;color:#fff;display:none;z-index:999;}
+.toast.error{background:#c0392b;}
+.toast.success{background:#27ae60;}
+.loader{width:18px;height:18px;border:3px solid #fff;border-top:3px solid #A89676;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+.hint{font-size:12px;color:#7f8c8d;margin-top:-8px;margin-bottom:5px;}
+.upload-status{font-size:12px;margin-top:5px;padding:5px;border-radius:8px;}
+.upload-status.success{background:#d4edda;color:#155724;}
+.upload-status.error{background:#f8d7da;color:#721c24;}
+.upload-status.loading{background:#fff3cd;color:#856404;}
+.footer-credit{text-align:center;padding:20px;font-size:12px;color:#A89676;border-top:1px solid #e5e0d4;margin-top:30px;}
+.nav-links{display:flex;justify-content:center;gap:25px;margin:20px 0;flex-wrap:wrap;}
+.nav-links a{color:#324A3E;text-decoration:none;font-weight:500;padding:5px 10px;transition:0.3s;}
+.nav-links a:hover{color:#A89676;}
+.note-small{font-size:11px;color:#A89676;margin-top:-5px;margin-bottom:5px;font-style:italic;}
+.required{color:#c0392b;}
+.optional{color:#7f8c8d;font-weight:normal;}
+.promo-banner{background:linear-gradient(135deg,#A89676,#c2ad86);color:#fff;text-align:center;padding:12px;font-size:14px;font-weight:bold;position:relative;z-index:100;}
+.promo-banner a{color:#324A3E;text-decoration:none;background:#fff;padding:4px 12px;border-radius:20px;margin-right:10px;transition:0.3s;display:inline-block;}
+.promo-banner a:hover{background:#F7F5EB;}
+.close-banner{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;margin-right:15px;vertical-align:middle;}
+.hero-nav{display:flex;justify-content:center;gap:20px;margin-top:15px;flex-wrap:wrap;}
+.hero-nav a{color:#D4C5A9;text-decoration:none;padding:8px 20px;border:1px solid #D4C5A9;border-radius:30px;transition:0.3s;font-size:14px;}
+.hero-nav a:hover{background:#D4C5A9;color:#324A3E;}
+.hero-nav a.active{background:#A89676;color:#fff;border-color:#A89676;}
+.back-link{display:inline-block;color:#324A3E;text-decoration:none;margin-bottom:15px;font-weight:500;}
+.back-link:hover{color:#A89676;}
+</style>
+</head>
+<body>
+
+<!-- شريط إعلاني -->
+<div class="promo-banner" id="promoBanner">
+    <span>✨ خصم خاص لدى وندر بيوتي! استخدمي كود الخصم <strong style="background:#324A3E; padding:2px 8px; border-radius:15px;">H91</strong> واحصلي على خصم حصري. 🛍️</span>
+    <a href="https://www.wonderbeauties.com" target="_blank" rel="noopener noreferrer">تسوقي الآن</a>
+    <button class="close-banner" onclick="document.getElementById('promoBanner').style.display='none';">✖</button>
+</div>
+
+<div class="hero">
+    <div class="custom-logo">
+        <svg width="280" height="85" viewBox="0 0 280 85" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(140, 30)">
+                <path d="M0,-22 C12,-22 20,-12 20,0 C20,12 12,22 0,22" stroke="#A89676" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                <path d="M0,-22 C-12,-22 -20,-12 -20,0 C-20,12 -12,22 0,22" stroke="#A89676" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                <path d="M0,-17 C8,-17 14,-8 14,0 C14,8 8,15 0,15" stroke="#D4C5A9" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path d="M0,-17 C-8,-17 -14,-8 -14,0 C-14,8 -8,15 0,15" stroke="#D4C5A9" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <circle cx="0" cy="0" r="3.5" fill="#A89676"/>
+                <circle cx="0" cy="0" r="1.8" fill="#324A3E"/>
+            </g>
+            <text x="140" y="58" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="15" font-weight="bold" fill="#A89676" letter-spacing="3">halcyon hair & wellness</text>
+            <line x1="70" y1="67" x2="210" y2="67" stroke="#D4C5A9" stroke-width="0.7" opacity="0.6"/>
+            <text x="140" y="80" text-anchor="middle" font-family="'Georgia', 'Times New Roman', serif" font-size="9" fill="#D4C5A9" letter-spacing="4">serene beauty ritual</text>
+        </svg>
+    </div>
+    <h1>هبة سالم</h1>
+    <p>اختصاص علم الشعر | Trichologist</p>
+    
+    <!-- روابط التنقل في الهيدر -->
+    <div class="hero-nav">
+        <a href="index.html">📋 حجز موعد</a>
+        <a href="consult-only.html" class="active">📝 استشارة بدون حجز</a>
+        <a href="about.html">👩‍⚕️ عن هبة سالم</a>
+        <a href="partners.html">🤝 شركاؤنا</a>
+        <a href="reviews.html">⭐ آراء العملاء</a>
+    </div>
+</div>
+
+<div class="container">
+<div class="box">
+<h2>📝 استشارة بدون حجز موعد</h2>
+<p style="color:#7f8c8d;margin-bottom:20px;">📌 يمكنك تعبئة بياناتك وإجاباتك وسيتم إرسالها مباشرة إلى هبة سالم. هذا الخيار مناسب إذا كنت تريدين استشارة أولية دون تحديد موعد.</p>
+
+<!-- المعلومات الأساسية -->
+<label>الاسم الكامل <span class="required">*</span></label>
+<input type="text" id="fullname" placeholder="الاسم الكامل">
+
+<label>العمر <span class="required">*</span></label>
+<input type="number" id="age" placeholder="العمر">
+
+<label>رقم الهاتف <span class="required">*</span></label>
+<input type="tel" id="phone" placeholder="مثال: 07712345678" maxlength="11">
+<div class="hint">📞 11 رقم</div>
+
+<label>البريد الإلكتروني <span class="optional">(اختياري)</span></label>
+<input type="email" id="email" placeholder="example@gmail.com">
+<div class="hint">📧 سيصلك رد على هذا البريد (اختياري)</div>
+
+<!-- ===== سؤال الحمل ===== -->
+<h3>🤰 أسئلة خاصة بالحمل</h3>
+<label>هل أنت حامل حالياً؟ <span class="required">*</span></label>
+<div class="radio-group">
+    <label><input type="radio" name="isPregnant" value="نعم" id="pregnantYes"> نعم</label>
+    <label><input type="radio" name="isPregnant" value="لا" id="pregnantNo"> لا</label>
+</div>
+
+<div id="pregnancyQuestions" style="display:none;">
+    <label>1. هل تلاحظين تساقط شعر مكثف أثناء فترة الحمل؟</label>
+    <div class="radio-group">
+        <label><input type="radio" name="pregnancyHairLoss" value="نعم"> نعم</label>
+        <label><input type="radio" name="pregnancyHairLoss" value="لا"> لا</label>
+    </div>
+    <label>2. في أي ثلث من الحمل أنت الآن؟</label>
+    <div class="radio-group">
+        <label><input type="radio" name="pregnancyTrimester" value="الثلث الأول (1-3)"> الثلث الأول (الأشهر 1-3)</label>
+        <label><input type="radio" name="pregnancyTrimester" value="الثلث الثاني (4-6)"> الثلث الثاني (الأشهر 4-6)</label>
+        <label><input type="radio" name="pregnancyTrimester" value="الثلث الثالث (7-9)"> الثلث الثالث (الأشهر 7-9)</label>
+    </div>
+    <label>3. طبيعة الفروة في فترة الحمل مقارنة بما قبل الحمل؟</label>
+    <div class="radio-group">
+        <label><input type="radio" name="pregnancyScalp" value="أصبحت دهنية أكثر مع قشرة"> أصبحت دهنية أكثر مع قشرة</label>
+        <label><input type="radio" name="pregnancyScalp" value="أصبحت جافة جداً وتسبب حكة"> أصبحت جافة جداً وتسبب حكة</label>
+        <label><input type="radio" name="pregnancyScalp" value="لم تتغير"> لم تتغير</label>
+    </div>
+    <label>4. هل تلتزمين بتناول الفيتامينات والمكملات الغذائية أثناء الحمل يومياً؟</label>
+    <div class="radio-group">
+        <label><input type="radio" name="pregnancyVitamins" value="نعم بانتظام"> نعم بانتظام</label>
+        <label><input type="radio" name="pregnancyVitamins" value="أحياناً (أنسى بعض الأيام)"> أحياناً (أنسى بعض الأيام)</label>
+        <label><input type="radio" name="pregnancyVitamins" value="لا أتناول"> لا أتناول</label>
+    </div>
+</div>
+
+<!-- الأهداف الرئيسية -->
+<h3>🎯 الأهداف الرئيسية من الاستشارة العلاجية</h3>
+<div class="radio-group"><label>1. هل هدفك إيقاف تساقط الشعر وتحفيز نمو بصيلات الشعر؟</label><br><label><input type="radio" name="goalHairLoss" value="نعم"> نعم</label> <label><input type="radio" name="goalHairLoss" value="لا"> لا</label></div>
+<div class="radio-group"><label>2. هل الهدف التخلص من جفاف وتكسر ألياف الشعر ونفشة الشعر؟</label><br><label><input type="radio" name="goalDryness" value="نعم"> نعم</label> <label><input type="radio" name="goalDryness" value="لا"> لا</label></div>
+<div class="checkbox-group"><label>3. هل الهدف علاج مشاكل الفروة؟ (يمكن اختيار أكثر من إجابة)</label><br><label><input type="checkbox" name="scalpIssue" value="قشرة"> قشرة</label> <label><input type="checkbox" name="scalpIssue" value="حكة"> حكة</label> <label><input type="checkbox" name="scalpIssue" value="دهون زائدة"> دهون زائدة</label> <label><input type="checkbox" name="scalpIssue" value="التهاب"> التهاب</label> <label><input type="checkbox" name="scalpIssue" value="أخرى"> أخرى</label></div>
+<input type="text" id="scalpIssueOther" placeholder="يرجى التوضيح (في حالة اختيار أخرى)" style="width:100%; padding:8px; margin-top:5px; border:1px solid #e0ddd0; border-radius:12px; background:#F7F5EB; display:none;">
+
+<!-- تشخيص تساقط الشعر -->
+<h3>🩺 تشخيص تساقط الشعر</h3>
+<label>معدل تساقط الشعر التقريبي يومياً؟</label>
+<div class="radio-group">
+    <label><input type="radio" name="hairLossRate" value="طبيعي (أقل من 100 شعرة)"> طبيعي (أقل من 100 شعرة)</label>
+    <label><input type="radio" name="hairLossRate" value="متوسط"> متوسط</label>
+    <label><input type="radio" name="hairLossRate" value="حاد (يتساقط خصل)"> حاد (يتساقط خصل)</label>
+</div>
+
+<label>نوع التساقط؟ (يمكن اختيار أكثر من إجابة)</label>
+<div class="checkbox-group">
+    <label><input type="checkbox" name="hairLossType" value="تساقط هرموني"> تساقط هرموني</label>
+    <label><input type="checkbox" name="hairLossType" value="تساقط وراثي"> تساقط وراثي</label>
+    <label><input type="checkbox" name="hairLossType" value="تساقط كربي (بعد ولادة، عملية، دايت قاسي)"> تساقط كربي</label>
+    <label><input type="checkbox" name="hairLossType" value="ثعلبة بقعية"> ثعلبة بقعية</label>
+</div>
+
+<label>نوع وملمس الشعر الطبيعي؟</label>
+<div class="radio-group">
+    <label><input type="radio" name="hairTexture" value="ناعم"> ناعم / أملس</label>
+    <label><input type="radio" name="hairTexture" value="مموج ويفي"> مموج ويفي (Wavy)</label>
+    <label><input type="radio" name="hairTexture" value="كيرلي"> كيرلي (Curly)</label>
+    <label><input type="radio" name="hairTexture" value="أفريقي خشن"> أفريقي خشن (Coily/Kinky)</label>
+</div>
+
+<!-- مسامية الشعر -->
+<h3>💧 مسامية الشعر (Hair Porosity)</h3>
+<p class="hint" style="margin-bottom:10px;">مسامية الشعر هي قدرة الشعر على امتصاص الرطوبة والمنتجات</p>
+
+<label>1. هل يجف شعرك بسرعة عالية بعد الاستحمام ويمتص الزيوت والمنتجات دون لمعان؟ (مسامية عالية)</label>
+<div class="radio-group">
+    <label><input type="radio" name="highPorosity" value="نعم"> نعم</label>
+    <label><input type="radio" name="highPorosity" value="لا"> لا</label>
+</div>
+
+<label>2. هل يأخذ شعرك ساعات طويلة جداً حتى يجف وتلاحظين تراكم المنتجات على سطح الشعرة دون امتصاصها؟ (مسامية منخفضة)</label>
+<div class="radio-group">
+    <label><input type="radio" name="lowPorosity" value="نعم"> نعم</label>
+    <label><input type="radio" name="lowPorosity" value="لا"> لا</label>
+</div>
+
+<label>هل لديك حساسية معروفة من مواد معينة؟</label>
+<div class="radio-group">
+    <label><input type="radio" name="hasAllergies" value="نعم" id="allergiesYes"> نعم</label>
+    <label><input type="radio" name="hasAllergies" value="لا" id="allergiesNo"> لا</label>
+</div>
+<div id="allergiesDetails" style="display:none;">
+    <div class="checkbox-group">
+        <label><input type="checkbox" name="allergyType" value="العطور"> العطور</label>
+        <label><input type="checkbox" name="allergyType" value="السلفات"> السلفات</label>
+        <label><input type="checkbox" name="allergyType" value="البارابين"> البارابين</label>
+        <label><input type="checkbox" name="allergyType" value="الفورمالديهايد"> الفورمالديهايد</label>
+        <label><input type="checkbox" name="allergyType" value="المينوكسيديل"> المينوكسيديل</label>
+    </div>
+</div>
+
+<label>هل تعانين من نقوصات غذائية؟</label>
+<div class="checkbox-group">
+    <label><input type="checkbox" name="nutritionDeficiency" value="الحديد"> الحديد (Iron)</label>
+    <label><input type="checkbox" name="nutritionDeficiency" value="فيتامين D"> فيتامين D</label>
+    <label><input type="checkbox" name="nutritionDeficiency" value="فيتامين B12"> فيتامين B12</label>
+    <label><input type="checkbox" name="nutritionDeficiency" value="زنك"> زنك (Zinc)</label>
+</div>
+
+<label>هل هناك اضطرابات في الغدة الدرقية؟</label>
+<div class="radio-group">
+    <label><input type="radio" name="thyroidDisorder" value="نعم"> نعم</label>
+    <label><input type="radio" name="thyroidDisorder" value="لا"> لا</label>
+</div>
+
+<label>هل لديك تغييرات هرمونية؟ (متلازمة تكيس المبايض - PCOS)</label>
+<div class="radio-group">
+    <label><input type="radio" name="hormonalChanges" value="نعم"> نعم</label>
+    <label><input type="radio" name="hormonalChanges" value="لا"> لا</label>
+</div>
+
+<!-- نمط الحياة -->
+<h3>📋 نمط الحياة والصحة العامة</h3>
+<div class="radio-group"><label>كمية شرب الماء يومياً</label><br><label><input type="radio" name="water" value="أقل من لتر"> أقل من لتر</label> <label><input type="radio" name="water" value="1-2 لتر"> 1-2 لتر</label> <label><input type="radio" name="water" value="أكثر من 2 لتر"> أكثر من 2 لتر</label></div>
+<div class="radio-group"><label>هل تعانين من تساقط الشعر؟ <span class="required">*</span></label><br><label><input type="radio" name="hairLoss" value="نعم" id="hairLossYes"> نعم</label> <label><input type="radio" name="hairLoss" value="لا" id="hairLossNo"> لا</label></div>
+<div class="radio-group"><label>هل تعانين من مشاكل متكررة في الجهاز الهضمي؟</label><br><label><input type="radio" name="digestive" value="نعم"> نعم</label> <label><input type="radio" name="digestive" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل تعانين من إرهاق مستمر أو ضعف عام في الجسم؟</label><br><label><input type="radio" name="fatigue" value="نعم"> نعم</label> <label><input type="radio" name="fatigue" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل تلاحظين تكسراً سريعاً في الأظافر أو ظهور بقع بيضاء عليها؟</label><br><label><input type="radio" name="nails" value="نعم"> نعم</label> <label><input type="radio" name="nails" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل تتبعين حمية غذائية قاسية أو عانيت من نقص مخزون الحديد؟</label><br><label><input type="radio" name="diet" value="نعم"> نعم</label> <label><input type="radio" name="diet" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل يخف شعرك بسرعة فائقة بعد الاستحمام؟</label><br><label><input type="radio" name="quickDry" value="نعم"> نعم</label> <label><input type="radio" name="quickDry" value="لا"> لا</label></div>
+<div class="radio-group"><label>هل يأخذ شعرك ساعات طويلة جداً ليجف وتلاحظين تراكم المنتجات فوقه دون امتصاص؟</label><br><label><input type="radio" name="slowDry" value="نعم"> نعم</label> <label><input type="radio" name="slowDry" value="لا"> لا</label></div>
+
+<label>ملاحظات إضافية <span class="optional">(اختياري - حد أقصى 50 حرف)</span></label>
+<textarea id="notes" maxlength="50" rows="2" placeholder="أضيفي أي ملاحظات إضافية (50 حرف كحد أقصى)"></textarea>
+<div class="hint" id="charCount">💬 0 / 50 حرف</div>
+
+<!-- رفع الصور -->
+<h3>📸 رفع الملفات</h3>
+
+<div class="file-input">
+    <label>📸 صورة الشعر</label>
+    <input type="file" id="hairImage" accept="image/*" multiple>
+    <div class="note-small">✨ يمكنك اختيار أكثر من صورة (حتى 2 صور)</div>
+    <div id="hairImageStatus" class="upload-status" style="display:none;"></div>
+</div>
+
+<div class="file-input">
+    <label>🩺 التحليل الطبي <span id="medicalRequiredLabel" class="required">(إجباري في حالة وجود تساقط)</span></label>
+    <input type="file" id="medicalReport" accept="image/*,.pdf" multiple>
+    <div class="note-small">📎 يمكنك رفع أكثر من ملف (حتى 2 ملفات)</div>
+    <div id="medicalReportStatus" class="upload-status" style="display:none;"></div>
+    <div id="medicalNote" class="hint">💡 ملاحظة: التحليل الطبي إجباري فقط إذا كان تساقط الشعر = نعم (يكفي رفع ملف واحد على الأقل)</div>
+    <div id="medicalError" style="color:#c0392b;font-size:12px;display:none;">⚠️ في حالة وجود تساقط للشعر، يجب رفع التحليل الطبي (ملف واحد على الأقل)</div>
+</div>
+
+<button class="submit" id="finalSendBtn">📤 إرسال الاستشارة</button>
+
+<p style="color:#7f8c8d;font-size:12px;margin-top:15px;text-align:center;">📌 سيتم إرسال بياناتك إلى هبة سالم وسيتم الرد عليك خلال 24 ساعة (على البريد الإلكتروني إن وجد)</p>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div class="footer-credit">
+    <div class="nav-links">
+        <a href="index.html">📋 حجز موعد</a>
+        <a href="consult-only.html">📝 استشارة بدون حجز</a>
+        <a href="about.html">👩‍⚕️ عن هبة سالم</a>
+        <a href="partners.html">🤝 شركاؤنا</a>
+        <a href="reviews.html">⭐ آراء العملاء</a>
+    </div>
+    <br>
+    برمجة: محمد العزاوي
+</div>
+
+<script>
+// ==================== الرابط ====================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIph4K0JcQcCF3crmLyGzlkS35T9gS5zC_fYl9w_LAAMKvQ0i1aODeWXZYUcSJYwPc/exec';
+
+let uploadedHairImages = [];
+let uploadedMedicalReports = [];
+
+// ==================== إظهار/إخفاء أسئلة الحمل ====================
+document.getElementById('pregnantYes').addEventListener('change', function() {
+    document.getElementById('pregnancyQuestions').style.display = 'block';
+});
+document.getElementById('pregnantNo').addEventListener('change', function() {
+    document.getElementById('pregnancyQuestions').style.display = 'none';
+});
+
+// ==================== إظهار/إخفاء تفاصيل الحساسية ====================
+document.getElementById('allergiesYes').addEventListener('change', function() {
+    document.getElementById('allergiesDetails').style.display = 'block';
+});
+document.getElementById('allergiesNo').addEventListener('change', function() {
+    document.getElementById('allergiesDetails').style.display = 'none';
+});
+
+// ==================== إظهار حقل "أخرى" لمشاكل الفروة ====================
+document.querySelectorAll('input[name="scalpIssue"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const otherField = document.getElementById('scalpIssueOther');
+        if (document.querySelector('input[name="scalpIssue"]:checked[value="أخرى"]')) {
+            otherField.style.display = 'block';
+        } else {
+            otherField.style.display = 'none';
+            otherField.value = '';
+        }
+    });
+});
+
+// ==================== دوال رفع الصور ====================
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+    });
+}
+
+async function handleMultipleFiles(files, type, maxFiles = 2) {
+    const filesList = Array.from(files).slice(0, maxFiles);
+    const base64List = [];
+    const statusDiv = document.getElementById(`${type}Status`);
+    
+    statusDiv.style.display = 'block';
+    statusDiv.className = 'upload-status loading';
+    statusDiv.innerHTML = `⏳ جاري تجهيز ${filesList.length} ملف...`;
+    
+    for (let i = 0; i < filesList.length; i++) {
+        try {
+            const base64 = await fileToBase64(filesList[i]);
+            base64List.push(base64);
+        } catch(error) {
+            statusDiv.className = 'upload-status error';
+            statusDiv.innerHTML = `❌ فشل تجهيز الملف ${i+1}`;
+            return [];
+        }
+    }
+    
+    if (type === 'hairImage') {
+        uploadedHairImages = base64List;
+    } else {
+        uploadedMedicalReports = base64List;
+    }
+    
+    statusDiv.className = 'upload-status success';
+    statusDiv.innerHTML = `✅ تم تجهيز ${base64List.length} ملف بنجاح`;
+    return base64List;
+}
+
+document.getElementById('hairImage').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleMultipleFiles(e.target.files, 'hairImage', 2);
+    } else {
+        uploadedHairImages = [];
+        document.getElementById('hairImageStatus').style.display = 'none';
+    }
+});
+
+document.getElementById('medicalReport').addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleMultipleFiles(e.target.files, 'medicalReport', 2);
+    } else {
+        uploadedMedicalReports = [];
+        document.getElementById('medicalReportStatus').style.display = 'none';
+    }
+});
+
+// ==================== دوال مساعدة ====================
+function showMessage(text, isError) {
+    const toast = document.getElementById('toast');
+    toast.textContent = text;
+    toast.className = 'toast' + (isError ? ' error' : ' success');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 5000);
+}
+
+function validatePhone(phone) { return /^[0-9]{11}$/.test(phone); }
+
+const notesField = document.getElementById('notes');
+const charCountSpan = document.getElementById('charCount');
+notesField.addEventListener('input', function() {
+    charCountSpan.innerHTML = `💬 ${this.value.length} / 50 حرف`;
+});
+
+function updateMedicalRequirement() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const label = document.getElementById('medicalRequiredLabel');
+    const note = document.getElementById('medicalNote');
+    if (isHairLoss && isHairLoss.value === 'نعم') {
+        label.innerHTML = '(إجباري - ملف واحد على الأقل)';
+        label.style.color = '#c0392b';
+        note.innerHTML = '⚠️ يرجى رفع التحليل الطبي (ملف واحد على الأقل)';
+        note.style.color = '#c0392b';
+    } else {
+        label.innerHTML = '(اختياري)';
+        label.style.color = '#7f8c8d';
+        note.innerHTML = '💚 غير مطلوب';
+        note.style.color = '#27ae60';
+    }
+}
+
+function validateMedicalReport() {
+    const isHairLoss = document.querySelector('input[name="hairLoss"]:checked');
+    const hasHairLoss = isHairLoss && isHairLoss.value === 'نعم';
+    const hasAnyReport = uploadedMedicalReports.length > 0;
+    if (hasHairLoss && !hasAnyReport) {
+        document.getElementById('medicalError').style.display = 'block';
+        setTimeout(() => document.getElementById('medicalError').style.display = 'none', 4000);
+        showMessage('⚠️ يرجى رفع التحليل الطبي (ملف واحد على الأقل)', true);
+        return false;
+    }
+    return true;
+}
+
+document.getElementById('hairLossYes')?.addEventListener('change', updateMedicalRequirement);
+document.getElementById('hairLossNo')?.addEventListener('change', updateMedicalRequirement);
+updateMedicalRequirement();
+
+// ==================== إرسال الاستشارة ====================
+document.getElementById('finalSendBtn').onclick = async () => {
+    const name = document.getElementById('fullname').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+    
+    const isPregnant = document.querySelector('input[name="isPregnant"]:checked')?.value || '';
+    const pregnancyHairLoss = document.querySelector('input[name="pregnancyHairLoss"]:checked')?.value || '';
+    const pregnancyTrimester = document.querySelector('input[name="pregnancyTrimester"]:checked')?.value || '';
+    const pregnancyScalp = document.querySelector('input[name="pregnancyScalp"]:checked')?.value || '';
+    const pregnancyVitamins = document.querySelector('input[name="pregnancyVitamins"]:checked')?.value || '';
+    
+    const goalHairLoss = document.querySelector('input[name="goalHairLoss"]:checked')?.value || '';
+    const goalDryness = document.querySelector('input[name="goalDryness"]:checked')?.value || '';
+    const scalpIssues = Array.from(document.querySelectorAll('input[name="scalpIssue"]:checked')).map(cb => cb.value).join(', ');
+    const scalpIssueOther = document.getElementById('scalpIssueOther').value.trim();
+    const hairLossRate = document.querySelector('input[name="hairLossRate"]:checked')?.value || '';
+    const hairLossType = Array.from(document.querySelectorAll('input[name="hairLossType"]:checked')).map(cb => cb.value).join(', ');
+    const hairTexture = document.querySelector('input[name="hairTexture"]:checked')?.value || '';
+    
+    const highPorosity = document.querySelector('input[name="highPorosity"]:checked')?.value || '';
+    const lowPorosity = document.querySelector('input[name="lowPorosity"]:checked')?.value || '';
+    
+    const hasAllergies = document.querySelector('input[name="hasAllergies"]:checked')?.value || '';
+    const allergyType = Array.from(document.querySelectorAll('input[name="allergyType"]:checked')).map(cb => cb.value).join(', ');
+    const nutritionDeficiency = Array.from(document.querySelectorAll('input[name="nutritionDeficiency"]:checked')).map(cb => cb.value).join(', ');
+    const thyroidDisorder = document.querySelector('input[name="thyroidDisorder"]:checked')?.value || '';
+    const hormonalChanges = document.querySelector('input[name="hormonalChanges"]:checked')?.value || '';
+    
+    const water = document.querySelector('input[name="water"]:checked')?.value || '';
+    const hairLoss = document.querySelector('input[name="hairLoss"]:checked')?.value || '';
+    const digestive = document.querySelector('input[name="digestive"]:checked')?.value || '';
+    const fatigue = document.querySelector('input[name="fatigue"]:checked')?.value || '';
+    const nails = document.querySelector('input[name="nails"]:checked')?.value || '';
+    const diet = document.querySelector('input[name="diet"]:checked')?.value || '';
+    const quickDry = document.querySelector('input[name="quickDry"]:checked')?.value || '';
+    const slowDry = document.querySelector('input[name="slowDry"]:checked')?.value || '';
+    
+    if (!name || !age || !phone) {
+        showMessage('⚠️ الرجاء تعبئة جميع الحقول الإجبارية (الاسم، العمر، الهاتف)', true);
+        return;
+    }
+    if (!validatePhone(phone)) {
+        showMessage('⚠️ رقم الهاتف يجب أن يكون 11 رقم', true);
+        return;
+    }
+    if (!hairLoss) {
+        showMessage('⚠️ الرجاء الإجابة عن سؤال تساقط الشعر', true);
+        return;
+    }
+    if (!isPregnant) {
+        showMessage('⚠️ الرجاء الإجابة عن سؤال "هل أنت حامل حالياً؟"', true);
+        return;
+    }
+    
+    if (!validateMedicalReport()) return;
+    
+    const btn = document.getElementById('finalSendBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> جاري إرسال الاستشارة...';
+    showMessage('⏳ جاري إرسال الاستشارة...');
+    
+    const allData = {
+        name, age, phone, email, 
+        date: 'بدون حجز',
+        selectedHour: 'بدون حجز',
+        consultType: 'استشارة بدون حجز',
+        notes,
+        isPregnant, pregnancyHairLoss, pregnancyTrimester, pregnancyScalp, pregnancyVitamins,
+        goalHairLoss, goalDryness, scalpIssues, scalpIssueOther,
+        hairLossRate, hairLossType, hairTexture,
+        highPorosity, lowPorosity,
+        hasAllergies, allergyType, nutritionDeficiency, thyroidDisorder, hormonalChanges,
+        water, hairLoss, digestive, fatigue, nails, diet, quickDry, slowDry,
+        hairImageBase64: uploadedHairImages.join('||'),
+        medicalReportBase64: uploadedMedicalReports.join('||')
+    };
+    
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(allData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            showMessage('✅ تم إرسال الاستشارة بنجاح! سيتم الرد عليك خلال 24 ساعة.');
+            // إعادة تعيين النموذج
+            document.getElementById('fullname').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('hairImage').value = '';
+            document.getElementById('medicalReport').value = '';
+            uploadedHairImages = [];
+            uploadedMedicalReports = [];
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+            document.getElementById('scalpIssueOther').style.display = 'none';
+            document.getElementById('scalpIssueOther').value = '';
+            document.getElementById('pregnancyQuestions').style.display = 'none';
+            document.getElementById('allergiesDetails').style.display = 'none';
+            document.querySelectorAll('.upload-status').forEach(div => div.style.display = 'none');
+            charCountSpan.innerHTML = '💬 0 / 50 حرف';
+            updateMedicalRequirement();
+        } else {
+            showMessage('❌ حدث خطأ: ' + result.message, true);
+        }
+    } catch (error) {
+        console.error(error);
+        showMessage('❌ حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.', true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📤 إرسال الاستشارة';
+    }
+};
+</script>
+</body>
+</html>
