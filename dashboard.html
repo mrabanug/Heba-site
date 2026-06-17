@@ -180,7 +180,10 @@ async function fetchBookings() {
         showMessage('❌ حدث خطأ في الاتصال', true);
     }
 }
-
+const response = await fetch(APPS_SCRIPT_URL + '?action=getBookings', {
+    method: 'GET',
+    mode: 'no-cors'  // 🔴 أضيفي هذا السطر هنا
+});
 // ==================== تحديث الإحصائيات ====================
 function updateStats() {
     const total = allBookings.length;
