@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم - هبة سالم</title>
+<style>
+/* ===== الأنماط العامة ===== */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(135deg,#F7F5EB,#EFE9DB);font-family:'Segoe UI',Tahoma,sans-serif;color:#2D2D2A;direction:rtl;}
+.hero{background:linear-gradient(135deg,#324A3E,#2D3E34);color:#fff;text-align:center;padding:40px 20px;}
+.hero h1{font-size:36px;margin-top:10px;}
+.hero p{color:#D4C5A9;margin-top:10px;font-size:18px;}
+.container{max-width:1200px;margin:auto;padding:20px 15px;}
+/* ===== الإحصائيات ===== */
+.dashboard-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin-bottom:25px;}
+.stat-card{background:#fff;padding:15px;border-radius:15px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.06);border:1px solid #eee;}
+.stat-card h3{font-size:28px;color:#324A3E;}
+.stat-card p{color:#7f8c8d;font-size:13px;}
+/* ===== الصندوق ===== */
+.box{background:#fff;padding:20px;border-radius:20px;box-shadow:0 10px 35px rgba(0,0,0,0.08);border:1px solid #eee;overflow-x:auto;}
+/* ===== الجدول ===== */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:#324A3E;color:#fff;padding:10px;text-align:right;position:sticky;top:0;z-index:10;}
+td{padding:10px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
+tr:hover{background:#f8f6f0;}
+/* ===== الفلاتر ===== */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;align-items:center;}
+.filters select,.filters input{padding:8px 12px;border-radius:8px;border:1px solid #e5e0d4;background:#faf8f2;}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+/* ===== الأزرار ===== */
+.btn-export{background:#A89676;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-export:hover{opacity:0.8;}
+.btn-logout{background:#c0392b;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-logout:hover{opacity:0.8;}
+.btn-change-password{background:#2980b9;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-change-password:hover{opacity:0.8;}
+/* ===== الحالات ===== */
+.status-badge{padding:4px 12px;border-radius:20px;font-size:11px;display:inline-block;}
+.status-badge.confirmed{background:#d4edda;color:#155724;}
+.status-badge.pending{background:#fff3cd;color:#856404;}
+.status-badge.cancelled{background:#f8d7da;color:#721c24;}
+/* ===== أدوات ===== */
+.loader{width:30px;height:30px;border:4px solid #e0ddd0;border-top:4px solid #324A3E;border-radius:50%;margin:30px auto;animation:spin 1s linear infinite;}
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+.empty-state{text-align:center;padding:40px;color:#7f8c8d;}
+.empty-state h3{color:#324A3E;margin-bottom:10px;}
+.meet-link{color:#2E7D32;text-decoration:none;word-break:break-all;}
+.meet-link:hover{text-decoration:underline;}
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:15px;flex-wrap:wrap;}
+.pagination button{padding:6px 14px;border:1px solid #e5e0d4;border-radius:6px;background:#fff;cursor:pointer;}
+.pagination button.active{background:#324A3E;color:#fff;border-color:#324A3E;}
+.pagination button:hover:not(.active){background:#f0ede5;}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);padding:14px 25px;border-radius:50px;background:#324A3E;color:#fff;display:none;z-index:999;}
+.toast.error{background:#c0392b;}
+.toast.success{background:#27ae60;}
+@media(max-width:768px){table{font-size:11px;}th,td{padding:6px;}}
+</style>
+</head>
+<body>
+
+<!-- ===== الهيدر ===== -->
+<div class="hero">
+    <h1>📊 لوحة التحكم</h1>
+    <p>إدارة الحجوزات والاستشارات</p>
+    <div style="margin-top:10px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap;">
+        <a href="https://hibasalem.com" style="color:#D4C5A9;text-decoration:none;">🏠 الرئيسية</a>
+        <a href="https://hibasalem.com/no-booking" style="color:#D4C5A9;text-decoration:none;">📝 استشارة بدون حجز</a>
+        <a href="change-password.html" style="color:#D4C5A9;text-decoration:none;">🔑 تغيير كلمة المرور</a>
+        <a href="#" onclick="logout()" style="color:#D4C5A9;text-decoration:none;">🚪 تسجيل الخروج</a>
+    </div>
+</div>
+
+<!-- ===== المحتوى ===== -->
+<div class="container">
+    <!-- الإحصائيات -->
+    <div class="dashboard-stats" id="statsContainer">
+        <div class="stat-card"><h3 id="totalBookings">0</h3><p>إجمالي الحجوزات</p></div>
+        <div class="stat-card"><h3 id="todayBookings">0</h3><p>حجوزات اليوم</p></div>
+        <div class="stat-card"><h3 id="pendingBookings">0</h3><p>قيد الانتظار</p></div>
+        <div class="stat-card"><h3 id="confirmedBookings">0</h3><p>مؤكدة</p></div>
+    </div>
+
+    <!-- قائمة الحجوزات -->
+    <div class="box">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:15px;align-items:center;">
+            <h2 style="color:#324A3E;font-size:20px;">📋 قائمة الحجوزات</h2>
+            <div class="top-actions">
+                <button class="btn-export" onclick="exportCSV()">📥 تصدير CSV</button>
+                <button class="btn-export" onclick="refreshData()" style="background:#27ae60;">🔄 تحديث</button>
+            </div>
+        </div>
+
+        <!-- الفلاتر -->
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="🔍 بحث بالاسم أو الهاتف..." onkeyup="applyFilters()">
+            <select id="statusFilter" onchange="applyFilters()">
+                <option value="">جميع الحالات</option>
+                <option value="مؤكدة">مؤكدة</option>
+                <option value="قيد الانتظار">قيد الانتظار</option>
+                <option value="ملغية">ملغية</option>
+            </select>
+            <input type="date" id="dateFilter" onchange="applyFilters()">
+            <button onclick="clearFilters()" style="padding:8px 15px;border:none;border-radius:8px;background:#e74c3c;color:#fff;cursor:pointer;">✖ مسح</button>
+        </div>
+
+        <!-- الجدول -->
+        <div id="tableContainer">
+            <div class="loader"></div>
+        </div>
+
+        <!-- الترقيم -->
+        <div class="pagination" id="paginationContainer"></div>
+    </div>
+</div>
+
+<!-- ===== رسالة منبثقة ===== -->
+<div id="toast" class="toast"></div>
+
+<!-- ===== JavaScript ===== -->
+<script>
+// 🔴 استبدلي هذا الرابط بالرابط الذي نسخته من سكربت كلمة المرور
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynuSwiAXew7B5sOjpATb9KWEAwQ76vZ1YRmQe9JchFmjjlsoKHgM3ps7FlezaPzAU7/exec';
+
+let allBookings = [];
+let filteredBookings = [];
+let currentPage = 1;
+const itemsPerPage = 20;
+
+// ==================== التحقق من الجلسة ====================
+function checkSession() {
+    const loggedIn = localStorage.getItem('adminLoggedIn');
+    if (loggedIn !== 'true') {
+        window.location.href = 'login.html';
+        return false;
+    }
+    const loginTime = new Date(localStorage.getItem('adminLoginTime'));
+    const now = new Date();
+    const diffHours = (now - loginTime) / (1000 * 60 * 60);
+    if (diffHours > 24) {
+        localStorage.removeItem('adminLoggedIn');
+        localStorage.removeItem('adminLoginTime');
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
+// ==================== تسجيل الخروج ====================
+function logout() {
+    localStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminLoginTime');
+    window.location.href = 'login.html';
+}
+
+// ==================== عرض الرسائل ====================
+function showMessage(text, isError) {
+    const toast = document.getElementById('toast');
+    toast.textContent = text;
+    toast.className = 'toast' + (isError ? ' error' : ' success');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 3000);
+}
+
+// ==================== جلب البيانات ====================
+async function fetchBookings() {
+    try {
+        const response = await fetch(APPS_SCRIPT_URL + '?action=getBookings');
+        const result = await response.json();
+        if (result.status === 'success') {
+            allBookings = result.data || [];
+            filteredBookings = [...allBookings];
+            updateStats();
+            applyFilters();
+        } else {
+            showMessage('❌ خطأ في جلب البيانات: ' + result.message, true);
+        }
+    } catch (error) {
+        console.error(error);
+        showMessage('❌ حدث خطأ في الاتصال', true);
+    }
+}
+
+// ==================== تحديث الإحصائيات ====================
+function updateStats() {
+    const total = allBookings.length;
+    const today = new Date().toISOString().split('T')[0];
+    const todayCount = allBookings.filter(b => b.bookingDate === today).length;
+    const pendingCount = allBookings.filter(b => b.status === 'قيد الانتظار' || !b.status).length;
+    const confirmedCount = allBookings.filter(b => b.status === 'مؤكدة').length;
+    document.getElementById('totalBookings').textContent = total;
+    document.getElementById('todayBookings').textContent = todayCount;
+    document.getElementById('pendingBookings').textContent = pendingCount;
+    document.getElementById('confirmedBookings').textContent = confirmedCount;
+}
+
+// ==================== تطبيق الفلاتر ====================
+function applyFilters() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    filteredBookings = allBookings.filter(booking => {
+        const matchSearch = !searchTerm || 
+            (booking.name && booking.name.toLowerCase().includes(searchTerm)) ||
+            (booking.phone && booking.phone.includes(searchTerm));
+        const matchStatus = !statusFilter || booking.status === statusFilter;
+        const matchDate = !dateFilter || booking.bookingDate === dateFilter;
+        return matchSearch && matchStatus && matchDate;
+    });
+    currentPage = 1;
+    renderTable();
+}
+
+// ==================== مسح الفلاتر ====================
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    applyFilters();
+}
+
+// ==================== عرض الجدول ====================
+function renderTable() {
+    const container = document.getElementById('tableContainer');
+    const totalItems = filteredBookings.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageItems = filteredBookings.slice(start, end);
+    
+    if (totalItems === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>📭 لا توجد حجوزات</h3>
+                <p>لم يتم العثور على أي حجوزات مطابقة للبحث</p>
+            </div>
+        `;
+        document.getElementById('paginationContainer').innerHTML = '';
+        return;
+    }
+    
+    let tableHTML = `
+        <table>
+            <thead><tr>
+                <th>#</th><th>الرقم المرجعي</th><th>الاسم</th>
+                <th>الهاتف</th><th>التاريخ</th><th>الوقت</th>
+                <th>نوع الاستشارة</th><th>الحالة</th><th>رابط Meet</th>
+            </tr></thead><tbody>
+    `;
+    
+    pageItems.forEach((booking, index) => {
+        const statusClass = booking.status === 'مؤكدة' ? 'confirmed' : 
+                          booking.status === 'ملغية' ? 'cancelled' : 'pending';
+        const statusText = booking.status || 'قيد الانتظار';
+        tableHTML += `
+            <tr>
+                <td>${start + index + 1}</td>
+                <td><strong>${booking.referenceNumber || '-'}</strong></td>
+                <td>${booking.name || '-'}</td>
+                <td>${booking.phone || '-'}</td>
+                <td>${booking.bookingDate || '-'}</td>
+                <td>${formatTime(booking.bookingTime) || '-'}</td>
+                <td>${booking.consultType || '-'}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>${booking.meetLink ? `<a href="${booking.meetLink}" target="_blank" class="meet-link">🔗 رابط</a>` : '-'}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `</tbody></table>`;
+    container.innerHTML = tableHTML;
+    renderPagination(totalPages);
+}
+
+// ==================== ترقيم الصفحات ====================
+function renderPagination(totalPages) {
+    const container = document.getElementById('paginationContainer');
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+    let html = '';
+    html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.5;"' : ''}>« السابق</button>`;
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.5;"' : ''}>التالي »</button>`;
+    container.innerHTML = html;
+}
+
+function goToPage(page) {
+    const totalPages = Math.ceil(filteredBookings.length / itemsPerPage) || 1;
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderTable();
+}
+
+// ==================== تنسيق الوقت ====================
+function formatTime(time24) {
+    if (!time24) return '';
+    const parts = time24.split(':');
+    const hour = parseInt(parts[0]);
+    const minutes = parts[1] || '00';
+    const ampm = hour >= 12 ? 'مساءً' : 'صباحاً';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+}
+
+// ==================== تصدير CSV ====================
+function exportCSV() {
+    if (filteredBookings.length === 0) {
+        showMessage('⚠️ لا توجد بيانات للتصدير', true);
+        return;
+    }
+    const headers = ['الرقم المرجعي', 'الاسم', 'العمر', 'الهاتف', 'البريد الإلكتروني', 'تاريخ الحجز', 'وقت الحجز', 'نوع الاستشارة', 'الحالة', 'ملاحظات'];
+    const rows = filteredBookings.map(b => [
+        b.referenceNumber || '',
+        b.name || '',
+        b.age || '',
+        b.phone || '',
+        b.email || '',
+        b.bookingDate || '',
+        b.bookingTime || '',
+        b.consultType || '',
+        b.status || 'قيد الانتظار',
+        b.notes || ''
+    ]);
+    let csv = headers.join(',') + '\n';
+    rows.forEach(row => {
+        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+    });
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `حجوزات_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    showMessage('✅ تم تصدير CSV بنجاح');
+}
+
+// ==================== تحديث البيانات ====================
+function refreshData() {
+    showMessage('⏳ جاري التحديث...');
+    fetchBookings();
+}
+
+// ==================== تحميل البيانات عند فتح الصفحة ====================
+document.addEventListener('DOMContentLoaded', function() {
+    if (checkSession()) {
+        fetchBookings();
+    }
+});
+</script>
+</body>
+</html>
