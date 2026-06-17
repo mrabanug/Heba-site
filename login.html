@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول - لوحة التحكم</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:linear-gradient(135deg,#324A3E,#2D3E34);font-family:'Segoe UI',Tahoma,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;}
+.login-container{background:#fff;padding:40px;border-radius:25px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.login-container h1{text-align:center;color:#324A3E;margin-bottom:10px;}
+.login-container p{text-align:center;color:#7f8c8d;margin-bottom:30px;font-size:14px;}
+label{display:block;margin-bottom:6px;font-weight:600;color:#324A3E;}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid #e5e0d4;background:#faf8f2;font-size:14px;margin-bottom:20px;}
+input:focus{outline:none;border-color:#A89676;}
+button{width:100%;padding:16px;border:none;border-radius:50px;background:linear-gradient(135deg,#324A3E,#2D3E34);color:#fff;font-size:18px;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{opacity:0.9;}
+button:disabled{opacity:0.5;cursor:not-allowed;}
+.error-msg{color:#c0392b;font-size:13px;text-align:center;margin-top:10px;display:none;}
+.success-msg{color:#27ae60;font-size:13px;text-align:center;margin-top:10px;display:none;}
+.loader{width:18px;height:18px;border:3px solid #fff;border-top:3px solid #A89676;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+.logo{text-align:center;margin-bottom:20px;}
+.logo h2{color:#A89676;font-size:22px;}
+</style>
+</head>
+<body>
+<div class="login-container">
+    <div class="logo">
+        <h2>🌸 هبة سالم</h2>
+        <p style="color:#7f8c8d;font-size:12px;margin-top:-5px;">لوحة التحكم</p>
+    </div>
+    <h1>🔐 تسجيل الدخول</h1>
+    <p>أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+    
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <label>كلمة المرور</label>
+        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور" required>
+        
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
+        
+        <button type="submit" id="loginBtn">🚪 تسجيل الدخول</button>
+        
+        <div style="text-align:center;margin-top:15px;">
+            <a href="change-password.html" style="color:#A89676;text-decoration:none;font-size:13px;">تغيير كلمة المرور</a>
+        </div>
+    </form>
+</div>
+
+<script>const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynuSwiAXew7B5sOjpATb9KWEAwQ76vZ1YRmQe9JchFmjjlsoKHgM3ps7FlezaPzAU7/exec';
+
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const password = document.getElementById('passwordInput').value.trim();
+    const btn = document.getElementById('loginBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+    
+    if (!password) {
+        errorMsg.textContent = '⚠️ الرجاء إدخال كلمة المرور';
+        errorMsg.style.display = 'block';
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> جاري التحقق...';
+    errorMsg.style.display = 'none';
+    successMsg.style.display = 'none';
+    
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'login', password: password })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            localStorage.setItem('adminLoggedIn', 'true');
+            localStorage.setItem('adminLoginTime', new Date().toISOString());
+            
+            successMsg.textContent = '✅ ' + result.message;
+            successMsg.style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        } else {
+            errorMsg.textContent = '❌ ' + result.message;
+            errorMsg.style.display = 'block';
+        }
+    } catch (error) {
+        errorMsg.textContent = '❌ حدث خطأ في الاتصال';
+        errorMsg.style.display = 'block';
+        console.error(error);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🚪 تسجيل الدخول';
+    }
+}
+</script>
+</body>
+</html>
