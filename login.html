@@ -75,7 +75,13 @@ async function handleLogin(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'login', password: password })
         });
-        
+        try {
+    const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',  // 🔴 أضيفي هذا السطر هنا
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'login', password: password })
+    });
         const result = await response.json();
         
         if (result.status === 'success') {
