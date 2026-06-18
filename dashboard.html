@@ -29,11 +29,11 @@ tr:hover{background:#f8f6f0;}
 .filters select,.filters input{padding:8px 12px;border-radius:8px;border:1px solid #e5e0d4;background:#faf8f2;}
 .top-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 /* ===== الأزرار ===== */
-.btn-export{background:#A89676;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-export{background:#A89676;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;}
 .btn-export:hover{opacity:0.8;}
-.btn-logout{background:#c0392b;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-logout{background:#c0392b;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;}
 .btn-logout:hover{opacity:0.8;}
-.btn-change-password{background:#2980b9;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;margin-left:10px;}
+.btn-change-password{background:#2980b9;padding:8px 20px;border:none;border-radius:8px;color:#fff;cursor:pointer;}
 .btn-change-password:hover{opacity:0.8;}
 /* ===== الحالات ===== */
 .status-badge{padding:4px 12px;border-radius:20px;font-size:11px;display:inline-block;}
@@ -119,8 +119,9 @@ tr:hover{background:#f8f6f0;}
 
 <!-- ===== JavaScript ===== -->
 <script>
-// 🔴 استبدلي هذا الرابط بالرابط الذي نسخته من سكربت كلمة المرور
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxvym6Huzg1wDhVqB22obIvLkTOAzCxkQuhfcw5dSmNvpkex2A6wB9oFC4hZNqwyvbc/exec';
+// ==================== الرابط ====================
+// 🔴 استبدلي هذا الرابط بالرابط الجديد لسكربت لوحة التحكم المنفصل
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/رابط_سكربت_لوحة_التحكم_الجديد/exec';
 
 let allBookings = [];
 let filteredBookings = [];
@@ -180,10 +181,7 @@ async function fetchBookings() {
         showMessage('❌ حدث خطأ في الاتصال', true);
     }
 }
-const response = await fetch(APPS_SCRIPT_URL + '?action=getBookings', {
-    method: 'GET',
-    mode: 'no-cors'  // 🔴 أضيفي هذا السطر هنا
-});
+
 // ==================== تحديث الإحصائيات ====================
 function updateStats() {
     const total = allBookings.length;
