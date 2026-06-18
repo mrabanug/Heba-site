@@ -578,6 +578,18 @@ document.getElementById('finalSendBtn').onclick = async () => {
         return;
     }
     
+    // 🔴 رسالة منبثقة إذا لم يكتب بريد إلكتروني
+    if (!email) {
+        const confirmSend = confirm(
+            '📌 ملاحظة: لم تقم بإدخال بريد إلكتروني.\n\n' +
+            'سيتم التواصل معك عبر رقم الهاتف فقط.\n\n' +
+            'هل تريد المتابعة؟'
+        );
+        if (!confirmSend) {
+            return; // إلغاء الإرسال
+        }
+    }
+    
     if (!validateMedicalReport()) return;
     
     const btn = document.getElementById('finalSendBtn');
